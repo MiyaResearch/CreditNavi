@@ -277,6 +277,13 @@
   .fare-pill.blocked b{color:var(--red);}
   .ic-net-line{font-size:12px;color:var(--label2);margin-top:5px;}
   .ic-net-line b{color:var(--label);font-weight:600;}
+  .warn-box{
+    display:flex;align-items:flex-start;gap:9px;
+    background:#FFF8E1;border:1px solid #FFE082;border-radius:10px;
+    padding:11px 13px;margin:16px 0 4px 0;font-size:13px;color:#8a6d00;line-height:1.5;
+  }
+  .warn-box svg{flex-shrink:0;margin-top:1px;}
+  .warn-box b{color:#7a5f00;font-weight:600;}
 </style>
 </head>
 <body>
@@ -1057,6 +1064,12 @@ function openDetail(i){
         </div>
         <div class="net-line">実質負担 <b>${fmtYen(c.ccNet)}円</b></div>
       </div>`;
+  const arriveBlk = CC_DEPART_BLOCK.find(b=> currentOD.toSt && currentOD.toSt.slug===b.slug && currentOD.toSt.ops && currentOD.toSt.ops.includes(b.op));
+  const arriveWarn = arriveBlk ? `
+    <div class="warn-box">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 1.5 L17 15.5 L1 15.5 Z" fill="#FFC107"/><path d="M9 6 L9 10.5 M9 12.6 L9 13.1" stroke="#7a5f00" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+      <span><b>${arriveBlk.name}駅からの乗車時には、クレカ乗車はご利用できません。</b>ご注意ください。</span>
+    </div>` : "";
   const legsSection = ccBlock ? "" : `
     <div class="section-header">クレカ乗車運賃の内訳</div>
     <div class="group">
@@ -1074,6 +1087,7 @@ function openDetail(i){
       <div class="fare-row"><div class="fr-line"><div class="fr-name">交通系IC${minBadges(c.isRaw(icOpt.raw),c.isNet(icOpt.net))}</div><div class="fr-amount">${r.ic}円</div></div>${icPtBlock}</div>
       ${ccRow}
     </div>
+    ${arriveWarn}
     ${legsSection}
     <div class="footnote">${notes.map(n=>"・"+n).join("<br>")}</div>`;
   history.unshift({from:currentOD.from,to:currentOD.to,via:viaText(r.via, currentOD.from, currentOD.to),cc: ccBlock?null:r.cc, pt: ccBlock?0:c.pt, card:card.name, blocked:!!ccBlock});
