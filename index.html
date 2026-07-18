@@ -119,6 +119,14 @@
   }
   .ride-del-btn:active{opacity:.5;}
   .section-header.sh-title-row{display:flex;align-items:center;justify-content:space-between;padding-right:12px;}
+  .fav-edit-btn{border:none;background:none;color:var(--blue);font-size:14px;font-family:inherit;font-weight:600;cursor:pointer;padding:0;}
+  .fav-edit-btn:active{opacity:.4;}
+  .info-btn{
+    width:32px;height:32px;border-radius:50%;background:var(--card);border:none;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--label2);
+    flex-shrink:0;margin-top:10px;
+  }
+  .info-btn:active{opacity:.5;}
   .primary-btn{
     display:block;width:100%;margin-top:14px;background:var(--blue);color:#fff;
     font-size:17px;font-weight:600;border:none;border-radius:12px;padding:15px;
@@ -134,7 +142,7 @@
   .chip:active{opacity:.4;}
   .card-banner{
     display:flex;align-items:center;background:var(--card);border-radius:12px;
-    padding:12px 16px;margin-top:24px;cursor:pointer;
+    padding:12px 16px;margin-top:2px;cursor:pointer;
   }
   .card-banner:active{opacity:.6;}
   .card-chip-icon{
@@ -341,8 +349,11 @@
   <div class="screen root-active" id="scr-search">
     <div class="mini-nav" id="search-mini"><div class="nav-title">クレカ乗車運賃ナビ</div></div>
     <div class="scroll" id="search-scroll" style="padding-top:0;">
-      <div class="navbar-large">
+      <div class="navbar-large" style="display:flex;align-items:flex-start;justify-content:space-between;">
         <div class="large-title">クレカ乗車運賃ナビ</div>
+        <button class="info-btn" onclick="openAppInfo()" aria-label="アプリ情報">
+          <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="9.3" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="11" cy="6.8" r="1.15" fill="currentColor"/><path d="M11 9.9 L11 15.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        </button>
       </div>
       <div class="footnote" style="padding:0 4px 12px 4px;" id="data-source"></div>
       <div class="route-input-card">
@@ -363,7 +374,7 @@
       </div>
       <button class="primary-btn" id="search-btn" disabled onclick="doSearch()">経路を検索</button>
 
-      <div class="section-header">区間の例</div>
+      <div class="section-header sh-title-row"><span>お気に入り区間</span><button class="fav-edit-btn" id="fav-edit-btn" onclick="toggleFavoritesEdit()">編集</button></div>
       <div class="chips" id="example-chips"></div>
 
       <div class="section-header">ポイント計算に使うカード</div>
@@ -436,6 +447,18 @@
       <div class="nav-title">検索履歴</div>
     </div>
     <div class="pushed-scroll" id="search-history-body"></div>
+  </div>
+
+  <!-- APP INFO -->
+  <div class="screen pushed" id="scr-app-info">
+    <div class="navbar">
+      <button class="back" onclick="popScreen('scr-app-info')">
+        <svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2 L3 10 L10 18" stroke="#007AFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        検索
+      </button>
+      <div class="nav-title">アプリ情報</div>
+    </div>
+    <div class="pushed-scroll" id="app-info-body"></div>
   </div>
 
   <!-- tab bar -->
@@ -614,10 +637,11 @@ function initFareV2(json){
   STS=Object.values(bySlug).sort((a,b)=>a.name.localeCompare(b.name,"ja"));
 
   document.getElementById("data-source").textContent=
-    `fare.json v${json.version}（${json.operators.map(o=>o.operatorName||o.operator).join("＋")}） 全${STS.length}駅 / ${json.generated||""}`;
+    `対応事業者：${json.operators.map(o=>o.operatorName||o.operator).join("＋")}　全${STS.length}駅 / ${json.generated||""}`;
   document.getElementById("app-note").textContent=
-    "運賃計算はfare.jsonのみで完結しています。社局跨ぎは同一駅グループを接続点とした合算の最安値による推定です（連絡割引はメトロ⇔都営−70円のみ。クレカ乗車では他の乗継割引は適用されません）。IC運賃の社局跨ぎは各社IC運賃の合算による近似値です。";
-  setChips([["Kudanshita","ShirokaneTakanawa"],["SangenJaya","Omotesando"],["Otemachi","Mita"],["Jimbocho","Meguro"]]);
+    "社局跨ぎは同一駅グループを接続点とした合算の最安値による推定です（連絡割引はメトロ⇔都営−70円のみ。クレカ乗車では他の乗継割引は適用されません）。IC運賃の社局跨ぎは各社IC運賃の合算による近似値です。";
+  seedFavoritesIfNeeded([["Kudanshita","ShirokaneTakanawa"],["SangenJaya","Omotesando"],["Otemachi","Mita"],["Jimbocho","Meguro"]]);
+  renderFavorites();
 }
 
 /* ---------- 旧fare-bundle(v1)はv2相当に変換して初期化 ---------- */
@@ -640,24 +664,76 @@ function initTX(json){
     `${json.operatorName} ／ ${LINE.name} 全${STS.length}駅（fare_tx.json）`;
   document.getElementById("app-note").textContent=
     "運賃・駅データはすべて fare_tx.json から読み込んでいます。クレカ乗車運賃は現金（きっぷ）運賃と同額です。";
-  setChips([[0,STS.length-1],[4,14],[0,11]]);
+  seedFavoritesIfNeeded(STS.length>1 ? [[STS[0].slug,STS[STS.length-1].slug],[STS[Math.min(4,STS.length-1)].slug,STS[Math.min(14,STS.length-1)].slug],[STS[0].slug,STS[Math.min(11,STS.length-1)].slug]] : []);
+  renderFavorites();
 }
 
-function setChips(pairs){
-  const chips=document.getElementById("example-chips");
-  chips.innerHTML="";
-  pairs.forEach(p=>{
-    let a,b;
-    if(MODE==="bundle"){
-      a=STS.findIndex(s=>s.slug===p[0]); b=STS.findIndex(s=>s.slug===p[1]);
-      if(a<0||b<0) return;
-    }else{ a=p[0]; b=p[1]; }
-    const btn=document.createElement("button");
-    btn.className="chip";
-    btn.textContent=`${STS[a].name} → ${STS[b].name}`;
-    btn.onclick=()=>quickSet(a,b);
-    chips.appendChild(btn);
-  });
+/* =========================================================
+   お気に入り区間（旧: 区間の例チップ）
+   {fromSlug,toSlug} の配列としてlocalStorageに保存。初回のみ既定区間をseedする。
+========================================================= */
+function seedFavoritesIfNeeded(pairs){
+  if(!favoritesNeedSeed) return;
+  favoritesNeedSeed=false;
+  if(favoriteRoutes.length) return; /* 既にデータがある場合は上書きしない */
+  favoriteRoutes = pairs
+    .map(p=>({fromSlug:p[0], toSlug:p[1]}))
+    .filter(f=>STS.some(s=>s.slug===f.fromSlug) && STS.some(s=>s.slug===f.toSlug));
+  saveFavorites();
+}
+function toggleFavoritesEdit(){
+  favoritesEditing=!favoritesEditing;
+  const btn=document.getElementById("fav-edit-btn");
+  if(btn) btn.textContent=favoritesEditing?"完了":"編集";
+  renderFavorites();
+}
+function addCurrentAsFavorite(){
+  if(fromIdx===null||toIdx===null||fromIdx===toIdx) return;
+  const fromSlug=STS[fromIdx].slug, toSlug=STS[toIdx].slug;
+  if(favoriteRoutes.some(f=>f.fromSlug===fromSlug&&f.toSlug===toSlug)){
+    showAlert("追加済みです","この区間はすでにお気に入りに登録されています。",[{label:"OK",bold:true}]);
+    return;
+  }
+  favoriteRoutes.push({fromSlug,toSlug});
+  saveFavorites();
+  renderFavorites();
+}
+function removeFavorite(idx){
+  favoriteRoutes.splice(idx,1);
+  saveFavorites();
+  renderFavorites();
+}
+function renderFavorites(){
+  const c=document.getElementById("example-chips");
+  if(!c) return;
+  if(!favoritesEditing){
+    if(!favoriteRoutes.length){
+      c.innerHTML=`<div class="footnote" style="padding:4px 0 0 0;">お気に入り区間はまだありません。「編集」から追加できます。</div>`;
+      return;
+    }
+    c.innerHTML = favoriteRoutes.map(f=>{
+      const fi=STS.findIndex(s=>s.slug===f.fromSlug), ti=STS.findIndex(s=>s.slug===f.toSlug);
+      if(fi<0||ti<0) return "";
+      return `<button class="chip" onclick="quickSet(${fi},${ti})">${STS[fi].name} → ${STS[ti].name}</button>`;
+    }).join("");
+    return;
+  }
+  const canAdd = fromIdx!==null && toIdx!==null && fromIdx!==toIdx;
+  c.innerHTML = `<div class="group" style="width:100%;">`+
+    favoriteRoutes.map((f,idx)=>{
+      const fi=STS.findIndex(s=>s.slug===f.fromSlug), ti=STS.findIndex(s=>s.slug===f.toSlug);
+      const label=(fi>=0&&ti>=0)?`${STS[fi].name} → ${STS[ti].name}`:"（該当する駅が見つかりません）";
+      return `<div class="cell" style="cursor:default;">
+          <div style="flex:1;">${label}</div>
+          <button class="ride-del-btn" onclick="removeFavorite(${idx})" aria-label="この区間をお気に入りから削除">
+            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2.5 3.5 L11.5 3.5 M5 3.5 L5 1.8 A0.8 0.8 0 0 1 5.8 1 H8.2 A0.8 0.8 0 0 1 9 1.8 L9 3.5 M3.3 3.5 L3.9 12 A1 1 0 0 0 4.9 13 H9.1 A1 1 0 0 0 10.1 12 L10.7 3.5" stroke="#FF3B30" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>`;
+    }).join("")+
+    `<button class="cell" onclick="addCurrentAsFavorite()" style="color:${canAdd?"var(--blue)":"var(--label3)"};cursor:${canAdd?"pointer":"default"};">
+      ＋ 現在選択中の区間を追加${canAdd?`（${STS[fromIdx].name} → ${STS[toIdx].name}）`:""}
+    </button>
+  </div>`;
 }
 
 /* =========================================================
@@ -925,7 +1001,8 @@ const LS_KEYS={
   rideHistory:"crekaFareNavi.rideHistory.v1",
   cardId:"crekaFareNavi.cardId.v1",
   customRate:"crekaFareNavi.customRate.v1",
-  icRate:"crekaFareNavi.icRate.v1"
+  icRate:"crekaFareNavi.icRate.v1",
+  favorites:"crekaFareNavi.favorites.v1"
 };
 function loadPersisted(){
   try{
@@ -948,11 +1025,17 @@ function loadPersisted(){
     const ir=localStorage.getItem(LS_KEYS.icRate);
     if(ir!==null){ const v=parseFloat(ir); if(!isNaN(v)) icRate=v; }
   }catch(e){}
+  try{
+    const fr=localStorage.getItem(LS_KEYS.favorites);
+    if(fr){ const arr=JSON.parse(fr); if(Array.isArray(arr)) favoriteRoutes=arr; }
+    else favoritesNeedSeed=true;
+  }catch(e){ favoritesNeedSeed=true; }
 }
 function saveHistory(){ try{ localStorage.setItem(LS_KEYS.history, JSON.stringify(history)); }catch(e){} }
 function saveRideHistory(){ try{ localStorage.setItem(LS_KEYS.rideHistory, JSON.stringify(rideHistory)); }catch(e){} }
 function saveCard(){ try{ localStorage.setItem(LS_KEYS.cardId, selectedCardId); localStorage.setItem(LS_KEYS.customRate, String(customRate)); }catch(e){} }
 function saveIcRate(){ try{ localStorage.setItem(LS_KEYS.icRate, String(icRate)); }catch(e){} }
+function saveFavorites(){ try{ localStorage.setItem(LS_KEYS.favorites, JSON.stringify(favoriteRoutes)); }catch(e){} }
 function clearSearchHistoryConfirm(){
   showAlert("履歴を削除","検索履歴をすべて削除します。よろしいですか？",
     [{label:"キャンセル"},{label:"削除",bold:true,onTap:()=>{ history=[]; saveHistory(); renderSearchHistoryList(); }}]);
@@ -1098,6 +1181,7 @@ let currentTab=0;
 let currentDetailIndex=null;
 let selectedRidePayment=null, rideStage="main", rideDateMode="today", rideCustomDate="", pendingRideRouteIndex=null;
 let rideFilterMonth="", rideFilterPayment="";
+let favoriteRoutes=[], favoritesEditing=false, favoritesNeedSeed=false;
 let monthlyUsageYm="";
 
 function activeCard(){
@@ -1228,6 +1312,7 @@ function setStation(target,idx){
   const el=document.getElementById(target+"-label");
   el.innerHTML=stationLabelHTML(STS[idx]); el.classList.remove("placeholder");
   updateSearchBtn();
+  if(favoritesEditing) renderFavorites();
 }
 function swapStations(e){
   e.stopPropagation();
@@ -1237,6 +1322,7 @@ function swapStations(e){
   fl.innerHTML=fromIdx!==null?stationLabelHTML(STS[fromIdx]):"出発駅"; fl.classList.toggle("placeholder",fromIdx===null);
   tl.innerHTML=toIdx!==null?stationLabelHTML(STS[toIdx]):"到着駅"; tl.classList.toggle("placeholder",toIdx===null);
   updateSearchBtn();
+  if(favoritesEditing) renderFavorites();
 }
 function quickSet(a,b){ setStation("from",a); setStation("to",b); }
 function updateSearchBtn(){
@@ -1413,6 +1499,54 @@ function applySearchHistory(idx){
   if(fi>=0) setStation("from",fi);
   if(ti>=0) setStation("to",ti);
   popScreen("scr-search-history");
+}
+
+/* =========================================================
+   アプリ情報（タイトル右のインフォメーションボタンから開く画面）
+========================================================= */
+function openAppInfo(){
+  renderAppInfo();
+  pushScreen("scr-app-info");
+}
+function renderAppInfo(){
+  const c=document.getElementById("app-info-body");
+  const ops=(DATA&&DATA.operators)||[];
+  const opsHtml = ops.length
+    ? `<div class="group">`+ops.map(o=>{
+        const st=opStyle(o.operator);
+        return `<div class="cell" style="cursor:default;">
+            <div style="width:8px;height:8px;border-radius:50%;background:${st.color};margin-right:10px;flex-shrink:0;"></div>
+            <div style="flex:1;">${o.operatorName||o.operator}</div>
+          </div>`;
+      }).join("")+`</div>`
+    : `<div class="footnote">事業者データを読み込み中です。</div>`;
+  c.innerHTML=`
+    <div class="section-header" style="padding-top:4px;">対応事業者</div>
+    ${opsHtml}
+    <div class="section-header">利用規約</div>
+    <div class="group">
+      <div class="cell" style="cursor:default;flex-direction:column;align-items:flex-start;padding:12px 16px;">
+        <div style="font-size:14px;line-height:1.6;">本アプリが表示する運賃・駅データ・ポイント計算結果の正確性・完全性は保証しません。実際のご乗車前に、必ず各事業者の公式情報でご確認ください。データの誤りや古さ、計算結果の相違により生じたいかなる損害についても、本アプリの作成者は責任を負いません。</div>
+      </div>
+    </div>
+    <div class="section-header">ライセンス</div>
+    <div class="group">
+      <a class="cell" style="text-decoration:none;" href="https://developer.odpt.org/terms/data_basic_license.html" target="_blank" rel="noopener">
+        <div style="flex:1;">
+          <div>ODPT データ活用基本ライセンス</div>
+          <div style="font-size:12px;color:var(--label2);margin-top:2px;">developer.odpt.org/terms/data_basic_license.html</div>
+        </div>
+        <svg class="chevron" width="8" height="14" viewBox="0 0 8 14"><path d="M1 1 L7 7 L1 13" stroke="#C7C7CC" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="cell" style="text-decoration:none;" href="https://developer.odpt.org/challenge_license" target="_blank" rel="noopener">
+        <div style="flex:1;">
+          <div>ODPT チャレンジ限定ライセンス</div>
+          <div style="font-size:12px;color:var(--label2);margin-top:2px;">developer.odpt.org/challenge_license</div>
+        </div>
+        <svg class="chevron" width="8" height="14" viewBox="0 0 8 14"><path d="M1 1 L7 7 L1 13" stroke="#C7C7CC" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="footnote">本アプリの運賃・駅データは、公共交通オープンデータセンター（ODPT）が提供するAPIのデータをもとに作成しています。データ活用基本ライセンス（一般公開・商用利用可、出典表示必須）およびチャレンジ限定ライセンス（期間・目的限定）に基づき、事業者ごとに定められた条件のもとで利用しています。</div>`;
 }
 
 /* =========================================================
