@@ -1044,17 +1044,25 @@ function effectiveRouteForToday(r){
 function ccBlockForRoute(od,r){
   const from=od.fromSt, to=od.toSt;
   if(!from||!to||!r) return null;
+  let departBlock=null, arriveBlock=null;
   /* 出発駅のみ非対応（例: 東京メトロ中野） */
   for(const b of CC_DEPART_BLOCK){
-    if(r.opFrom===b.op && from.slug===b.slug) return {msg:b.msg};
+    if(r.opFrom===b.op && from.slug===b.slug){ departBlock={name:from.name, opName:opStyle(b.op).name}; break; }
   }
   /* 乗車・降車とも非対応の駅（発着社局が該当する場合のみ） */
   for(const op in CC_NO_SERVICE){
     const set=CC_NO_SERVICE[op], nm=opStyle(op).name;
-    if(r.opFrom===op && set.has(from.slug))
-      return {msg:`${from.name}駅（${nm}）はクレカ乗車に対応していないため、この駅からクレカ乗車で乗ることはできません`};
-    if(r.opTo===op && set.has(to.slug))
-      return {msg:`${to.name}駅（${nm}）はクレカ乗車に対応していないため、この駅でクレカ乗車を降りることはできません`};
+    if(!departBlock && r.opFrom===op && set.has(from.slug)) departBlock={name:from.name, opName:nm};
+    if(r.opTo===op && set.has(to.slug)) arriveBlock={name:to.name, opName:nm};
+  }
+  if(departBlock && arriveBlock){
+    return {msg:`${departBlock.name}駅（${departBlock.opName}）、${arriveBlock.name}駅（${arriveBlock.opName}）ではクレカ乗車はご利用できません。`};
+  }
+  if(departBlock){
+    return {msg:`${departBlock.name}駅（${departBlock.opName}）からクレカ乗車で乗ることはできません。`};
+  }
+  if(arriveBlock){
+    return {msg:`${arriveBlock.name}駅（${arriveBlock.opName}）ではクレカ乗車で降りることはできません。`};
   }
   return null;
 }
