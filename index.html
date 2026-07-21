@@ -619,7 +619,7 @@ let GROUPS=[];          // stationGroups（存在する事業者のみ）
 let JUNCTIONS=[];       // 経由駅指定用: 境界駅（GROUPSの表示用一覧）
 let DISCOUNTS=[];       // 割引テーブル
 let LINE=null;          // tx用
-const APP_VERSION="2026-07-21 17:52"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
+const APP_VERSION="2026-07-22 08:20"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
 let NOTICES=[];          // お知らせ一覧（先頭に更新案内が入る場合あり）
 let noticeRotateTimer=null;
 let noticeRotateIdx=0;
@@ -640,7 +640,11 @@ const OP_STYLE={
   "横浜高速鉄道みなとみらい線":{sym:"MM", name:"みなとみらい線", color:"#09357F"},
   mir:              {sym:"TX", name:"つくばエクスプレス", color:"#000080"},
   yokohamamunicipal:{sym:"横浜市営", name:"横浜市営地下鉄", color:"#006BF0"},
-  yurikamome:       {sym:"U",  name:"ゆりかもめ", color:"#27404C"}
+  yurikamome:       {sym:"U",  name:"ゆりかもめ", color:"#27404C"},
+  toden:            {sym:"SA", name:"東京さくらトラム（都電荒川線）", color:"#E85298"},
+  nipporitoneri:    {sym:"NT", name:"日暮里・舎人ライナー", color:"#8FC31F"},
+  hakonetozanrailway:{sym:"箱根", name:"箱根登山鉄道", color:"#e5580c"},
+  hakonetozancable: {sym:"箱根", name:"箱根登山ケーブルカー", color:"#e5580c"}
 };
 function romajiFromSlug(slug,name){
   if(MODE==="tx"||!slug||/[぀-鿿ぁ-ヶ]/.test(slug)) return "";
@@ -658,6 +662,42 @@ function opStyle(op){
 }
 /* クレカ乗車運賃の区間特例: 横浜市営地下鉄はクレカ乗車もIC運賃（1円単位）を適用。v=[cash,ic] */
 function ccFareOf(op,v){ return op==="yokohamamunicipal" ? v[1] : v[0]; }
+
+/* =========================================================
+   駅名検索の表記ゆれ吸収
+   - カタカナ→ひらがな変換（伸ばし棒「ー」はそのまま維持。例:「センター」→「せんたー」）
+   - 「ヶ/ケ/が」「ツ/ッ」「ノ/の」「ず/づ」「じ/ぢ」の異体字ゆれを同一視して比較する
+========================================================= */
+function kataToHira(s){
+  return String(s||"").replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0)-0x60));
+}
+/* 検索比較用キー: 異体字クラスを代表文字に畳み込んでからひらがな化する
+   （先に「ヶ/ケ/が」等の特定文字だけを畳み込み、その後カタカナ→ひらがな変換するのがポイント。
+    先にひらがな化すると「ケ」が通常の「け」と区別できなくなり、誤爆する）
+   例: 市ケ谷=市ヶ谷 / 四ツ谷=四ッ谷=四谷 / 霞ケ関=霞が関=霞ヶ関 / 御茶ノ水=お茶の水 / 幡ヶ谷=幡ケ谷 */
+function fuzzyKey(s){
+  let t=String(s||"");
+  t=t.replace(/[ヶケが]/g,"@");
+  t=t.replace(/[ツッ]/g,"");   /* 四ツ谷/四ッ谷/四谷のように、あってもなくても同一視 */
+  t=t.replace(/[ノの]/g,"%");
+  t=t.replace(/[御お]/g,"&");  /* 御茶ノ水/お茶の水 */
+  t=t.replace(/[ずづ]/g,"z");
+  t=t.replace(/[じぢ]/g,"j");
+  return kataToHira(t).toLowerCase();
+}
+/* 駅名検索クエリが対象駅にマッチするか（表示名・スラッグ・ふりがな・異体字ゆれを横断判定） */
+function stationMatches(s, qRaw){
+  const q=qRaw.trim();
+  if(!q) return true;
+  const qLower=q.toLowerCase();
+  if(s.name.toLowerCase().includes(qLower)) return true;
+  if(s.slug && s.slug.toLowerCase().includes(qLower)) return true;
+  if(s.kana && kataToHira(s.kana).includes(kataToHira(q))) return true;
+  const qFuzzy=fuzzyKey(q);
+  if(qFuzzy && fuzzyKey(s.name).includes(qFuzzy)) return true;
+  if(qFuzzy && s.kana && fuzzyKey(s.kana).includes(qFuzzy)) return true;
+  return false;
+}
 
 async function boot(){
   for(const f of ["fare.json","fare_metro_toei_bundle.json","fare_tx.json"]){
@@ -738,9 +778,10 @@ function initFareV2(json){
   const bySlug={};
   mats.forEach(o=>o.stations.forEach(st=>{
     const nm=groupName[o.operator+"|"+st.slug]||st.name;
-    if(!bySlug[st.slug]) bySlug[st.slug]={slug:st.slug,name:nm,ops:[]};
+    if(!bySlug[st.slug]) bySlug[st.slug]={slug:st.slug,name:nm,ops:[],kana:st.kana||""};
     if(!bySlug[st.slug].ops.includes(o.operator)) bySlug[st.slug].ops.push(o.operator);
     if(bySlug[st.slug].name===st.slug&&nm!==st.slug) bySlug[st.slug].name=nm;
+    if(!bySlug[st.slug].kana&&st.kana) bySlug[st.slug].kana=st.kana;
   }));
   STS=Object.values(bySlug).sort((a,b)=>a.name.localeCompare(b.name,"ja"));
 
@@ -1004,6 +1045,7 @@ function cross(opA,opB,a,b,ja,jb,f,t){
   return {kind:"cross", key:`x|${opA}|${opB}|${ja}|${jb}`, opFrom:opA, opTo:opB, opKeys:[opA,opB], tobuFare:((opA==="tobu"?a[0]:0)+(opB==="tobu"?b[0]:0)),
     via:[{sym:A.sym,name:A.name,color:A.color},{sta:jDisp},{sym:B.sym,name:B.name,color:B.color}],
     cash:a[0]+b[0]-d.cash, ic:a[1]+b[1]-d.ic, cc:ccA+ccB-d.cc,
+    transfers:[{alightOp:opA, alightSlug:ja, alightName:jNameA, boardOp:opB, boardSlug:jb, boardName:jNameB}],
     legs, notes};
 }
 
@@ -1167,7 +1209,7 @@ function forceViaMultiHop(f,t,viaGroupId){
 function routeFromLegs(legList){
   if(!legList||!legList.length) return null;
   let cashSum=0, icSum=0, ccSum=0, cashDisc=0, icDisc=0, ccDisc=0, tobuSum=0;
-  const via=[], disp=[], notes=[];
+  const via=[], disp=[], notes=[], transfers=[];
   let hasCcDisc=false, hasNonCcDisc=false, hasYokohamaMunicipal=false;
   for(let k=0;k<legList.length;k++){
     const L=legList[k], st=opStyle(L.op);
@@ -1182,6 +1224,7 @@ function routeFromLegs(legList){
       const prev=legList[k-1], pst=opStyle(prev.op);
       const jNamePrev=LUS[prev.op].name(prev.to), jNameCur=fromName;
       via.push({sta: jNamePrev===jNameCur?jNamePrev:`${jNamePrev}（${jNameCur}）`});
+      transfers.push({alightOp:prev.op, alightSlug:prev.to, alightName:jNamePrev, boardOp:L.op, boardSlug:L.from, boardName:jNameCur});
       const dsc=discountsFor(prev.op,L.op, prev.from, L.to, prev.to, L.from);
       cashDisc+=dsc.cash; icDisc+=dsc.ic; ccDisc+=dsc.cc;
       if(dsc.cc>0){ hasCcDisc=true; disp.push({op:"割引",color:"#8E8E93",sec:`${pst.name}⇔${st.name} 連絡割引`,fare:-dsc.cc}); }
@@ -1199,7 +1242,7 @@ function routeFromLegs(legList){
     key:"m|"+legList.map(L=>L.op+":"+L.from+">"+L.to).join("|"),
     opFrom:legList[0].op, opTo:legList[legList.length-1].op, opKeys:legList.map(L=>L.op),
     via, cash:cashSum-cashDisc, ic:icSum-icDisc, cc:ccSum-ccDisc, tobuFare:tobuSum,
-    legs:disp, notes};
+    transfers, legs:disp, notes};
 }
 
 /* =========================================================
@@ -1273,8 +1316,15 @@ const CC_DEPART_BLOCK=[
 ];
 /* クレカ乗車が乗車・降車とも非対応の駅（op → Set(slug)）: 出発・到着いずれでも不可 */
 const CC_NO_SERVICE={
-  seibu:new Set(["Shiinamachi","HigashiNagasaki","NerimaTakanodai","HigashiKurume","Kiyose","MusashiYokote","HigashiAgano","Agano","NishiAgano","Shomaru","Ashigakubo","Yokoze","Seibuen","HigashiMurayama","Kumegawa","SeibuYagisawa","MusashiSeki","KamiShakujii","KamiIgusa","Iogi","ShimoIgusa","Saginomiya","ToritsuKasei","Nogata","Numabukuro","AraiyakushiMae","Nakai","ShimoOchiai"]),
-  tobu:new Set(["Agata","Aioi","Akagi","Atago","Azami","BushuKarasawa","BushuNagase","Daishimae","Daiyamuko","Edogawadai","Esojima","FujinoUshijima","Fujioka","Fukui","Funabashi","Goshi","Hachigata","Hanasaki","Hanyu","Hatsuishi","HigashiAzuma","HigashiIwatsuki","HigashiKoizumi","HigashiMoro","HonNakano","Horigome","Hosoya","Ienaka","Ippommatsu","Isesaki","Itaga","ItakuraToyodaimae","Iwatsuki","Jiroembashi","Kamagaya","Kameido","Kameidosuijin","KamiImaichi","Kashiwa","Kassemba","Kawakado","Kawama","Kawamata","Kazo","KinugawaKoen","KitaKanuma","KitaOmiya","Kizaki","Koizumimachi","Kosagoe","Kuniya","Kurihashi","Kuzu","Magomezawa","Masuo","Mibu","MinamiHanyu","MinamiSakurai","MinamiUtsunomiya","MinamiYorii","Momiyama","Morinjimae","Mutsumi","Myojin","NagareyamaOtakanomori","Nanakodai","Nanasato","Narushima","Niragawa","Niregi","NishiKoizumi","NishiOya","Nishikawada","Nodashi","Obusuma","Ogose","Okuwa","Omiya","OmiyaKoen","Omochanomachi","Omurai","Owada","Ryumai","Sakaimachi","Sakasai","Sammaibashi","Sano","Sanoshi","Serada","ShimizuKoen","ShimoGoshiro","ShinFujiwara","ShinFunabashi","ShinIsesaki","ShinKamagaya","ShinKashiwa","ShinKiryu","ShinKoga","ShinOhirashita","ShinTochigi","Shinozuka","Shizuwa","Tada","Tajima","Takayanagi","Tamayodo","Tanuma","Tatara","TobuIzumi","TobuKanasaki","TobuTakezawa","TobuUtsunomiya","Toyoharu","Toyoshiki","Tsukada","Umesato","Unga","Washinomiya","Watarase","Yabuzuka","Yagisaki","Yagyu","YashuHirakawa","YashuOtsuka","YashuYamabe","Yasuzuka","Yorii","Yoshimizu"])
+  seibu:new Set(["Shiinamachi","HigashiNagasaki","NerimaTakanodai","HigashiKurume","Kiyose","MusashiYokote","HigashiAgano","Agano","NishiAgano","Shomaru","Ashigakubo","Yokoze","Seibuen","HigashiMurayama","Kumegawa","SeibuYagisawa","MusashiSeki","KamiShakujii","KamiIgusa","Iogi","ShimoIgusa","Saginomiya","ToritsuKasei","Nogata","Numabukuro","AraiyakushiMae","Nakai","ShimoOchiai","MusashiSakai","ShinKoganei","Tama","Shiraitodai","KyoteijoMae","Koremasa"]),
+  tobu:new Set(["Agata","Aioi","Akagi","Atago","Azami","BushuKarasawa","BushuNagase","Daishimae","Daiyamuko","Edogawadai","Esojima","FujinoUshijima","Fujioka","Fukui","Funabashi","Goshi","Hachigata","Hanasaki","Hanyu","Hatsuishi","HigashiAzuma","HigashiIwatsuki","HigashiKoizumi","HigashiMoro","HonNakano","Horigome","Hosoya","Ienaka","Ippommatsu","Isesaki","Itaga","ItakuraToyodaimae","Iwatsuki","Jiroembashi","Kamagaya","Kameido","Kameidosuijin","KamiImaichi","Kashiwa","Kassemba","Kawakado","Kawama","Kawamata","Kazo","KinugawaKoen","KitaKanuma","KitaOmiya","Kizaki","Koizumimachi","Kosagoe","Kuniya","Kurihashi","Kuzu","Magomezawa","Masuo","Mibu","MinamiHanyu","MinamiSakurai","MinamiUtsunomiya","MinamiYorii","Momiyama","Morinjimae","Mutsumi","Myojin","NagareyamaOtakanomori","Nanakodai","Nanasato","Narushima","Niragawa","Niregi","NishiKoizumi","NishiOya","Nishikawada","Nodashi","Obusuma","Ogose","Okuwa","Omiya","OmiyaKoen","Omochanomachi","Omurai","Owada","Ryumai","Sakaimachi","Sakasai","Sammaibashi","Sano","Sanoshi","Serada","ShimizuKoen","ShimoGoshiro","ShinFujiwara","ShinFunabashi","ShinIsesaki","ShinKamagaya","ShinKashiwa","ShinKiryu","ShinKoga","ShinOhirashita","ShinTochigi","Shinozuka","Shizuwa","Tada","Tajima","Takayanagi","Tamayodo","Tanuma","Tatara","TobuIzumi","TobuKanasaki","TobuTakezawa","TobuUtsunomiya","Toyoharu","Toyoshiki","Tsukada","Umesato","Unga","Washinomiya","Watarase","Yabuzuka","Yagisaki","Yagyu","YashuHirakawa","YashuOtsuka","YashuYamabe","Yasuzuka","Yorii","Yoshimizu"]),
+  /* 東京さくらトラム(都電荒川線)・日暮里舎人ライナーは全駅クレカ乗車非対応（両路線とも路線全体でタッチ決済非対応のため） */
+  toden:new Set(["ArakawaItchumae","ArakawaNanachome","ArakawaNichome","ArakawaShakomae","ArakawaYuenchimae","Arakawakuyakushomae","Asukayama","Gakushuinshita","HigashiIkebukuroYonchome","HigashiOguSanchome","Kajiwara","Kishibojimmae","Koshinzuka","Kumanomae","MachiyaEkimae","MachiyaNichome","Minowabashi","Miyanomae","Mukohara","NishigaharaYonchome","Odai","OjiEkimae","Omokagebashi","OtsukaEkimae","Sakaecho","ShinKoshinzuka","Sugamoshinden","TakinogawaItchome","TodenZoshigaya","Waseda"]),
+  nipporitoneri:new Set(["AdachiOdai","AkadoShogakkomae","Kohoku","Koya","Kumanomae","MinumadaiShinsuikoen","Nippori","NishiNippori","NishiaraidaishiNishi","OgiOhashi","Toneri","ToneriKoen","Yazaike"]),
+  /* 箱根登山鉄道: クレカ乗車対応は小田原・箱根湯本・塔ノ沢・大平台・宮ノ下・小涌谷・彫刻の森・強羅のみ。それ以外(箱根板橋・入生田・風祭)は非対応 */
+  hakonetozanrailway:new Set(["HakoneItabashi","Iriuda","Kazamatsuri"]),
+  /* 箱根登山ケーブルカー: クレカ乗車対応は強羅・早雲山のみ。それ以外(上強羅・公園上・公園下・中強羅)は非対応 */
+  hakonetozancable:new Set(["KamiGora","KoenKami","KoenShimo","NakaGora"])
 };
 /* 1日上限サービス（横浜市営地下鉄740円・ゆりかもめ820円。両社局は完全に別会社・別集計で、上限は互いに影響しない） */
 const DAILY_CAP={
@@ -1343,31 +1393,40 @@ function effectiveRouteForToday(r){
   return {...r, cc:Math.max(0,adjustedCc), legs, capApplied, capInfo};
 }
 /* 経路の実際の乗車社局に基づきクレカ乗車の可否を判定
-   （中井など複数社局が同居する駅は、非対応社局で発着する経路のみブロック） */
+   （中井など複数社局が同居する駅は、非対応社局で発着する経路のみブロック）
+   2社以上を乗り継ぐ経路では、出発・到着駅だけでなく途中の乗換駅（r.transfers）も
+   判定対象にする。乗換駅ではその駅で「降りる側」と「乗る側」の両社局をそれぞれ
+   チェックする（例: つくば→春日部でTX・東武を流山おおたかの森で乗り換える場合、
+   東武側が乗車不可駅ならその乗換区間でクレカ乗車不可と判定する） */
 function ccBlockForRoute(od,r){
   const from=od.fromSt, to=od.toSt;
   if(!from||!to||!r) return null;
-  let departBlock=null, arriveBlock=null;
-  /* 出発駅のみ非対応（例: 東京メトロ中野） */
-  for(const b of CC_DEPART_BLOCK){
-    if(r.opFrom===b.op && from.slug===b.slug){ departBlock={name:from.name, opName:opStyle(b.op).name}; break; }
+  const departBlocks=[], arriveBlocks=[];
+  const isDepartBlocked=(op,slug)=> CC_DEPART_BLOCK.some(b=>b.op===op&&b.slug===slug) || (CC_NO_SERVICE[op]&&CC_NO_SERVICE[op].has(slug));
+  const isArriveBlocked=(op,slug)=> !!(CC_NO_SERVICE[op]&&CC_NO_SERVICE[op].has(slug));
+  const pushUnique=(arr,item)=>{ if(!arr.some(x=>x.name===item.name&&x.opName===item.opName)) arr.push(item); };
+  /* 出発駅 */
+  if(isDepartBlocked(r.opFrom, from.slug)) pushUnique(departBlocks, {name:from.name, opName:opStyle(r.opFrom).name});
+  /* 到着駅 */
+  if(isArriveBlocked(r.opTo, to.slug)) pushUnique(arriveBlocks, {name:to.name, opName:opStyle(r.opTo).name});
+  /* 途中の乗換駅（2社以上のときのみ存在） */
+  (r.transfers||[]).forEach(tr=>{
+    if(isArriveBlocked(tr.alightOp, tr.alightSlug)) pushUnique(arriveBlocks, {name:tr.alightName, opName:opStyle(tr.alightOp).name});
+    if(isDepartBlocked(tr.boardOp, tr.boardSlug)) pushUnique(departBlocks, {name:tr.boardName, opName:opStyle(tr.boardOp).name});
+  });
+  if(!departBlocks.length && !arriveBlocks.length) return null;
+  if(departBlocks.length===1 && !arriveBlocks.length){
+    return {msg:`${departBlocks[0].name}駅（${departBlocks[0].opName}）からクレカ乗車で乗ることはできません。`};
   }
-  /* 乗車・降車とも非対応の駅（発着社局が該当する場合のみ） */
-  for(const op in CC_NO_SERVICE){
-    const set=CC_NO_SERVICE[op], nm=opStyle(op).name;
-    if(!departBlock && r.opFrom===op && set.has(from.slug)) departBlock={name:from.name, opName:nm};
-    if(r.opTo===op && set.has(to.slug)) arriveBlock={name:to.name, opName:nm};
+  if(arriveBlocks.length===1 && !departBlocks.length){
+    return {msg:`${arriveBlocks[0].name}駅（${arriveBlocks[0].opName}）ではクレカ乗車で降りることはできません。`};
   }
-  if(departBlock && arriveBlock){
-    return {msg:`${departBlock.name}駅（${departBlock.opName}）、${arriveBlock.name}駅（${arriveBlock.opName}）ではクレカ乗車はご利用できません。`};
-  }
-  if(departBlock){
-    return {msg:`${departBlock.name}駅（${departBlock.opName}）からクレカ乗車で乗ることはできません。`};
-  }
-  if(arriveBlock){
-    return {msg:`${arriveBlock.name}駅（${arriveBlock.opName}）ではクレカ乗車で降りることはできません。`};
-  }
-  return null;
+  const names=[];
+  [...departBlocks, ...arriveBlocks].forEach(b=>{
+    const label=`${b.name}駅（${b.opName}）`;
+    if(!names.includes(label)) names.push(label);
+  });
+  return {msg:`${names.join("、")}ではクレカ乗車はご利用できません。`};
 }
 function icNetOf(ic){ return ic - ic*icRate/100; }
 /* 運賃3手段の比較（最安=raw / 実質最安=net） */
@@ -1535,7 +1594,7 @@ function renderStationList(){
     return;
   }
   STS.forEach((s,idx)=>{
-    if(q && !s.name.toLowerCase().includes(q) && !s.slug.toLowerCase().includes(q)) return;
+    if(!stationMatches(s, q)) return;
     const b=document.createElement("button");
     b.className="cell st-cell";
     const rj=romajiOf(s);
