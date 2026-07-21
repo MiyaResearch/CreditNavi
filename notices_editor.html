@@ -127,10 +127,10 @@
     <div class="field">
       <label>最新バージョン（latestVersion）</label>
       <div style="display:flex;gap:8px;">
-        <input type="text" id="g-version" placeholder="例: 2026-07-20" style="flex:1;">
-        <button type="button" class="small-btn" onclick="setTodayVersion()">今日の日付</button>
+        <input type="text" id="g-version" placeholder="例: 2026-07-20 15:30" style="flex:1;">
+        <button type="button" class="small-btn" onclick="setTodayVersion()">現在日時を入力</button>
       </div>
-      <div class="hint">index.html内の<code>APP_VERSION</code>定数と異なる値をここに入れると、アプリのお知らせ欄の先頭に「最新版があります」が自動で表示されます。index.htmlを更新していないのに変更すると誤って更新案内が出てしまうので、index.htmlを新しく公開した時だけ更新してください。</div>
+      <div class="hint">index.html内の<code>APP_VERSION</code>定数と異なる値をここに入れると、アプリのお知らせ欄の先頭に「最新版があります」が自動で表示されます。index.htmlを更新していないのに変更すると誤って更新案内が出てしまうので、index.htmlを新しく公開した時だけ更新してください。日付のみだと同じ日に2回以上デプロイした場合に区別できず更新案内が出せないため、分単位の時刻まで入れてください（「現在日時を入力」ボタンで自動入力できます）。</div>
     </div>
     <div class="field">
       <label>更新案内の表示文言（updateSummary・省略可）</label>
@@ -163,8 +163,15 @@ function todayStr(){
   const p = n => String(n).padStart(2,"0");
   return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
 }
+function nowVersionStr(){
+  /* 日付のみだと同日に2回以上デプロイした場合に区別できず更新案内が出せないため、
+     分単位までを含めたタイムスタンプをバージョン値として使う。 */
+  const d = new Date();
+  const p = n => String(n).padStart(2,"0");
+  return `${todayStr()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
 function setTodayVersion(){
-  document.getElementById("g-version").value = todayStr();
+  document.getElementById("g-version").value = nowVersionStr();
 }
 
 /* ---------- 一覧の追加・削除・並び替え ---------- */

@@ -88,9 +88,10 @@
   }
   .cell .chevron{margin-left:auto;flex-shrink:0;}
   .footnote{font-size:13px;color:var(--label2);padding:7px 16px 0 16px;line-height:1.45;}
+  .route-input-group{position:relative;}
   .route-input-card{background:var(--card);border-radius:12px;padding:6px 16px;position:relative;}
+  .route-input-gap{position:relative;height:38px;}
   .station-row{display:flex;align-items:center;min-height:52px;cursor:pointer;}
-  .station-row:first-child{border-bottom:0.5px solid var(--sep);}
   .station-row:active{opacity:.5;}
   .st-badge{
     width:46px;padding:4px 0;border-radius:6px;color:#fff;font-size:13px;font-weight:600;
@@ -98,13 +99,27 @@
   }
   .st-badge.dep{background:var(--blue);}
   .st-badge.arr{background:var(--green);}
+  .via-chip{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    display:flex;align-items:center;gap:6px;
+    padding:6px 14px;border-radius:16px;border:1px solid var(--sep);
+    background:var(--card);color:var(--label2);font-size:13px;font-family:inherit;font-weight:600;
+    cursor:pointer;max-width:calc(100% - 70px); /* 未選択時は内容に合わせて縮み、駅名が長い時はスワップボタン手前まで伸びる */
+  }
+  .via-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .via-chip:active{opacity:.5;}
+  .via-chip.selected{color:var(--label);}
+  .via-chip-badge{
+    background:var(--gray);color:#fff;font-size:11px;font-weight:600;
+    padding:3px 6px;border-radius:5px;flex-shrink:0;letter-spacing:0;
+  }
   .station-name{font-size:17px;color:var(--label);}
   .station-name.placeholder{color:var(--label3);}
   .st-romaji{font-size:11px;color:var(--label2);font-weight:400;letter-spacing:0;margin-left:6px;}
   .st-romaji-lg{font-size:12px;color:var(--label2);font-weight:400;letter-spacing:0;margin-left:6px;}
   .swap-btn{
     position:absolute;right:14px;top:50%;transform:translateY(-50%);
-    width:34px;height:34px;border-radius:50%;background:var(--bg);border:none;
+    width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--sep);
     display:flex;align-items:center;justify-content:center;cursor:pointer;
   }
   .swap-btn:active{opacity:.4;}
@@ -388,27 +403,38 @@
           <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="9.3" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="11" cy="6.8" r="1.15" fill="currentColor"/><path d="M11 9.9 L11 15.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
         </button>
       </div>
-      <div class="footnote" style="padding:0 4px 12px 4px;" id="data-source"></div>
+      <div class="footnote">首都圏のクレジットカード等のタッチ決済による乗車サービスに対応した事業者に対応しています。詳細は右上のiマークからご確認ください。 version:2026-07-21</div>
       <button class="notice-box" id="notice-box" style="display:none;" onclick="openNotices()">
         <span class="notice-label">お知らせ</span>
         <span class="notice-summary-wrap"><span class="notice-summary" id="notice-summary"></span></span>
         <svg class="chevron" width="8" height="14" viewBox="0 0 8 14"><path d="M1 1 L7 7 L1 13" stroke="#C7C7CC" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <div class="route-input-card">
+      <div class="route-input-group">
         <button class="history-btn" onclick="openSearchHistory()" aria-label="検索履歴">
           <svg width="22" height="22" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M13 7 L13 13 L17.5 15.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <div class="station-row" onclick="openPicker('from')">
-          <div class="st-badge dep">出発</div>
-          <div class="station-name placeholder" id="from-label">出発駅</div>
+        <div class="route-input-card">
+          <div class="station-row" onclick="openPicker('from')">
+            <div class="st-badge dep">出発</div>
+            <div class="station-name placeholder" id="from-label">出発駅</div>
+          </div>
         </div>
-        <div class="station-row" onclick="openPicker('to')">
-          <div class="st-badge arr">到着</div>
-          <div class="station-name placeholder" id="to-label">到着駅</div>
+        <div class="route-input-gap">
+          <button class="via-chip" id="via-chip" onclick="openPicker('via')">
+            <svg id="via-chip-icon" width="12" height="12" viewBox="0 0 12 12"><path d="M6 1 L6 11 M1 6 L11 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span class="via-chip-badge" id="via-chip-badge" style="display:none;">経由</span>
+            <span id="via-chip-label">経由</span>
+          </button>
+          <button class="swap-btn" onclick="swapStations(event)" aria-label="入れ替え">
+            <svg width="16" height="16" viewBox="0 0 16 16"><path d="M5 2 L5 11 M2.5 8.5 L5 11 L7.5 8.5" stroke="#007AFF" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 14 L11 5 M8.5 7.5 L11 5 L13.5 7.5" stroke="#007AFF" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
-        <button class="swap-btn" onclick="swapStations(event)" aria-label="入れ替え">
-          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M5 2 L5 11 M2.5 8.5 L5 11 L7.5 8.5" stroke="#007AFF" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 14 L11 5 M8.5 7.5 L11 5 L13.5 7.5" stroke="#007AFF" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <div class="route-input-card">
+          <div class="station-row" onclick="openPicker('to')">
+            <div class="st-badge arr">到着</div>
+            <div class="station-name placeholder" id="to-label">到着駅</div>
+          </div>
+        </div>
       </div>
       <button class="primary-btn" id="search-btn" disabled onclick="doSearch()">経路を検索</button>
 
@@ -448,6 +474,9 @@
       <div class="section-header">交通系ICのポイント還元率</div>
       <div class="group" id="ic-rate-group"></div>
       <div class="footnote">交通系IC（Suica・PASMO等）はチャージ時などにクレジットカード経由でポイント還元を受けられる場合があります。ここで設定した還元率（0.1%単位）で交通系ICの実質額を計算します。</div>
+      <div class="section-header">バックアップ</div>
+      <div class="group" id="backup-group"></div>
+      <div class="footnote">機種変更などでこのアプリを使い続ける場合、バックアップファイルを書き出しておき、新しい端末で読み込むことで乗車履歴・お気に入り区間・カード設定・検索履歴を引き継げます。</div>
     </div>
   </div>
 
@@ -587,9 +616,10 @@ let STS=[];             // 統一駅リスト {slug,name,ops:[]}
 let OPSDATA={};         // operator → データ
 let LUS={};             // operator → 運賃lookup
 let GROUPS=[];          // stationGroups（存在する事業者のみ）
+let JUNCTIONS=[];       // 経由駅指定用: 境界駅（GROUPSの表示用一覧）
 let DISCOUNTS=[];       // 割引テーブル
 let LINE=null;          // tx用
-const APP_VERSION="2026-07-21"; // デプロイ毎に手動更新（notices.jsonのlatestVersionと比較して更新案内を出す）
+const APP_VERSION="2026-07-21 17:52"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
 let NOTICES=[];          // お知らせ一覧（先頭に更新案内が入る場合あり）
 let noticeRotateTimer=null;
 let noticeRotateIdx=0;
@@ -612,10 +642,14 @@ const OP_STYLE={
   yokohamamunicipal:{sym:"横浜市営", name:"横浜市営地下鉄", color:"#006BF0"},
   yurikamome:       {sym:"U",  name:"ゆりかもめ", color:"#27404C"}
 };
+function romajiFromSlug(slug,name){
+  if(MODE==="tx"||!slug||/[぀-鿿ぁ-ヶ]/.test(slug)) return "";
+  if(slug===name) return "";  /* 未和訳（名前がスラッグそのまま）は重複表示しない */
+  return slug.replace(/([a-z])([A-Z])/g,"$1-$2");
+}
 function romajiOf(st){
-  if(MODE==="tx"||!st||!st.slug||/[぀-鿿ぁ-ヶ]/.test(st.slug)) return "";
-  if(st.slug===st.name) return "";  /* 未和訳（名前がスラッグそのまま）は重複表示しない */
-  return st.slug.replace(/([a-z])([A-Z])/g,"$1-$2");
+  if(!st) return "";
+  return romajiFromSlug(st.slug, st.name);
 }
 function opStyle(op){
   if(OP_STYLE[op]) return OP_STYLE[op];
@@ -689,6 +723,13 @@ function initFareV2(json){
   GROUPS=(json.stationGroups||[])
     .map(g=>({id:g.id,members:g.members.filter(m=>LUS[m.op]&&LUS[m.op].has(m.slug))}))
     .filter(g=>g.members.length>=2);
+  /* 経由駅指定（社局境界駅）用の一覧。GROUPSの各接続点を表示名付きでフラット化 */
+  JUNCTIONS=GROUPS.map(g=>{
+    const ops=Array.from(new Set(g.members.map(m=>m.op)));
+    const names=Array.from(new Set(g.members.map(m=>LUS[m.op].name(m.slug))));
+    const primary=g.members.find(m=>LUS[m.op].name(m.slug)===names[0])||g.members[0];
+    return {id:g.id, name:names.join("／"), ops, sampleSlug:primary.slug};
+  }).sort((a,b)=>a.name.localeCompare(b.name,"ja"));
   DISCOUNTS=json.discounts||[];
 
   /* 駅統合（スラッグ単位）: 全事業者の駅を集約し、所属社局を保持 */
@@ -703,8 +744,6 @@ function initFareV2(json){
   }));
   STS=Object.values(bySlug).sort((a,b)=>a.name.localeCompare(b.name,"ja"));
 
-  document.getElementById("data-source").textContent=
-    `対応事業者：${json.operators.map(o=>o.operatorName||o.operator).join("＋")}　全${STS.length}駅 / ${json.generated||""}`;
   document.getElementById("app-note").textContent=
     "社局跨ぎは同一駅グループを接続点とした合算の最安値による推定です（連絡割引はメトロ⇔都営−70円のみ。クレカ乗車では他の乗継割引は適用されません）。IC運賃の社局跨ぎは各社IC運賃の合算による近似値です。";
   seedFavoritesIfNeeded([["Kudanshita","ShirokaneTakanawa"],["SangenJaya","Omotesando"],["Otemachi","Mita"],["Jimbocho","Meguro"]]);
@@ -727,8 +766,6 @@ function initTX(json){
   MODE="tx"; DATA=json;
   LINE=json.lines[0];
   STS=LINE.stations.map(s=>({slug:s.id,name:s.name,kmX10:s.kmX10}));
-  document.getElementById("data-source").textContent=
-    `${json.operatorName} ／ ${LINE.name} 全${STS.length}駅（fare_tx.json）`;
   document.getElementById("app-note").textContent=
     "運賃・駅データはすべて fare_tx.json から読み込んでいます。クレカ乗車運賃は現金（きっぷ）運賃と同額です。";
   seedFavoritesIfNeeded(STS.length>1 ? [[STS[0].slug,STS[STS.length-1].slug],[STS[Math.min(4,STS.length-1)].slug,STS[Math.min(14,STS.length-1)].slug],[STS[0].slug,STS[Math.min(11,STS.length-1)].slug]] : []);
@@ -806,9 +843,9 @@ function renderFavorites(){
 /* =========================================================
    経路候補の生成
 ========================================================= */
-function buildRoutes(i,j){
+function buildRoutes(i,j,viaGroupId){
   if(MODE==="tx") return buildRoutesTX(i,j);
-  return buildRoutesBundle(i,j);
+  return buildRoutesBundle(i,j,viaGroupId);
 }
 
 /* ---------- TX: 距離帯計算 ---------- */
@@ -857,7 +894,7 @@ function discountsFor(opA,opB,fromSlug,toSlug,ja,jb){
   return r;
 }
 
-function buildRoutesBundle(i,j){
+function buildRoutesBundle(i,j,viaGroupId){
   const f=STS[i], t=STS[j];
   const cands=[];
   /* 単独社局で完結する候補 */
@@ -877,7 +914,9 @@ function buildRoutesBundle(i,j){
         for(const ja of jas) for(const jb of jbs){
           const a=LUS[opA].get(f.slug,ja.slug), b=LUS[opB].get(jb.slug,t.slug);
           if(!a||!b||a[0]<=0||b[0]<=0) continue;
-          cands.push(cross(opA,opB,a,b,ja.slug,jb.slug,f,t));
+          const c=cross(opA,opB,a,b,ja.slug,jb.slug,f,t);
+          c.groupId=g.id; /* 経由駅指定（境界駅）でこの候補を特定するための接続点ID */
+          cands.push(c);
         }
       }
     }
@@ -891,6 +930,29 @@ function buildRoutesBundle(i,j){
     seen.add(c.key);
     out.push(c);
     if(out.length>=4) break;
+  }
+  /* 経由駅（境界駅）が指定されている場合: 運賃順の上位4件に入っていなくても、
+     その境界駅を通る候補を必ず結果に含める。cross()（2社跨ぎ直接接続点）は
+     単一のgroupId、multiHopCandidates()（3社以上）は経路上の全接続点IDを
+     groupIds配列で保持しており、そのどちらかが一致すれば対象とする。
+     見つからない場合はout.viaNotFoundを立てて呼び出し側（doSearch）で案内する。 */
+  if(viaGroupId){
+    const viaMatches=cands.filter(c=>c.groupId===viaGroupId||(c.groupIds&&c.groupIds.includes(viaGroupId))).sort((x,y)=>x.cash-y.cash||x.ic-y.ic);
+    let forced=viaMatches[0];
+    if(!forced){
+      /* 通常探索（cross()の全接続点網羅／multiHopCandidates()の脚数別最安経路）に
+         その境界駅を通る候補がない場合、3社以上の乗継ぎで「その境界駅を必ず通る」
+         経路を専用の2フェーズ探索で合成して補う。 */
+      forced=forceViaMultiHop(f,t,viaGroupId);
+    }
+    if(forced){
+      forced.forcedVia=true;
+      const dupIdx=out.findIndex(c=>c.key===forced.key);
+      if(dupIdx>=0) out.splice(dupIdx,1);
+      out.unshift(forced);
+    } else {
+      out.viaNotFound=true;
+    }
   }
   return out;
 }
@@ -975,13 +1037,13 @@ function multiHopCandidates(f,t){
   const groups=[];
   for(const g of GROUPS){
     const mem=g.members.filter(m=>LUS[m.op]&&LUS[m.op].has(m.slug));
-    if(mem.length>=2){ mem.forEach(m=>add(m.op,m.slug)); groups.push(mem); }
+    if(mem.length>=2){ mem.forEach(m=>add(m.op,m.slug)); groups.push({id:g.id, mem}); }
   }
   const xfer={};
-  for(const mem of groups) for(const m of mem){
+  for(const grp of groups) for(const m of grp.mem){
     const k=m.op+"|"+m.slug;
     xfer[k]=xfer[k]||[];
-    for(const n of mem) if(n.op!==m.op) xfer[k].push(n);
+    for(const n of grp.mem) if(n.op!==m.op) xfer[k].push({...n, groupId:grp.id});
   }
   const out=[], seen=new Set();
   for(const metric of [0,1]){
@@ -993,20 +1055,31 @@ function multiHopCandidates(f,t){
          ため、連続する同一社局の区間は1区間にまとめ直してから採用する。
          まとめた結果、実質2社以下に収束した場合はここでは扱わない
          （single()/cross()側で既にカバーされている）。 */
-      const merged=mergeConsecutiveSameOp(byLegs[legsKey]);
+      const merged=mergeConsecutiveSameOp(byLegs[legsKey].legs);
       if(merged.length<3) continue;
       const r=routeFromLegs(merged);
-      if(r && !seen.has(r.key)){ seen.add(r.key); out.push(r); }
+      if(r && !seen.has(r.key)){
+        seen.add(r.key);
+        r.groupIds=byLegs[legsKey].groupIds; /* 経路上で通過した接続点（境界駅）ID一覧。経由駅指定の一致判定に使用 */
+        out.push(r);
+      }
     }
   }
   return out;
 }
 
-function dijkstraByLegs(f,t,rel,xfer,metric){
-  /* 状態キー: "op|slug|mode|legs"  mode T=次に乗車可 / R=直前に乗車（次は乗換のみ） */
-  const dist={}, prev={}, pq=[], visited={};
-  const push=(key,d,p)=>{ if(dist[key]===undefined||d<dist[key]){ dist[key]=d; prev[key]=p; pq.push({key,d}); } };
-  f.ops.forEach(op=>{ if(rel[op]&&rel[op].has(f.slug)) push(op+"|"+f.slug+"|T|0",0,null); });
+function dijkstraByLegs(f,t,rel,xfer,metric,opts){
+  /* 状態キー: "op|slug|mode|legs"  mode T=次に乗車可 / R=直前に乗車（次は乗換のみ）
+     prevGroup[key] は「このkeyに到達した直前の乗換」で使った接続点(stationGroups)のID。
+     乗車移動（同一社局内）で到達した場合はnull。経由駅指定の一致判定に経路復元時使う。
+     opts.sources / opts.isGoal を指定すると、出発地f・目的地tの代わりに任意の
+     開始/到達条件で探索できる（経由駅を強制する2フェーズ探索で使用）。 */
+  opts=opts||{};
+  const dist={}, prev={}, prevGroup={}, pq=[], visited={};
+  const push=(key,d,p,g)=>{ if(dist[key]===undefined||d<dist[key]){ dist[key]=d; prev[key]=p; prevGroup[key]=g||null; pq.push({key,d}); } };
+  const sources=opts.sources||(f?f.ops.filter(op=>rel[op]&&rel[op].has(f.slug)).map(op=>({op,slug:f.slug})):[]);
+  sources.forEach(s=>push(s.op+"|"+s.slug+"|T|0",0,null,null));
+  const isGoal=opts.isGoal||((op,slug)=>t&&slug===t.slug&&t.ops.includes(op));
   const goalByLegs={};
   while(pq.length){
     let bi=0; for(let x=1;x<pq.length;x++) if(pq[x].d<pq[bi].d) bi=x;
@@ -1014,7 +1087,7 @@ function dijkstraByLegs(f,t,rel,xfer,metric){
     if(visited[cur.key]) continue;
     visited[cur.key]=true;
     const parts=cur.key.split("|"), op=parts[0], slug=parts[1], mode=parts[2], legs=Number(parts[3]);
-    if(slug===t.slug && t.ops.includes(op) && legs>=1 && !(legs in goalByLegs)){
+    if(isGoal(op,slug) && legs>=1 && !(legs in goalByLegs)){
       goalByLegs[legs]=cur.key;
     }
     if(legs<MULTIHOP_MAX_LEGS && mode==="T" && rel[op]){
@@ -1022,24 +1095,73 @@ function dijkstraByLegs(f,t,rel,xfer,metric){
         if(s2===slug) continue;
         const fv=LUS[op].get(slug,s2);
         if(!fv||fv[0]<=0) continue;
-        push(op+"|"+s2+"|R|"+(legs+1), cur.d+fv[metric], cur.key);
+        push(op+"|"+s2+"|R|"+(legs+1), cur.d+fv[metric], cur.key, null);
       }
     }
     const xs=xfer[op+"|"+slug]||[];
-    for(const n of xs) push(n.op+"|"+n.slug+"|T|"+legs, cur.d, cur.key);
+    for(const n of xs) push(n.op+"|"+n.slug+"|T|"+legs, cur.d, cur.key, n.groupId);
   }
   const result={};
   for(const legsKey in goalByLegs){
-    const chain=[]; let k=goalByLegs[legsKey];
-    while(k){ chain.unshift(k); k=prev[k]; }
+    const chain=[]; const groupIdSet=new Set();
+    let k=goalByLegs[legsKey];
+    while(k){
+      chain.unshift(k);
+      if(prevGroup[k]) groupIdSet.add(prevGroup[k]);
+      k=prev[k];
+    }
     const legPath=[];
     for(let x=1;x<chain.length;x++){
       const a=chain[x-1].split("|"), b=chain[x].split("|");
       if(a[0]===b[0] && a[1]!==b[1]) legPath.push({op:a[0], from:a[1], to:b[1]});
     }
-    result[legsKey]=legPath;
+    result[legsKey]={legs:legPath, groupIds:Array.from(groupIdSet)};
   }
   return result;
+}
+
+/* =========================================================
+   経由駅の強制指定（3社以上のケース）
+   multiHopCandidates()のダイクストラは脚数ごとに「全体最安の1経路」
+   しか記録しないため、指定した境界駅がその最安経路上になければ
+   （＝より安い別ルートが存在すれば）通常探索の候補には現れない。
+   これを補うため、探索を「出発地→経由駅（の任意メンバー）」と
+   「経由駅（の任意メンバー）→到着地」の2フェーズに分けて最安経路を
+   個別に求め、連結することで“その経由駅を必ず通る”経路を合成する。 */
+function forceViaMultiHop(f,t,viaGroupId){
+  const grp=GROUPS.find(g=>g.id===viaGroupId);
+  if(!grp||!grp.members||grp.members.length<2) return null;
+  const mem=grp.members;
+  const rel={};
+  const add=(op,slug)=>{ if(LUS[op]&&LUS[op].has(slug)){ (rel[op]=rel[op]||new Set()).add(slug); } };
+  f.ops.forEach(op=>add(op,f.slug));
+  t.ops.forEach(op=>add(op,t.slug));
+  mem.forEach(m=>add(m.op,m.slug));
+  const groups=[];
+  for(const g of GROUPS){
+    const gm=g.members.filter(m=>LUS[m.op]&&LUS[m.op].has(m.slug));
+    if(gm.length>=2){ gm.forEach(m=>add(m.op,m.slug)); groups.push({id:g.id, mem:gm}); }
+  }
+  const xfer={};
+  for(const g of groups) for(const m of g.mem){
+    const k=m.op+"|"+m.slug;
+    xfer[k]=xfer[k]||[];
+    for(const n of g.mem) if(n.op!==m.op) xfer[k].push({...n, groupId:g.id});
+  }
+  let best=null;
+  for(const metric of [0,1]){
+    const toJunction=dijkstraByLegs(f,null,rel,xfer,metric,{isGoal:(op,slug)=>mem.some(m=>m.op===op&&m.slug===slug)});
+    const fromJunction=dijkstraByLegs(null,t,rel,xfer,metric,{sources:mem.map(m=>({op:m.op,slug:m.slug}))});
+    for(const ka in toJunction) for(const kb in fromJunction){
+      const merged=mergeConsecutiveSameOp(toJunction[ka].legs.concat(fromJunction[kb].legs));
+      if(!merged.length) continue;
+      const r=routeFromLegs(merged);
+      if(!r) continue;
+      r.groupIds=Array.from(new Set([...toJunction[ka].groupIds, ...fromJunction[kb].groupIds, viaGroupId]));
+      if(!best||r.cash<best.cash||(r.cash===best.cash&&r.ic<best.ic)) best=r;
+    }
+  }
+  return best;
 }
 
 function routeFromLegs(legList){
@@ -1142,6 +1264,7 @@ function clearRideHistory(){
     [{label:"キャンセル"},{label:"削除",bold:true,onTap:()=>{ rideHistory=[]; saveRideHistory(); renderRideHistory(); }}]);
 }
 let fromIdx=null, toIdx=null, pickTarget="from";
+let selectedViaGroupId=null;
 let selectedCardId="smccnl", customRate=1.0;
 let icRate=0.5;  /* 交通系ICのポイント還元率（%・0.1%単位・ユーザー設定） */
 /* 出発駅としてクレカ乗車が使えない駅（到着駅としては可） */
@@ -1371,7 +1494,8 @@ function stationSub(s){
 }
 function openPicker(target){
   pickTarget=target;
-  document.getElementById("picker-title").textContent = target==="from"?"出発駅を選択":"到着駅を選択";
+  document.getElementById("picker-title").textContent =
+    target==="from"?"出発駅を選択":target==="to"?"到着駅を選択":"経由駅を選択（境界駅のみ）";
   document.getElementById("station-search").value="";
   renderStationList();
   document.getElementById("sheet-dim").classList.add("show");
@@ -1385,6 +1509,31 @@ function renderStationList(){
   const q=document.getElementById("station-search").value.trim().toLowerCase();
   const list=document.getElementById("station-list");
   list.innerHTML="";
+  if(pickTarget==="via"){
+    if(!q){
+      const clearBtn=document.createElement("button");
+      clearBtn.className="cell st-cell";
+      clearBtn.innerHTML=`<div style="flex:1;color:${selectedViaGroupId?"var(--red)":"var(--label2)"};">経由駅を指定しない</div>`+
+        (!selectedViaGroupId?
+          `<svg width="16" height="13" viewBox="0 0 16 13"><path d="M1.5 7 L6 11.5 L14.5 1.5" stroke="#007AFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`:"");
+      clearBtn.onclick=()=>{ clearVia(); closePicker(); };
+      list.appendChild(clearBtn);
+    }
+    JUNCTIONS.forEach((j,idx)=>{
+      if(q && !j.name.toLowerCase().includes(q)) return;
+      const b=document.createElement("button");
+      b.className="cell st-cell";
+      b.innerHTML=`<div style="flex:1;"><div>${j.name}</div><div class="st-lines">${j.ops.map(op=>opStyle(op).name).join("・")}</div></div>`+
+        (selectedViaGroupId===j.id?
+          `<svg width="16" height="13" viewBox="0 0 16 13"><path d="M1.5 7 L6 11.5 L14.5 1.5" stroke="#007AFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`:"");
+      b.onclick=()=>{ setVia(j); closePicker(); };
+      list.appendChild(b);
+    });
+    if(!list.children.length){
+      list.innerHTML=`<div class="cell" style="color:var(--label2);cursor:default;">該当する境界駅がありません</div>`;
+    }
+    return;
+  }
   STS.forEach((s,idx)=>{
     if(q && !s.name.toLowerCase().includes(q) && !s.slug.toLowerCase().includes(q)) return;
     const b=document.createElement("button");
@@ -1398,6 +1547,37 @@ function renderStationList(){
   });
   if(!list.children.length){
     list.innerHTML=`<div class="cell" style="color:var(--label2);cursor:default;">該当する駅がありません</div>`;
+  }
+}
+function setVia(j){
+  selectedViaGroupId=j.id;
+  updateViaChip();
+}
+function clearVia(){
+  selectedViaGroupId=null;
+  updateViaChip();
+}
+function updateViaChip(){
+  const chip=document.getElementById("via-chip");
+  const icon=document.getElementById("via-chip-icon");
+  const badge=document.getElementById("via-chip-badge");
+  const label=document.getElementById("via-chip-label");
+  if(selectedViaGroupId){
+    const j=JUNCTIONS.find(x=>x.id===selectedViaGroupId);
+    chip.classList.add("selected");
+    icon.style.display="none";
+    badge.style.display="";
+    if(j){
+      const rj=romajiFromSlug(j.sampleSlug, j.name);
+      label.innerHTML=`${j.name}${rj?`<span class="st-romaji">${rj}</span>`:""}`;
+    } else {
+      label.textContent="経由";
+    }
+  } else {
+    chip.classList.remove("selected");
+    icon.style.display="";
+    badge.style.display="none";
+    label.textContent="経由";
   }
 }
 function stationLabelHTML(st){
@@ -1442,7 +1622,7 @@ function viaText(via, from, to){
 }
 
 function doSearch(){
-  currentRoutes=buildRoutes(fromIdx,toIdx);
+  currentRoutes=buildRoutes(fromIdx,toIdx,selectedViaGroupId);
   currentOD={from:STS[fromIdx].name, to:STS[toIdx].name,
              fromR:romajiOf(STS[fromIdx]), toR:romajiOf(STS[toIdx]),
              fromSt:STS[fromIdx], toSt:STS[toIdx]};
@@ -1451,6 +1631,9 @@ function doSearch(){
     return;
   }
   document.getElementById("results-title").textContent=`${currentOD.from} → ${currentOD.to}`;
+  if(currentRoutes.viaNotFound){
+    showAlert("指定した経由駅は使えません","この駅の組合せでは、指定した経由駅を通る経路が見つかりませんでした。通常の候補を表示します。",[{label:"OK",bold:true}]);
+  }
   renderResults();
   pushScreen("scr-results");
 }
@@ -1469,7 +1652,7 @@ function renderResults(){
     const el=document.createElement("button");
     el.className="route-card";
     el.innerHTML=`
-      <div class="rc-top"><div class="rc-via">${viaHTML(r.via, currentOD.from, currentOD.to)}</div></div>
+      <div class="rc-top"><div class="rc-via">${viaHTML(r.via, currentOD.from, currentOD.to)}</div>${r.forcedVia?`<span class="min-badge" style="background:var(--gray);flex-shrink:0;">指定した経由駅</span>`:""}</div>
       <div class="rc-fares">
         <div class="fare-pill">きっぷ <b>${r.cash}円</b>${minBadges(c.isRaw(cashOpt.raw),c.isNet(cashOpt.net))}</div>
         <div class="fare-pill">IC <b>${r.ic}円</b>${minBadges(c.isRaw(icOpt.raw),c.isNet(icOpt.net))}</div>
@@ -1665,7 +1848,7 @@ function renderAppInfo(){
    は何もせず、お知らせ欄は非表示のまま。
    notices.json 形式:
    {
-     "latestVersion": "YYYY-MM-DD",       // 省略可。APP_VERSIONと異なれば更新案内を自動表示
+     "latestVersion": "YYYY-MM-DD HH:mm", // 省略可。APP_VERSIONと異なれば更新案内を自動表示（分単位まで含めるのは同日複数回デプロイを区別するため）
      "updateSummary": "タップして更新",    // 省略可。更新案内のボックス表示文言
      "notices": [
        {
@@ -1877,7 +2060,8 @@ function renderRideHistory(){
 
   c.innerHTML=filterBar+groupsHtml+
     `<button class="primary-btn" style="background:var(--red);margin-top:16px;" onclick="clearRideHistory()">乗車履歴をすべて削除</button>
-    <div class="footnote">乗車履歴はこの端末に保存され、次回起動時にも表示されます。</div>`;
+    <div class="footnote">乗車履歴はこの端末に保存され、次回起動時にも表示されます。</div>
+    <div class="footnote">乗車履歴のバックアップは、「カード」ページの1番下から行えます。</div>`;
 }
 function deleteRideEntryConfirm(idx){
   const h=rideHistory[idx];
@@ -2023,10 +2207,11 @@ function saveRide(){
       points = useCard ? ccPoints(effRouteUsed, useCard) : 0;
     }
   }
-  rideHistory.unshift({
+  const newRide={
     from:od.from, to:od.to, via:viaText(r.via, od.from, od.to),
     payment:paymentLabel, amount, date, paymentKind, cardId, tobuFare:tobuFareUsed, points, capUsage, recordedAt:Date.now()
-  });
+  };
+  rideHistory.unshift(newRide);
   if(rideHistory.length>500) rideHistory.pop();
   saveRideHistory();
   closeRideSheet();
@@ -2077,6 +2262,7 @@ function renderCards(){
   });
   renderIcRate();
   renderMonthlyUsage();
+  renderBackup();
 }
 /* マイカード画面: 選択中のカードの「今月のクレカ乗車利用額・獲得ポイント」を乗車履歴から集計して表示。
    三井住友カード(NL)・Oliveは月合計200円単位の正確な計算、それ以外は都度計算の合計（目安）。 */
@@ -2168,6 +2354,76 @@ function showAlert(title,msg,btns,withInput){
   });
   document.getElementById("alert-wrap").classList.add("show");
   if(withInput) setTimeout(()=>input.focus(),100);
+}
+
+/* =========================================================
+   バックアップの書き出し・読み込み（機種変更時の引き継ぎ用）
+   検索履歴・乗車履歴・お気に入り区間・カード設定をまとめて1つのJSONファイルに
+   書き出し、新しい端末でそのファイルを読み込むと丸ごと復元できる。
+   バックエンド・アカウント一切不要、この端末とファイルのやり取りだけで完結する。
+========================================================= */
+function renderBackup(){
+  const g=document.getElementById("backup-group");
+  if(!g) return;
+  g.innerHTML=`
+    <button class="cell" onclick="exportBackup()">
+      <div style="flex:1;">バックアップを書き出す</div>
+    </button>
+    <label class="cell" style="cursor:pointer;">
+      <div style="flex:1;">バックアップを読み込む</div>
+      <input type="file" accept="application/json,.json" style="display:none;" onchange="importBackupFile(this)">
+    </label>
+  `;
+}
+function exportBackup(){
+  const data={
+    format:"creka-fare-navi-backup", version:1, exportedAt:new Date().toISOString(),
+    history, rideHistory, favoriteRoutes,
+    cardId:selectedCardId, customRate, icRate
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`creka-fare-navi-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+function importBackupFile(fileInput){
+  const file=fileInput.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    let data;
+    try{ data=JSON.parse(reader.result); }
+    catch(e){
+      showAlert("読み込みに失敗しました","有効なバックアップファイルではないようです。",[{label:"OK",bold:true}]);
+      fileInput.value="";
+      return;
+    }
+    if(!data || data.format!=="creka-fare-navi-backup"){
+      showAlert("読み込みに失敗しました","このアプリのバックアップファイルではないようです。",[{label:"OK",bold:true}]);
+      fileInput.value="";
+      return;
+    }
+    showAlert("バックアップを読み込みますか？","この端末に保存されている現在のデータは上書きされます。よろしいですか？",
+      [{label:"キャンセル",onTap:()=>{ fileInput.value=""; }},
+       {label:"読み込む",bold:true,onTap:()=>{ applyBackup(data); fileInput.value=""; }}]);
+  };
+  reader.readAsText(file,"utf-8");
+}
+function applyBackup(data){
+  if(Array.isArray(data.history)) history=data.history;
+  if(Array.isArray(data.rideHistory)) rideHistory=data.rideHistory;
+  if(Array.isArray(data.favoriteRoutes)) favoriteRoutes=data.favoriteRoutes;
+  if(data.cardId && CARDS.some(c=>c.id===data.cardId)) selectedCardId=data.cardId;
+  if(typeof data.customRate==="number") customRate=data.customRate;
+  if(typeof data.icRate==="number") icRate=data.icRate;
+  saveHistory(); saveRideHistory(); saveFavorites(); saveCard(); saveIcRate();
+  renderRideHistory(); renderFavorites(); renderCards(); renderSearchHistoryList(); updateBanner();
+  showAlert("読み込みました","バックアップの内容をこの端末に反映しました。",[{label:"OK",bold:true}]);
 }
 
 if('serviceWorker' in navigator){
