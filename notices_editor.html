@@ -207,8 +207,10 @@ function addNotice(data){
       <label>本文（画像はツールバーから文中の好きな位置に挿入できます）</label>
       <div class="editor-toolbar">
         <button type="button" onmousedown="event.preventDefault()" onclick="execBold(this)"><b>B</b> 太字</button>
-        <button type="button" onmousedown="event.preventDefault()" onclick="insertImageUrl(this)">🔗 画像URLを挿入</button>
+        <button type="button" onmousedown="event.preventDefault()" onclick="insertImageUrl(this)">🖼️ 画像URLを挿入</button>
         <label class="upload-btn" onmousedown="saveRangeFor(this)">📁 画像をアップロードして挿入<input type="file" accept="image/*" style="display:none;" onchange="insertImageUpload(this)"></label>
+        <button type="button" onmousedown="event.preventDefault()" onclick="insertLink(this)">🔗 リンクを挿入</button>
+        <button type="button" onmousedown="event.preventDefault()" onclick="execUnlink(this)">リンク解除</button>
       </div>
       <div class="f-body notice-body" contenteditable="true" data-placeholder="ここに本文を入力してください"></div>
     </div>
@@ -343,6 +345,28 @@ function insertImageUrl(btn){
   if(!url) return;
   restoreRangeIn(bodyEl);
   document.execCommand("insertImage", false, url);
+}
+function insertLink(btn){
+  const card = btn.closest(".notice-card");
+  const bodyEl = card.querySelector(".f-body");
+  const url = prompt("挿入するリンクのURLを入力してください（例: https://example.com/）");
+  if(!url) return;
+  restoreRangeIn(bodyEl);
+  let text = window.getSelection().toString();
+  if(!text){
+    const inputText = prompt("リンクに表示するテキストを入力してください", url);
+    if(inputText === null) return;
+    text = inputText || url;
+    restoreRangeIn(bodyEl);
+  }
+  const html = `<a href="${escAttr(url)}" target="_blank" rel="noopener noreferrer">${escAttr(text)}</a>`;
+  document.execCommand("insertHTML", false, html);
+}
+function execUnlink(btn){
+  const card = btn.closest(".notice-card");
+  const bodyEl = card.querySelector(".f-body");
+  bodyEl.focus();
+  document.execCommand("unlink");
 }
 function insertImageUpload(fileInput){
   const file = fileInput.files[0];

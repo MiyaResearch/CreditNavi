@@ -1,0 +1,18 @@
+{
+  "name": "クレカ乗車運賃ナビ",
+  "short_name": "クレカ運賃ナビ",
+  "description": "現金・交通系IC・クレジットカードタッチ決済の運賃とポイント還元を比較する首都圏鉄道運賃ナビ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F2F2F7",
+  "theme_color": "#2f7de1",
+  "lang": "ja",
+  "icons": [
+    { "src": "アイコン画像/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "アイコン画像/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "アイコン画像/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "アイコン画像/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,9 @@
+Windowsでの手順です（以前お伝えした内容の再掲です）。
+
+index.html・sw.js・notices.json・fare.jsonを1つのフォルダにまとめる
+Windowsキュー→「cmd」と入力してEnter（コマンドプロンプトを開く）
+cd フォルダのパス でそのフォルダに移動
+例 cd Desktopcreka-fare-navi
+python -m http.server 8000 を実行（「'python' は認識されていません」と出たら py -m http.server 8000 を試す）
+ブラウザで localhost:8000 を開く
+終了する時はコマンドプロンプトで Ctrl + C

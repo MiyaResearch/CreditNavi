@@ -2,11 +2,16 @@
    オフラインでもアプリ本体・運賃データを表示できるようにするためのキャッシュ層。
    fare.json はキャッシュを即返しつつバックグラウンドで最新版に更新（stale-while-revalidate）。
 */
-const CACHE_NAME = "creka-fare-navi-v1";
+const CACHE_NAME = "creka-fare-navi-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./fare.json"
+  "./fare.json",
+  "./manifest.json",
+  "./アイコン画像/favicon.ico",
+  "./アイコン画像/apple-touch-icon.png",
+  "./アイコン画像/icon-192.png",
+  "./アイコン画像/icon-512.png"
 ];
 
 self.addEventListener("install", event => {
