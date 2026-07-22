@@ -88,6 +88,8 @@
   }
   .cell .chevron{margin-left:auto;flex-shrink:0;}
   .footnote{font-size:13px;color:var(--label2);padding:7px 16px 0 16px;line-height:1.45;}
+  .app-footnote{font-weight:500;padding-top:0;padding-bottom:16px;}
+  .app-footnote .ver{display:block;margin-top:2px;font-size:11.5px;color:var(--label2);font-weight:400;}
   .route-input-group{position:relative;}
   .route-input-card{background:var(--card);border-radius:12px;padding:6px 16px;position:relative;}
   .route-input-gap{position:relative;height:38px;}
@@ -403,7 +405,7 @@
           <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="9.3" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="11" cy="6.8" r="1.15" fill="currentColor"/><path d="M11 9.9 L11 15.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
         </button>
       </div>
-      <div class="footnote">首都圏のクレジットカード等のタッチ決済による乗車サービスに対応した事業者に対応しています。詳細は右上のiマークからご確認ください。 version:2026-07-21</div>
+      <div class="footnote app-footnote" id="app-footnote">首都圏のクレジットカード等のタッチ決済による乗車サービスに対応した事業者に対応しています。詳細は右上のiマークからご確認ください。</div>
       <button class="notice-box" id="notice-box" style="display:none;" onclick="openNotices()">
         <span class="notice-label">お知らせ</span>
         <span class="notice-summary-wrap"><span class="notice-summary" id="notice-summary"></span></span>
@@ -619,7 +621,8 @@ let GROUPS=[];          // stationGroups（存在する事業者のみ）
 let JUNCTIONS=[];       // 経由駅指定用: 境界駅（GROUPSの表示用一覧）
 let DISCOUNTS=[];       // 割引テーブル
 let LINE=null;          // tx用
-const APP_VERSION="2026-07-22 08:20"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
+const APP_VERSION="2026-07-22 11:00"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
+(function(){ const el=document.getElementById("app-footnote"); if(el) el.insertAdjacentHTML("beforeend", `<span class="ver">version:${APP_VERSION}</span>`); })();
 let NOTICES=[];          // お知らせ一覧（先頭に更新案内が入る場合あり）
 let noticeRotateTimer=null;
 let noticeRotateIdx=0;
