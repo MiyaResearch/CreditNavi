@@ -621,7 +621,7 @@ let GROUPS=[];          // stationGroups（存在する事業者のみ）
 let JUNCTIONS=[];       // 経由駅指定用: 境界駅（GROUPSの表示用一覧）
 let DISCOUNTS=[];       // 割引テーブル
 let LINE=null;          // tx用
-const APP_VERSION="2026-07-22 11:00"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
+const APP_VERSION="2026-07-23 21:10"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
 (function(){ const el=document.getElementById("app-footnote"); if(el) el.insertAdjacentHTML("beforeend", `<span class="ver">version:${APP_VERSION}</span>`); })();
 let NOTICES=[];          // お知らせ一覧（先頭に更新案内が入る場合あり）
 let noticeRotateTimer=null;
