@@ -1,0 +1,444 @@
+[
+  {
+    "@type": "odpt:Station",
+    "dc:title": "姪浜",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Meinohama",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "姪浜",
+      "ja-Hrkt": "めいのはま"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "室見",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Muromi",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "室見",
+      "ja-Hrkt": "むろみ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "藤崎",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Fujisaki",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "藤崎",
+      "ja-Hrkt": "ふじさき"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "西新",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Nishijin",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "西新",
+      "ja-Hrkt": "にしじん"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "唐人町",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Tojinmachi",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "唐人町",
+      "ja-Hrkt": "とうじんまち"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "大濠公園",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Ohorikoen",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "大濠公園",
+      "ja-Hrkt": "おおほりこうえん"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "赤坂",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Akasaka",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "赤坂",
+      "ja-Hrkt": "あかさか"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "天神",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Tenjin",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "天神",
+      "ja-Hrkt": "てんじん"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "中洲川端",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.NakasuKawabata",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "中洲川端",
+      "ja-Hrkt": "なかすかわばた"
+    },
+    "odpt:connectingRailway": [
+      "odpt.Railway:FukuokaCitySubway.Hakozaki"
+    ],
+    "odpt:connectingStation": [
+      "odpt.Station:FukuokaCitySubway.Hakozaki.NakasuKawabata"
+    ]
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "祇園",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Gion",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "祇園",
+      "ja-Hrkt": "ぎおん"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "博多",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.Hakata",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "博多",
+      "ja-Hrkt": "はかた"
+    },
+    "odpt:connectingRailway": [
+      "odpt.Railway:FukuokaCitySubway.Nanakuma"
+    ],
+    "odpt:connectingStation": [
+      "odpt.Station:FukuokaCitySubway.Nanakuma.Hakata"
+    ]
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "東比恵",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.HigashiHie",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "東比恵",
+      "ja-Hrkt": "ひがしひえ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "福岡空港",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Airport.FukuokaKuko",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:stationTitle": {
+      "ja": "福岡空港",
+      "ja-Hrkt": "ふくおかくうこう"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "中洲川端",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Hakozaki.NakasuKawabata",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Hakozaki",
+    "odpt:stationTitle": {
+      "ja": "中洲川端",
+      "ja-Hrkt": "なかすかわばた"
+    },
+    "odpt:connectingRailway": [
+      "odpt.Railway:FukuokaCitySubway.Airport"
+    ],
+    "odpt:connectingStation": [
+      "odpt.Station:FukuokaCitySubway.Airport.NakasuKawabata"
+    ]
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "呉服町",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Hakozaki.Gofukumachi",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Hakozaki",
+    "odpt:stationTitle": {
+      "ja": "呉服町",
+      "ja-Hrkt": "ごふくまち"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "千代県庁口",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Hakozaki.ChiyoKenchoguchi",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Hakozaki",
+    "odpt:stationTitle": {
+      "ja": "千代県庁口",
+      "ja-Hrkt": "ちよけんちょうぐち"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "馬出九大病院前",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Hakozaki.MaidashiKyudaiByoinmae",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Hakozaki",
+    "odpt:stationTitle": {
+      "ja": "馬出九大病院前",
+      "ja-Hrkt": "まいだしきゅうだいびょういんまえ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "箱崎九大前",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Hakozaki.HakozakiKyudaimae",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Hakozaki",
+    "odpt:stationTitle": {
+      "ja": "箱崎九大前",
+      "ja-Hrkt": "はこざききゅうだいまえ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "箱崎宮前",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Hakozaki.HakozakiMiyamae",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Hakozaki",
+    "odpt:stationTitle": {
+      "ja": "箱崎宮前",
+      "ja-Hrkt": "はこざきみやまえ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "貝塚",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Hakozaki.Kaizuka",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Hakozaki",
+    "odpt:stationTitle": {
+      "ja": "貝塚",
+      "ja-Hrkt": "かいづか"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "橋本",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Hashimoto",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "橋本",
+      "ja-Hrkt": "はしもと"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "次郎丸",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Jiromaru",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "次郎丸",
+      "ja-Hrkt": "じろうまる"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "賀茂",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Kamo",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "賀茂",
+      "ja-Hrkt": "かも"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "野芥",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Noke",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "野芥",
+      "ja-Hrkt": "のけ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "梅林",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Umebayashi",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "梅林",
+      "ja-Hrkt": "うめばやし"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "福大前",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Fukudaimae",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "福大前",
+      "ja-Hrkt": "ふくだいまえ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "七隈",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Nanakuma",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "七隈",
+      "ja-Hrkt": "ななくま"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "金山",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Kanayama",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "金山",
+      "ja-Hrkt": "かなやま"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "茶山",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Chayama",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "茶山",
+      "ja-Hrkt": "ちゃやま"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "別府",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Befu",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "別府",
+      "ja-Hrkt": "べふ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "六本松",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Ropponmatsu",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "六本松",
+      "ja-Hrkt": "ろっぽんまつ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "桜坂",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Sakurazaka",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "桜坂",
+      "ja-Hrkt": "さくらざか"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "薬院大通",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.YakuinOdori",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "薬院大通",
+      "ja-Hrkt": "やくいんおおどおり"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "薬院",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Yakuin",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "薬院",
+      "ja-Hrkt": "やくいん"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "渡辺通",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.WatanabeDori",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "渡辺通",
+      "ja-Hrkt": "わたなべどおり"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "天神南",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.TenjinMinami",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "天神南",
+      "ja-Hrkt": "てんじんみなみ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "櫛田神社前",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.KushidaJinjamae",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "櫛田神社前",
+      "ja-Hrkt": "くしだじんじゃまえ"
+    }
+  },
+  {
+    "@type": "odpt:Station",
+    "dc:title": "博多",
+    "owl:sameAs": "odpt.Station:FukuokaCitySubway.Nanakuma.Hakata",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "odpt:railway": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:stationTitle": {
+      "ja": "博多",
+      "ja-Hrkt": "はかた"
+    },
+    "odpt:connectingRailway": [
+      "odpt.Railway:FukuokaCitySubway.Airport"
+    ],
+    "odpt:connectingStation": [
+      "odpt.Station:FukuokaCitySubway.Airport.Hakata"
+    ]
+  }
+]

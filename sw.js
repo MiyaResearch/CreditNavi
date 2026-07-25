@@ -2,7 +2,7 @@
    オフラインでもアプリ本体・運賃データを表示できるようにするためのキャッシュ層。
    fare.json はキャッシュを即返しつつバックグラウンドで最新版に更新（stale-while-revalidate）。
 */
-const CACHE_NAME = "creka-fare-navi-v11";
+const CACHE_NAME = "creka-fare-navi-v13";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -11,7 +11,30 @@ const APP_SHELL = [
   "./アイコン画像/favicon.ico",
   "./アイコン画像/apple-touch-icon.png",
   "./アイコン画像/icon-192.png",
-  "./アイコン画像/icon-512.png"
+  "./アイコン画像/icon-512.png",
+  /* 路線案内（メトロ+都営+福岡市営地下鉄）用: ODPT生データ + 路線ナンバリング画像 */
+  "./odpt_Station_metro.json",
+  "./odpt_Station_toei.json",
+  "./odpt_Railway_metro.json",
+  "./odpt_Railway_toei.json",
+  "./odpt_Station_fukuokacitysubway.json",
+  "./odpt_Railway_fukuokacitysubway.json",
+  "./路線ナンバリング/marunouchi.png",
+  "./路線ナンバリング/chiyoda.png",
+  "./路線ナンバリング/namboku.png",
+  "./路線ナンバリング/fukutoshin.png",
+  "./路線ナンバリング/ginza.png",
+  "./路線ナンバリング/hanzomon.png",
+  "./路線ナンバリング/hibiya.png",
+  "./路線ナンバリング/tozai.png",
+  "./路線ナンバリング/yurakucho.png",
+  "./路線ナンバリング/Asakusa.png",
+  "./路線ナンバリング/Mita.png",
+  "./路線ナンバリング/Shinjuku.png",
+  "./路線ナンバリング/oedo.png",
+  "./路線ナンバリング/福岡市営地下鉄空港線(ナンバリング).png",
+  "./路線ナンバリング/福岡市営地下鉄箱崎線(ナンバリング).png",
+  "./路線ナンバリング/福岡市営地下鉄七隈線(ナンバリング).png"
 ];
 
 self.addEventListener("install", event => {

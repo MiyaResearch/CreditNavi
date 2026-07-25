@@ -21,11 +21,14 @@
 ## 2. ファイル構成と役割
 
 - **index.html** … アプリ本体（UI + 運賃・ポイント計算 + 経路探索）。単一ファイル。
-- **fare.json** … 運賃データ本体（`format:"fare"` v2）。アプリと同じフォルダに置く。12事業者・日本語駅名済み・全862駅。
+- **fare.json** … 運賃データ本体（`format:"fare"` v2）。アプリと同じフォルダに置く。20事業者・日本語駅名済み・全1210駅（2026-07-25、fare-new.json（福岡エリア統合用の作業ファイル）の内容をfare.jsonへ反映・本番化。§29参照）。
 - **sw.js** … サービスワーカー。index.html と同じフォルダに配置し `navigator.serviceWorker.register('sw.js')` で登録。アプリ本体・fare.json をキャッシュし、オフラインでも起動・運賃計算が可能（fare.json はキャッシュを即返しつつバックグラウンド更新する stale-while-revalidate 方式）。**ただし notices.json だけはこのキャッシュ層の対象外**にしており、常にオンライン時の最新内容を取得する（§19参照）。
 - **notices.json** … アプリ内「お知らせ」欄が読み込むお知らせデータ＋アプリの最新バージョン情報。index.html・fare.jsonと同じフォルダに置く。詳細は§19。
 - **odpt_fare_importer.html** … ODPTの `odpt:RailwayFare` JSON を fare.json に変換・統合するツール（別アプリ）。
 - **notices_editor.html** … notices.json をJSONを直接書かずに作成・編集するための単独ツール（別アプリ）。詳細は§20。
+- **odpt_Station_metro.json / odpt_Station_toei.json / odpt_Railway_metro.json / odpt_Railway_toei.json** … 経路案内レイヤー（§12a）が参照するODPT生データ。メトロ+都営限定の路線・駅・乗換情報（生データそのまま、加工済みファイルではない）。
+- **odpt_Station_fukuokacitysubway.json / odpt_Railway_fukuokacitysubway.json** … 経路案内レイヤー（§12a）向けに福岡市営地下鉄3路線（空港線・箱崎線・七隈線）を手動生成したODPT形式データ（生ODPTデータの入手待ちのため、公開駅一覧を基に構築。§12a参照）。
+- **route.json**（計画中・未実装） … 経路案内レイヤーを事業者非依存の汎用ロジックへ一般化するための、fare.json同様の単一集約ファイル構想。詳細は§12b。
 - **SPEC.md** … 本ドキュメント。
 
 ---
@@ -34,27 +37,44 @@
 
 トップレベルキー: `format, version, generated, note, operators, stationGroups, discounts, discountsNote, overrides, rule`
 
-### 3.1 operators（12事業者）
-keikyu, keio, seibu, sotetsu, tobu, toei, tokyometro, tokyu, 横浜高速鉄道みなとみらい線, mir(=つくばエクスプレス), yokohamamunicipal(=横浜市営地下鉄), yurikamome
+### 3.1 operators（20事業者）
+keikyu, keio, seibu, sotetsu, tobu, toei, tokyometro, tokyu, 横浜高速鉄道みなとみらい線, mir(=つくばエクスプレス), yokohamamunicipal(=横浜市営地下鉄), yurikamome, toden(=東京さくらトラム/都電荒川線), nipporitoneri(=日暮里・舎人ライナー), odakyu(=小田急電鉄), hakonetozanrailway(=箱根登山鉄道), hakonetozancable(=箱根登山ケーブルカー), fukuokacitysubway(=福岡市営地下鉄), nishitetsu(=西日本鉄道), jrkyushu(=JR九州)
+
+※ toden・nipporitoneri は2026-07にtoeiから分離した独立operator（3.1a参照）。odakyu・hakonetozanrailway・hakonetozancable は2026-07にODPTデータから新規追加（3.1b参照）。fukuokacitysubway・nishitetsu・jrkyushu は2026-07-25にfare-new.json（福岡エリア統合用の作業ファイル）からfare.jsonへ本番反映（§29参照）。
 
 各 operator（od-matrix型）の構造:
 - `operator, operatorName, fareType:"od-matrix", symmetric:true/false`
-- `stations`: `[{idx, slug, name, odptIds:[...]}]` … slug=一意キー(ローマ字)、name=表示名(日本語)。name===slug は未和訳。
+- `stations`: `[{idx, slug, name, odptIds:[...], kana, romaji?}]` … slug=一意キー(ローマ字)、name=表示名(日本語)。name===slug は未和訳。`kana`=駅名のふりがな（2026-07追加・全861駅分。駅名検索の補助用。カタカナ由来の伸ばし棒「ー」はそのまま保持。例:センター南→せんたーみなみ）。`romaji`=任意欄（2026-07追加）。英語表示は通常`romajiFromSlug()`が`slug`をキャメルケース境界・数字境界でハイフン化して自動生成するが、自動変換だと不自然になる駅名（造語・略称など）の場合はここに明示的な表示文字列を設定して上書きできる。未設定なら自動生成にフォールバックする（`romajiOf()`）。
 - `pairFormat`: `["fromIdx","toIdx","cash","ic"]`
 - `fares`: `[[fromIdx,toIdx,cash,ic], ...]`  cash=きっぷ(10円単位)、ic=IC(1円単位)。symmetric:true なら片方向のみ格納。
 - 運賃参照は idx で行う。slug は同一駅グループ・割引照合に使う。
 
-### 3.2 stationGroups（同一駅グループ・61件）
+### 3.1a toden / nipporitoneri 分離の経緯（2026-07）
+都電荒川線（東京さくらトラム）と日暮里舎人ライナーは、運行者はともに東京都交通局だが、以前はfare.json上で"toei"（都営地下鉄）operatorに統合されていた。これにより2つの問題があった。
+1. `discounts` の `metro-toei-70`（メトロ⇔都営70円引き）が `operators:["tokyometro","toei"]` の組合せのみで判定されるため、実際には対象外のこの2路線との乗継（例: 西日暮里でメトロ千代田線⇔日暮里舎人ライナー）にも誤って70円引きが適用されてしまう。
+2. クレカ乗車がこの2路線では非対応（都営地下鉄本体は対応）にもかかわらず、同一operator内では駅単位でしか制御できなかった。
+→ 2路線分の駅・運賃ペアを"toei"から抜き出し、`toden`・`nipporitoneri` という独立operatorとして新設（`interop.ccWhitelisted:false`）。乗継割引テーブルは`operators`に`toei`しか登録していないため自動的に対象外になり、`CC_NO_SERVICE`に両operatorの全駅を追加して全駅クレカ非対応とした。西日暮里の`stationGroups`（メトロ⇔都営の同一駅グループ）は`op:"toei"`→`op:"nipporitoneri"`に更新済み。荒川線・舎人ライナーとも都営地下鉄本線とは物理的に接続しない（乗換駅の熊野前のみ両路線に属し、駅データ上は両operatorに重複登録）。
+
+### 3.1b odakyu / hakonetozanrailway / hakonetozancable 追加の経緯（2026-07）
+odpt_fare_importer.htmlの土台モードで、小田急電鉄・箱根登山鉄道・箱根登山ケーブルカーの3社をfare.jsonへ新規追加（70+11+6=87駅、2415+55+15=2485運賃）。ODPTの運賃・駅データにはローマ字のみで日本語駅名・ふりがなが付かない駅が大半だったため、全87駅分の`name`（日本語）・`kana`（ふりがな）を手動整備した。
+- 追加直後、会社境界駅である小田原（小田急⇔箱根登山鉄道）・強羅（箱根登山鉄道⇔箱根登山ケーブルカー）の2駅だけindex.html上で日本語駅名が表示されない不具合が発生。原因は`stationGroups`の`odawara-odawara`・`gora-gora`エントリの`members[].name`が、駅本体のnameより先にインポーターに取り込まれローマ字のまま残っていたこと（`initFareV2()`のbySlugマージ処理では、stationGroupsのmember.nameが駅本体のnameより優先される）。該当2エントリの`name`を日本語に修正して解消。
+- `discounts`に小田急⇔他社局（京王・東京メトロ・都営・相鉄・東急）の乗継割引9件を追加（3.3参照）。
+- クレカ乗車可否: 小田急は全駅対応。箱根登山鉄道は小田原・箱根湯本・塔ノ沢・大平台・宮ノ下・小涌谷・彫刻の森・強羅の8駅のみ対応（非対応=箱根板橋・入生田・風祭）。箱根登山ケーブルカーは強羅・早雲山のみ対応（非対応=上強羅・公園上・公園下・中強羅）。`CC_NO_SERVICE`に両operator追加（§10参照）。
+- `OP_STYLE`に箱根登山鉄道・箱根登山ケーブルカーを追加（sym:"箱根" 共通、color:#e5580c）。小田急は追加時点から既に登録済みだったため変更なし（§13参照）。
+
+### 3.2 stationGroups（同一駅グループ・70件）
 乗換可能かつ運賃通算される「同一駅扱い」。社局跨ぎ経路の接続点。
 `{ id, members:[{op,slug},...], fareContinuous:true }`
 
-### 3.3 discounts（乗継割引・30件）
+### 3.3 discounts（乗継割引・39件）
 きっぷ・IC向け。クレカ乗車に適用されるのはメトロ⇔都営の70円のみ。
 `{ id, operators:[opA,opB], junction:[slug], amount, appliesTo:["cash","ic"], a:[opA側区間slug], b:[opB側区間slug] }`
 - `operators[0]`=a側 / `operators[1]`=b側。方向自動判定。出発駅∈a かつ 到着駅∈b のとき適用。
 - appliesTo: 基本 `["cash","ic"]`。メトロ⇔都営70円のみ `["cash","ic","cc"]`。IC限定は `["ic"]`。
 - 出典: 首都圏乗継割引設定全区間一覧 2026-03-14（komachi600 / PDF tetu1.pdf）。
-- 追加済: 泉岳寺(京急⇔都営)、横浜(東急/京急/相鉄/みなとみらい線 相互6ペア)。
+- 追加済: 泉岳寺(京急⇔都営)、横浜(東急/京急/相鉄/みなとみらい線 相互6ペア)、小田急⇔他社局9件（新宿:京王/メトロ/都営、代々木上原:メトロ、下北沢:京王、海老名:相鉄、中央林間:東急、大和:相鉄、湘南台:相鉄。すべて現金・IC20円引き。出典tetu1.pdf、§3.1b参照）。小田急⇔JR東日本の乗継割引はJRが本アプリのfare.json対象外のため未収録。
+- 金額（20円）はPDF全体の支配的パターン（私鉄・メトロ・都営同士の乗継はほぼ一律20円）から推定したもので、個々の行を1件ずつ確実な数字として読み取れたわけではない点に留意（JRが絡む一部区間は10円/一部20円の例外あり、ただし小田急の9件はいずれもJR非関係）。
+- 海老名・大和・中央林間・湘南台の割引は、接続駅そのものではなく接続駅を越えた先の駅同士の乗継が対象（`a`/`b`の駅リストに接続駅自体は含まれない）。
 
 ### 3.4 overrides / rule
 `overrides:{ic:[],cc:[]}`（個別上書き枠・現状空）。`rule`=社局跨ぎ計算方針の説明文。
@@ -96,6 +116,13 @@ keikyu, keio, seibu, sotetsu, tobu, toei, tokyometro, tokyu, 横浜高速鉄道�
 - 大見出し直下に「お知らせ」ボックス（`#notice-box`、`openNotices()`）。お知らせが1件も無い時は非表示。複数件ある場合は4秒おきにフェードしながら要約文を巡回表示（§19参照）。
 - 「お気に入り区間」セクション（§8参照）。
 - 最下部に社局跨ぎ計算方針の注記 `#app-note`。
+
+### 5.2a 駅名検索（`renderStationList()` / `stationMatches()`、2026-07改善）
+出発・到着・経由駅ピッカーの検索ボックス（`#station-search`）は、以下をすべてOR判定して候補を絞り込む（`stationMatches(s,q)`）。
+- 表示名（漢字）・スラッグ（ローマ字）の部分一致（従来通り）。
+- ふりがな（`s.kana`）の部分一致。日本語入力中の未確定ひらがな（例:「いいだばし」まで変換前の途中入力）でも「飯田橋」がヒットするようにするため。カタカナはひらがなに変換して比較（`kataToHira()`）。伸ばし棒「ー」は変換せずそのまま残す（例: センター南のふりがなは「せんたーみなみ」）。
+- 異体字ゆれ（`fuzzyKey()`）。「ヶ/ケ/が」「ツ/ッ(なくても可)」「ノ/の」「御/お」「ず/づ」「じ/ぢ」を同一視するキーに畳み込んで比較。市ケ谷⇔市ヶ谷、四ツ谷⇔四ッ谷⇔四谷、霞ケ関⇔霞が関⇔霞ヶ関、御茶ノ水⇔お茶の水、幡ヶ谷⇔幡ケ谷などを吸収する。表示名・ふりがな両方に適用。
+- 実装上の注意: `フリガナ`はカタカナ→ひらがな変換より先に「ヶ/ケ/が」を畳み込む必要がある（先に変換すると「ケ」が通常の「け」と区別できなくなり別の駅名と誤爆するため）。
 
 ### 5.3 プッシュ画面一覧
 - `scr-results`（経路候補）／`scr-detail`（運賃の内訳）… 検索結果から遷移。
@@ -151,22 +178,33 @@ keikyu, keio, seibu, sotetsu, tobu, toei, tokyometro, tokyu, 横浜高速鉄道�
 
 ### 6.7 実質負担・バッジ
 - クレカ実質=cc−ポイント。IC実質=ic−ic×icRate%。現金は実質=額面。
-- 「最安」=額面(raw)最小、「実質最安」=実質(net)最小。「上限適用」=1日上限サービスにより軽減された経路（§7参照）。各運賃行の横にバッジ表示（経路候補一覧・運賃の内訳の両方、`capBadgeHtml(effR)`で共通化）。
+- 「最安」=額面(raw)最小、「実質最安」=実質(net)最小。「上限適用」=上限サービスにより軽減された経路、「上限サービスあり」=上限サービス対象の区間を含む経路（実際に軽減が発生したかは問わない）（§7参照）。各運賃行の横にバッジ表示（経路候補一覧・運賃の内訳の両方、`capBadgeHtml(effR)`/`capServiceBadgeHtml(effR)`で共通化）。
 - icRate(交通系IC還元率) 既定0.5%、カード画面で変更可。
 
 ---
 
-## 7. 1日上限サービス（運賃・ポイントへの実計算反映）
+## 7. クレカ乗車の上限サービス（運賃・ポイントへの実計算反映）
 
-`DAILY_CAP = { yokohamamunicipal:{name:"横浜市営地下鉄",cap:740}, yurikamome:{name:"ゆりかもめ",cap:820} }`。**両社局の上限は完全に別集計**（片方の利用がもう片方の残枠に影響しない）。
+`CAP_DEFS`（配列）に社局ごとの上限定義を列挙。1社局につき複数件（日次・月次など）登録可能。各定義は `{op, name, label, period:"day"|"month", cap}`。
+
+```
+{op:"yokohamamunicipal", name:"横浜市営地下鉄", label:"1日上限", period:"day",   cap:740}
+{op:"yurikamome",        name:"ゆりかもめ",     label:"1日上限", period:"day",   cap:820}
+{op:"fukuokacitysubway", name:"福岡市営地下鉄", label:"1日上限", period:"day",   cap:640}
+{op:"fukuokacitysubway", name:"福岡市営地下鉄", label:"1か月上限", period:"month", cap:12570}
+```
+
+**社局間の上限は完全に別集計**（ある社局の利用が別の社局の残枠に影響しない）。同一社局に複数の上限定義がある場合（福岡市営地下鉄の1日上限・1か月上限）も、それぞれ独立に残枠を計算した上で、実際の運賃軽減には**両者のうちより厳しい（残枠が少ない）方**を採用する（`minRemaining`）。1か月上限の期間はカレンダー月（1日～末日）、1日上限の期間は当日のみ。判定ロジック自体は日次・月次で共通（`dateMatchesPeriod(dateStr,period,refDate)`が対象期間の一致を判定するだけの違い）。
 
 - 各経路オブジェクト（single/cross/routeFromLegs/buildRoutesTX）に `opKeys`（経路中の全社局キー）を付与。
-- 乗車履歴に「クレカ決済」で記録された当日分の該当社局ごとの利用額を集計（`todaysCreditCapUsage()`）。IC・現金での記録は集計対象外（媒体が異なるため）。
-- 検索・運賃内訳画面では、該当社局を含む経路のクレカ運賃を「本日の利用済み額＋この区間の運賃」が上限を超える分だけ軽減して表示（`effectiveRouteForToday()`）。軽減時は運賃の内訳画面に黄色の「1日上限サービス適用済」ボックスで内訳（利用済み額・軽減後の額・上限額）を表示し、経路候補一覧・運賃の内訳の両方に「上限適用」バッジを表示。軽減が発生しない場合は「上限以内のため通常運賃のまま」という説明のみ表示。
-- 乗車履歴に「乗車履歴を追加」で記録する際も、軽減後の実額をクレカ決済の場合のみ記録（`capUsage`・`paymentKind`フィールド）。IC・現金での記録には軽減を適用しない。
+- 乗車履歴に「クレカ決済」で記録された分を、上限定義の期間ごとに社局別集計（`creditCapUsageForPeriod(period, refDate)`）。IC・現金での記録は集計対象外（媒体が異なるため）。
+- 検索・運賃内訳画面では、該当社局を含む経路のクレカ運賃を「対象期間の利用済み額＋この区間の運賃」が上限を超える分だけ軽減して表示（`effectiveRouteForDate(r, refDate)`。検索・運賃内訳画面ではrefDateを省略＝本日基準）。軽減時は運賃の内訳画面に黄色の「（1日上限／1か月上限）サービス適用済」ボックスで内訳（利用済み額・軽減後の額・上限額）を表示し、経路候補一覧・運賃の内訳の両方に「上限適用」バッジを表示。軽減が発生しない場合は「上限以内のため通常運賃のまま」という説明のみ表示（`ci.label`・期間に応じ「本日」「今月」を出し分け）。
+- 経路のクレカ区間に上限サービス対象の社局・区間が含まれる場合（実際に軽減が発生したかどうかに関係なく）、経路候補一覧・運賃の内訳の両方に薄い黄色い枠の「上限サービスあり」バッジを表示（`capServiceBadgeHtml(effR)`、`.min-badge.cap-service`）。「最安」「実質最安」「上限適用」バッジと並べて表示。
+- 乗車履歴に「乗車履歴を追加」で記録する際も、軽減後の実額をクレカ決済の場合のみ記録（`capUsage`・`paymentKind`フィールド）。IC・現金での記録には軽減を適用しない。**過去日付で記録する場合は、その乗車日（`selectedRideDate()`）を基準日として上限判定を行う**（本日の利用状況ではなく、その日に既に記録済みの乗車履歴と合算して判定する。2026-07-25にバグ修正、詳細は下記「既知の制約」直後の段落参照）。
 - 例: 本日ゆりかもめをクレカで590円分記録済みの状態で、有明→テレコムセンター（260円区間）を検索すると、クレカ乗車運賃は260円ではなく230円（820−590）と表示され、黄色ボックスで説明される。
 - 既知の制約: この機能の追加前に記録された乗車履歴（capUsage/paymentKindを持たない旧データ）は、上限判定の集計対象に含まれない（0円扱い）。
-- 実装: `capUsageForRoute(r)`（DAILY_CAP対象社局ごとのクレカ運賃寄与額を集計）。
+- **不具合修正（2026-07-25）**: 乗車履歴を「今日以外」の過去日付で記録する際、上限判定が常に「本日」を基準にクレカ利用累計を集計していたため、同じ過去日付に複数回記録しても上限が一切効かない不具合があった（例: 福岡市営地下鉄1日上限640円の区間で、380円の乗車を同じ過去日付に2回記録すると、本来は2回目が260円（640−380）に軽減されるべきところ、両方とも380円のまま記録されていた）。原因は`effectiveRouteForToday(r)`・`creditCapUsageForPeriod(period)`・`dateMatchesPeriod(dateStr,period)`が`todayISO()`決め打ちで、乗車履歴シートで選択した日付を一切見ていなかったこと。`effectiveRouteForDate(r, refDate)`へ改名の上、上記3関数すべてに`refDate`（基準日、省略時は本日）を追加し、乗車履歴シート（`renderRideSheetBody()`のプレビュー・`saveRide()`の保存処理）では実際に選択された乗車日（`selectedRideDate()`、日付inputのonchangeでプレビューも即時再計算されるよう修正）を基準日として渡すようにした。検索・運賃の内訳画面（「今、乗るなら」の表示）は従来通り本日基準のまま。
+- 実装: `capUsageForRoute(r)`（対象社局ごとのクレカ運賃寄与額を集計）、`effectiveRouteForDate(r, refDate)`（`capInfo`=経路に関わる上限定義全件（未適用分含む・注記表示用）、`capApplied`=実際に軽減が発生した定義のみ（バッジ・警告ボックス表示用）を付与して返す）、`selectedRideDate()`（乗車履歴シートで現在選択中の乗車日を返す）。
 
 ---
 
@@ -195,7 +233,7 @@ keikyu, keio, seibu, sotetsu, tobu, toei, tokyometro, tokyu, 横浜高速鉄道�
 
 - **追加**: 運賃の内訳画面の「運賃比較」見出し横の丸＋ボタン（`.add-ride-btn`、「＋ 乗車履歴を追加」）からボトムシート（`ride-sheet`）を開いて記録。
   - 支払い手段は2段階選択: 初期表示は「ポイント計算に使うカード（検索時に選択中のカード）」「交通系IC」「その他」の3項目のみ。「その他」を選ぶと他の個別クレジットカードと「現金（きっぷ）」を展開表示（`rideStage`="main"|"other"、`setRideStage()`）。クレカ乗車不可の経路ではカード類を出さずIC・現金のみ表示。
-  - 支払金額の手入力欄はなし。選択した支払い手段（カード＝クレカ乗車運賃、交通系IC＝IC運賃、現金＝きっぷ運賃）から自動的に金額を確定して記録（`resolveRidePayment(key,r)`）。1日上限サービス対象区間はクレカ決済時のみ軽減後の実額を記録。
+  - 支払金額の手入力欄はなし。選択した支払い手段（カード＝クレカ乗車運賃、交通系IC＝IC運賃、現金＝きっぷ運賃）から自動的に金額を確定して記録（`resolveRidePayment(key,r)`）。上限サービス対象区間はクレカ決済時のみ軽減後の実額を記録。
   - 乗車日: 「今日」または「今日以外」（今日以外を選ぶと `<input type="date">` で任意の日付を選択可）。
 - **表示**: 日付ごとにグループ化（見出しは「今日」「昨日」「○月○日」、年が異なる場合のみ「○年○月○日」）。各見出しの右側にその日の合計利用額（支払い手段を問わない合計）を表示。
 - **絞り込み**: 「月で絞り込む」（記録がある年月から選択）と「支払い手段で絞り込む」（実際に使われた支払い手段名から選択）。
@@ -210,12 +248,13 @@ keikyu, keio, seibu, sotetsu, tobu, toei, tokyometro, tokyu, 横浜高速鉄道�
 判定は経路の実際の発着社局に基づく（`ccBlockForRoute(od,r)`）。
 
 - 出発のみ不可: `CC_DEPART_BLOCK`。東京メトロ中野駅は出発(乗車)にクレカ乗車不可、到着(降車)は可。中野が到着駅のときは運賃内訳の「運賃比較」と「クレカ乗車運賃の内訳」の間に薄黄色の注意ボックスを表示。
-- 発着とも不可(社局単位): `CC_NO_SERVICE = { seibu:Set(28駅), tobu:Set(128駅) }`。その社局で発着する経路のときのみブロック（例: 中井は西武発着なら不可、都営大江戸線発着なら可）。
+- 発着とも不可(社局単位): `CC_NO_SERVICE = { seibu:Set(34駅), tobu:Set(128駅), toden:Set(30駅・全駅), nipporitoneri:Set(13駅・全駅), hakonetozanrailway:Set(3駅), hakonetozancable:Set(4駅) }`。その社局で発着する経路のときのみブロック（例: 中井は西武発着なら不可、都営大江戸線発着なら可）。西武の34駅には多摩川線6駅（武蔵境・新小金井・多磨・白糸台・競艇場前・是政）を含む。東京さくらトラム（都電荒川線）・日暮里舎人ライナーは路線全体がクレカ乗車非対応のため全駅を登録。箱根登山鉄道は非対応3駅（箱根板橋・入生田・風祭）のみ登録（対応=小田原・箱根湯本・塔ノ沢・大平台・宮ノ下・小涌谷・彫刻の森・強羅の8駅）。箱根登山ケーブルカーは非対応4駅（上強羅・公園上・公園下・中強羅）のみ登録（対応=強羅・早雲山の2駅）。小田急電鉄は全駅対応のためエントリーなし。
   - 東武は「対応駅」から範囲展開して算出（対応78駅／非対応128駅）。対応=スカイツリーライン全線+押上/浅草、日光線一部、鬼怒川線3駅、伊勢崎線主要5駅、東上線 池袋〜小川町。
+- **途中の乗換駅も判定対象（2026-07改善）**: `ccBlockForRoute()`は出発・到着駅だけでなく、経路の`transfers`配列（`cross()`が1件、`routeFromLegs()`が乗換ごとに1件ずつ生成）に含まれる各乗換駅についても、降りる側・乗る側それぞれの社局でクレカ乗車可否を判定する。例: つくば→春日部を最安の流山おおたかの森経由（TX⇔東武）で計算する場合、東武側は流山おおたかの森でのクレカ乗車に非対応のため、その経路（候補の中で最安）はブロックされ、北千住・浅草・南千住経由など東武側が対応している代替候補は通常通り利用可能と表示される。
 - ブロック時のメッセージ文言（`ccBlockForRoute()`が返す）:
-  - 乗車駅のみ非対応: 「○○駅（事業者名）からクレカ乗車で乗ることはできません。」
-  - 降車駅のみ非対応: 「○○駅（事業者名）ではクレカ乗車で降りることはできません。」
-  - 発着とも非対応: 「○○駅（事業者名）、○○駅（事業者名）ではクレカ乗車はご利用できません。」（発着両方が非対応の場合は両方の駅名を併記）。
+  - 乗車駅（出発駅または乗換で乗る側）のみ非対応: 「○○駅（事業者名）からクレカ乗車で乗ることはできません。」
+  - 降車駅（到着駅または乗換で降りる側）のみ非対応: 「○○駅（事業者名）ではクレカ乗車で降りることはできません。」
+  - 複数駅が非対応: 「○○駅（事業者名）、△△駅（事業者名）ではクレカ乗車はご利用できません。」（該当する駅をすべて併記。出発・到着・乗換のどの組み合わせでも同じ文言ロジックで生成）。
 - ブロック時はクレカ乗車欄を赤字「ご利用できません」にし運賃・ポイント非表示、理由を注記。
 
 ---
@@ -249,6 +288,57 @@ keikyu, keio, seibu, sotetsu, tobu, toei, tokyometro, tokyu, 横浜高速鉄道�
   - 一致する候補（通常探索または上記の補完探索）が見つかった場合、上位4件に入っていなくても結果に追加する（`forcedVia:true`、結果表示で「指定した経由駅」バッジ）。該当する経路が全く無い場合のみ`out.viaNotFound`を立て、`doSearch()`が案内アラートを出したうえで通常の上位4件を表示する。
   - 補完探索はOD行列運賃（区間ごとの合算）に基づく近似のため、実在する分岐線の物理的な経路と厳密に一致しない場合がある（他の社局跨ぎ計算と同様の近似の範囲内）。
 
+### 12a. 経路案内レイヤー（路線ナンバリング表示、現状実装・2026-07-25）
+
+当初からの構想である「運賃計算の上に経路案内を重ねる2階建て」の、上の階にあたる最初の実装。§12の運賃計算（社局＝operator単位）はそのまま変更せず、その上に路線・駅単位の物理経路（どの路線に乗ってどこで乗り換えるか、路線ナンバリングのバッジ付き）を重ねて表示する。
+
+- **対応範囲（2026-07-25改訂: 混在表示に対応）**: 経路の`opKeys`のうち1社局でも`tokyometro`・`toei`・`fukuokacitysubway`のいずれかであれば対象（`rnEligible(r)`、`some`判定。旧実装は`every`＝全区間が対応事業者である場合のみだった）。路線案内データがある事業者の区間は路線ナンバリングバッジ、データがない事業者（西鉄・JR九州など）の区間は従来通りの事業者バッジにフォールバックする「混在表示」を1経路の中で行う（例: 福岡市営地下鉄⇔西鉄の乗継経路で、地下鉄区間だけ路線番号案内し、西鉄区間は事業者名バッジのまま）。理由は、商用利用可能な一般ライセンス（§17）相当のODPT `odpt:Railway`/`odpt:Station`形式データ（`stationOrder`・`connectingRailway`/`connectingStation`）をローカルに保持しているのがこの3社局分のみのため。
+- **データソース**: `odpt_Station_metro.json` / `odpt_Station_toei.json` / `odpt_Station_fukuokacitysubway.json` / `odpt_Railway_metro.json` / `odpt_Railway_toei.json` / `odpt_Railway_fukuokacitysubway.json` の6ファイルと、`路線ナンバリング/`フォルダの実物PNG（メトロ+都営13路線分＋福岡市営地下鉄3路線分＝計16路線。CSSで描いた疑似バッジではなく本物の駅ナンバリング画像。未収録3路線＝丸ノ内線支線・日暮里舎人ライナー・都電荒川線はCSSリング代替）。いずれも初回表示時に遅延fetch（`rnEnsureLoaded()`）し、以降はメモリ上のグラフ（`rnGraph`）を再利用する。取得・生成に失敗した場合は例外を握りつぶし、既存の社局レベル表示をそのまま残す（ユーザー向けエラー表示はせず、`console.error`にログのみ出す）。
+- **グラフ構築（`rnBuildGraph()`）**: 各レグの乗換境界駅は運賃計算側（`cross()`/`routeFromLegs()`の`transfers`配列）がすでに決定済みのため、路線案内側は「同一事業者内」のline辺（`stationOrder`の隣接）・transfer辺（`connectingRailway`/`connectingStation`。ただし事業者をまたぐ辺は除外）だけをグラフ化すれば足りる。
+- **混在ホップ列の構築（`rnHopsForRoute()`、2026-07-25追加）**: 運賃計算側のレグ境界（`rnWaypointsForRoute()`、駅名も保持するよう拡張）を1レグずつ辿り、そのレグの事業者が`RN_OPERATOR_URI`に登録済みかつ`rnSubpath()`が経路を返せた場合は、`rnFormatRoute()`でそのレグ内の物理路線ごとの複数ホップ（例: 福岡市営地下鉄の空港線→箱崎線の社内乗換も1レグ内で自動的に複数ホップへ展開される）に変換して追加する。それ以外（データがない事業者、またはsubpath計算に失敗した場合）は、`opStyle(op)`によるバッジ1ホップ（`numbered:false`）としてフォールバック追加する。全レグ分のホップを結合した1本の配列を`rnRenderHops()`が描画するため、対応・非対応区間が混在していても継ぎ目なく1本の経路表示になる。
+- **駅の紐付け**: fare.jsonの`stations[].odptIds[]`（§3.1）で、運賃側の`slug`とODPT側の`odpt.Station:...`ノードIDを橋渡しする。1つの`slug`に複数の`odptIds`がある場合（同一事業者内の他路線への乗換駅、例: 永田町、福岡市営地下鉄の中洲川端・博多）は、それらを仮想始点/終点としてダイクストラに選ばせる。
+- **路線コードの事業者間衝突対策（2026-07-25追加）**: 福岡市営地下鉄追加に伴い、路線記号1文字だけでは事業者間で衝突する（例: 東京メトロ南北線"N"と福岡市営地下鉄七隈線"N"、日比谷線"H"と箱崎線"H"）ことが判明。色・アイコン画像の参照キーを素の路線コードから「事業者URI＋路線コード」の複合キー（`rnKey(operatorUri, code)`、辺には`rnKey()`の戻り値を持たせる）に変更し、`rnLineColorByKey`/`rnIconSrcByKey`/`rnCodeByKey`（バッジ表示用の素のコード）/`rnTitleByKey`（路線名。下記参照）の4つの辞書で管理する。アイコンファイル対応表も事業者ごとに分離（メトロ+都営＝`RN_ICON_FILE_BY_CODE`、福岡市営地下鉄＝`FK_ICON_FILE_BY_CODE`）。
+- **福岡市営地下鉄の物理路線データ**: 空港線(K・姪浜〜福岡空港・13駅)・箱崎線(H・中洲川端〜貝塚・7駅、中洲川端は空港線と同一ノードを共有＝through-service)・七隈線(N・橋本〜博多・18駅、標準軌で空港線・箱崎線とは別線路のため中洲川端・呉服町は経由せず、博多のみ空港線と別プラットフォームの`connectingRailway`/`connectingStation`で接続)。天神(空港線)・天神南(七隈線)は徒歩連絡のみで線路上は繋がっていない（2023年の七隈線博多延伸で乗継運賃特例も廃止済み）ため、意図的に辺を張っていない。`odpt_Railway_fukuokacitysubway.json`・`odpt_Station_fukuokacitysubway.json`は手動生成（生ODPTデータ未取得のため、Wikipedia・raillab等の公開駅一覧を突き合わせて構築）。
+- **路線名の併記（`showLineName`、2026-07-25追加）**: `rnRenderInto(elId,r,od,showLineName)`/`rnRenderHops(hops,showLineName)`に、路線ナンバリングバッジの右に路線名（`rnTitleByKey`、ODPT `dc:title`）を併記するかどうかのフラグを追加。経路候補一覧（`rc-via-${i}`）はバッジのみのコンパクト表示のため`false`、運賃の内訳画面（`detail-via`）は`true`で呼び出し、「天神南→[N]七隈線→博多」のように路線名まで表示する（`.via-line`クラスを使用。事業者バッジの右に事業者名を表示する既存の`viaHTML()`と統一感を持たせるため、非対応区間のフォールバック表示も同じ`.via-line`クラスで事業者名を併記する）。
+- **表示**: 経路一覧カード（`rc-via-${i}`）・詳細画面ヘッダー（`detail-via`）の、社局レベルバッジ表示と同じ箇所に、非同期で路線ナンバリングバッジ表示へ差し替える（`rnRenderInto()`）。「降りる駅（乗換先の駅）」形式の括弧表記は事業者数によらず統一。
+- **主な関数**（index.html、prefix `rn` = route numbering）: `rnEligible` `rnEnsureLoaded` `rnBuildGraph` `rnDijkstra` `rnSubpath` `rnWaypointsForRoute` `rnFormatRoute` `rnHopsForRoute` `rnRenderHops` `rnRenderInto`。（`rnBuildFullPath`/`rnRenderLegs`は2026-07-25に`rnHopsForRoute`/`rnRenderHops`へ置き換えて削除）
+- **統合状況**: 2026-07-25にfare-new.jsonの内容がfare.json本体へ反映され（§29参照）、福岡市営地下鉄を含む経路案内が実際に有効化されている。
+- **制約**: 現状は「メトロ+都営のみ対応」がハードコードされたプロトタイプ実装で、ODPT生データ4ファイルを都度ブラウザ内でグラフ化している。他事業者を追加するには、同様の生データ用意と`rnBuildGraph()`相当のロジック追加がその都度必要になる → 12bで一般化の方向性を検討。
+
+### 12b. 経路案内レイヤーの今後の方向性（route.json、計画中・未実装）
+
+12aの実装は事業者を増やすたびにindex.html内のコード（fetch対象ファイル・事業者URIの対応表・アイコンファイル対応表など）を手で増やす必要があり、fare.jsonのような「1ファイルに集約されたデータ＋事業者非依存の汎用コード」という設計になっていない。運賃計算層と同じ発想で、経路案内層も`route.json`という単一ファイルに集約し、コード側は事業者非依存の汎用ロジックだけにするのが今後の方向性。
+
+- **2階建ての構成（あらためて）**: 下の階＝fare.json（運賃計算。必須。事業者非依存の`operator`キーで管理）。上の階＝route.json（経路案内。任意。存在しない・fetch失敗・対象外事業者の場合は常に従来通りの社局レベル表示にフォールバックする＝12aで実装済みの原則をそのまま踏襲）。両者は`odptIds`（既存のfare.json v2スキーマが既に持つ）で紐付ける。
+- **route.jsonの想定スキーマ（たたき台。未確定）**:
+  ```
+  {
+    "format": "route",
+    "version": 1,
+    "generated": "...",
+    "coverage": ["tokyometro", "toei", ...],
+    "lines": {
+      "<lineCode>": {"name": "...", "operator": "...", "color": "#...", "icon": "路線ナンバリング/xxx.png"}
+    },
+    "nodes": {
+      "<odpt.Station:...>": {"name": "...", "operator": "...", "line": "<lineCode>"}
+    },
+    "edges": [
+      ["<nodeA>", "<nodeB>", "line" または "transfer", "<lineCode>"]
+    ]
+  }
+  ```
+  - `coverage`を持たせることで、`rnEligible()`相当の判定を「index.html内にハードコードした事業者Set」から「route.jsonが宣言する対応事業者リストを参照する」形に一般化できる。
+  - `edges`はグラフ構築済みの状態で持たせ、生ODPTデータをそのまま埋め込んでブラウザ側で毎回`rnBuildGraph()`相当の変換をする必要をなくす（読み込み・処理コストの削減）。
+  - アイコン画像のファイル対応表（現状index.html内の`RN_ICON_FILE_BY_CODE`）も`lines[].icon`としてroute.json側に統合し、index.html側にハードコードを残さない。
+- **生成方法**: fare.jsonが`odpt_fare_importer.html`で生成・土台モード（既存データを保持しながら新会社を追記統合）で運用されているのと同様に、route.json用にも生成ツール（生ODPT Railway/Station JSONを取り込んでnodes/edges/linesへ変換するビルドスクリプト）が必要になる。プロトタイプ作成時の`route_search.py`/`generate_html.py`のグラフ構築ロジック（`buildGraph`/`findNodesByName`等）がほぼそのまま転用できる見込み。
+- **対応事業者を増やす際の制約**: §17のODPTライセンス制約がそのままroute.jsonにも適用される。一般ライセンス（商用可）の事業者から優先的に対応する。
+- **移行手順（案）**:
+  1. 現行の4ファイル（odpt_Station/Railway_metro/toei）を上記スキーマのroute.jsonへ変換するビルドスクリプトを作る。
+  2. index.htmlの`rnBuildGraph()`を「route.jsonをfetchしてそのままグラフとして使う」形に置き換え、`rnEligible()`をroute.jsonの`coverage`参照に一般化する。
+  3. 新しい事業者を追加するときは、route.json生成ツールに生ODPTデータを足して再生成するだけで済むようにする（fare.jsonのodpt_fare_importer.html土台モードと同じ運用感）。
+- **現状（2026-07-25時点）**: 12aの実装（メトロ+都営限定・生データを都度fetchしてブラウザ内でグラフ化）がそのまま本番稼働しており、route.json化は未着手（このセクションは設計方針のメモであり、実装済みの内容ではない）。
+
 ---
 
 ## 13. 事業者表示スタイル（OP_STYLE）
@@ -267,6 +357,11 @@ keikyu, keio, seibu, sotetsu, tobu, toei, tokyometro, tokyu, 横浜高速鉄道�
 - mir: TX / つくばエクスプレス / #000080
 - yokohamamunicipal: 横浜市営 / 横浜市営地下鉄 / #006BF0
 - yurikamome: U / ゆりかもめ / #27404C
+- toden: SA / 東京さくらトラム（都電荒川線） / #E85298
+- nipporitoneri: NT / 日暮里・舎人ライナー / #8FC31F
+- odakyu: OE / 小田急電鉄 / #2288CC
+- hakonetozanrailway: 箱根 / 箱根登山鉄道 / #e5580c
+- hakonetozancable: 箱根 / 箱根登山ケーブルカー / #e5580c
 
 未登録社局は operatorName とグレーで自動表示。
 
@@ -293,7 +388,11 @@ LS_KEYS = {
 
 ## 15. データ上の注意
 
-- 小川町: 東武東上線 小川町(埼玉, slug=Ogawamachi) と 都営新宿線 小川町(東京, slug=OgawamachiToei) は別駅。分離済み。都営小川町は 淡路町(Awajicho)・新御茶ノ水(ShinOchanomizu) と同一駅グループ。
+- **同名異駅のslug命名ルール（2026-07制定）**: STSの駅統合（`initFareV2`のbySlug、§3.1）は同一`slug`の駅を全事業者横断で無条件に1エントリへまとめる。そのため、同じ駅名でも実際には徒歩乗換できない全くの別駅（例: 小川町＝東武東上線[埼玉]と都営新宿線[東京]、約40km離れている）が同じslugを持つと、別々の駅が誤って1駅として統合されてしまう。これを避けるため、そのような同名異駅は`slug`に`(都道府県名の英語)`を付けて区別する（例: `Ogawamachi(Saitama)` / `Ogawamachi(Tokyo)`。slug自体にはスペースを入れない）。`name`も同様に全角括弧＋都道府県名で区別する（例: 小川町（埼玉）／小川町（東京））。ローマ字表示は`slug`をそのまま流用すると括弧の前にスペースが入らず読みにくいため（`Ogawamachi(Saitama)`）、`romaji`任意欄でスペースを入れた表示文字列を明示的に上書きする（例: `Ogawamachi (Saitama)`）。逆に、同名かつ実際に同一駅（同一施設・隣接施設での正規の乗換駅）の場合はslug・nameを統一したままにし、bySlugでの自動統合に任せる（渋谷・新宿・大手町など多数）。判定に迷う場合は、odpt:Stationのgeo:lat/long（保有していない事業者は徒歩距離を検索等で確認）を基に、実際に乗換案内で同一駅扱いされているかを確認してから決めること。
+- 小川町: 東武東上線 小川町(埼玉, slug=`Ogawamachi(Saitama)`, romaji=`Ogawamachi (Saitama)`) と 都営新宿線 小川町(東京, slug=`Ogawamachi(Tokyo)`, romaji=`Ogawamachi (Tokyo)`) は別駅（上記ルール適用済み・2026-07-24）。都営小川町は淡路町(Awajicho)・新御茶ノ水(ShinOchanomizu)と同一駅グループ（`ogawamachi-awajicho-shinochanomizu`）。
+- 霞ケ関: 東武東上線 霞ケ関(埼玉, slug=`Kasumigaseki(Saitama)`, romaji=`Kasumigaseki (Saitama)`) と 東京メトロ 霞ケ関(東京・千代田/日比谷/丸ノ内線, slug=`Kasumigaseki(Tokyo)`, romaji=`Kasumigaseki (Tokyo)`) は別駅（上記ルール適用済み・2026-07-24）。stationGroupsに登録なし（元々別駅として扱われていたが、slug衝突だけ残っていた）。
+- 浅草（つくばエクスプレス、slug=`Asakusa(TX)`）: 東武/都営/東京メトロの浅草駅とは600〜800m離れており、乗換駅ではない。上記ルールで分離済み（2026-07-24）。name=`浅草（TX線）`、romaji=`Asakusa (TX Line)`（自動生成だと`Asakusa(TX)`のままになるため明示的に上書き）。stationGroups側も`asakusa-asakusa-asakusa-asakusa`から`mir`を除いた3社局（東武・都営・東京メトロ）のみのグループ`asakusa-asakusa-asakusa`に修正し、TX浅草を誤って同一駅グループの乗継対象にしていた問題も解消した。他にも同一slugを事業者間で共有する駅は60件超あるが、個別確認できたのは小川町・霞ケ関・浅草のみで、それ以外は実在する乗換駅と見られる（渋谷・新宿・大手町等）。
+- **将来のエリア追加を見据えた予防的リネーム（2026-07-24）**: 橋本(京王相模原線, slug=`Hashimoto(Tokyo)`, name=`橋本（東京）`, romaji=`Hashimoto (Tokyo)`)・赤坂(東京メトロ千代田線, slug=`Akasaka(Tokyo)`, name=`赤坂（東京）`, romaji=`Akasaka (Tokyo)`)は、現時点ではfare.json内に同名の別駅は存在しない（衝突なし）が、今後福岡エリアの運賃データを統合する予定があり、福岡市地下鉄にも同名の橋本駅（七隈線）・赤坂駅（空港線）が存在するため、衝突を避ける準備工事として先行的に`(Tokyo)`を付与した。橋本(京王)は厳密には神奈川県相模原市だが、「現行のKanto/Tokyo圏データセット」対「将来のFukuokaデータセット」を区別する目的のため、地理的な都道府県名ではなく`(Tokyo)`で統一している（通常の同名異駅ルールとは目的が異なる派生パターン）。福岡側を追加する際はそちらに`(Fukuoka)`／`（福岡）`を付与する想定。
 - 綾瀬↔北千住(東京メトロ) は現金160円・IC155円に手動修正済み。
 
 ---
@@ -322,7 +421,7 @@ LS_KEYS = {
 - タッチ上乗せ対象外の社局追加 → `ccPoints` / `tobuFare` 集計（東武と同要領）
 - クレカ=IC運賃の社局追加 → `ccFareOf`
 - クレカ乗車不可の駅追加 → `CC_DEPART_BLOCK` / `CC_NO_SERVICE`
-- 1日上限の社局追加 → `DAILY_CAP`
+- 上限サービス（1日上限・1か月上限）の社局・定義追加 → `CAP_DEFS`
 - 月合計ポイント計算の対象カード追加 → `MONTHLY_AGGREGATE_CARDS`
 - ポイント切り捨て表示の対象カード追加 → `POINT_TRUNCATE_CARDS`
 - 事業者の記号・色・名称 → `OP_STYLE`
@@ -435,5 +534,33 @@ LS_KEYS = {
 11. ODPTライセンスの明記 → 後にアプリ情報画面へ統合。
 12. アプリ情報画面の新設（対応事業者・利用規約・ライセンス・お問い合わせ）、お気に入り区間機能の実装、各種文言・レイアウト調整。
 13. （2026-07-21）西武鉄道の運賃改定（2026-03-14実施分）をfare.jsonに反映。経路探索ロジックを、全体最安の経路1本だけを探すダイクストラ法から、脚数（乗車回数）ごとに最安値を独立に求める方式（`dijkstraByLegs`）に変更し、2社以内の経路が全体最安でも3社以上のより安全・現実的な代替経路（例: 東急→東京メトロ→都営地下鉄）を見落とさないよう修正。あわせて、0円の乗換を挟んで同一社局に戻ってしまう「往復ループ」経路（見かけ上その社局が連続する無駄な経路）を除去する`mergeConsecutiveSameOp`を追加。タブバー切替時に検索履歴・お知らせ・アプリ情報などのプッシュ画面が閉じずに残ってしまう不具合を修正（`switchTab()`のリセット対象にすべてのプッシュ画面を追加）。お知らせ機能（notices.json・notices_editor.html・sw.jsのnotices.json除外）を新規実装（§19・§20）。
+14. （2026-07-21）つくばエクスプレスの運賃改定（2026-03-14実施分）をfare.jsonに反映。
+15. （2026-07-21）検索画面にタッチ決済対応事業者・バージョン表記の案内文（`.footnote`）を追加。
+16. （2026-07-21）西武鉄道多摩川線6駅（武蔵境・新小金井・多磨・白糸台・競艇場前・是政）をクレカ乗車非対応駅に追加（§10・`CC_NO_SERVICE`）。
+17. （2026-07-21）日暮里舎人ライナー・東京さくらトラム（都電荒川線）を、従来統合されていた"toei"operatorから`nipporitoneri`・`toden`という独立operatorに分離（§3.1a）。メトロ⇔都営70円乗継割引の誤適用防止とクレカ乗車非対応の適用のため。
+18. （2026-07-21）全861駅分のふりがなデータをfare.jsonの各駅データに追加し、駅名検索でひらがな入力途中でも候補に出るよう改善。あわせて「市ケ谷/市ヶ谷」「四ツ谷/四ッ谷/四谷」等の異体字ゆれを吸収する`fuzzyKey()`を実装（§5.2a）。
+19. （2026-07-22）新高徳のふりがな誤り（しんこうとく→しんたかとく）を修正。`ccBlockForRoute()`が出発・到着駅しか見ていなかったため、2社以上の乗換ルートで乗換駅自体のクレカ非対応が判定されていなかった不具合を修正。`cross()`・`routeFromLegs()`が乗換駅の社局・駅slugを`transfers`配列として保持するようにし、`ccBlockForRoute()`はそれも含めて判定する（§10）。
+20. （2026-07-22）odpt_fare_importer.htmlの土台モードで小田急電鉄・箱根登山鉄道・箱根登山ケーブルカーの3社をfare.jsonへ新規追加（87駅・2485運賃）。追加87駅すべての日本語駅名・ふりがなを手動整備（§3.1b）。
+21. （2026-07-22）会社境界駅の小田原・強羅の2駅だけ日本語駅名が表示されない不具合を修正。原因はstationGroupsの`odawara-odawara`・`gora-gora`エントリのmember.nameがローマ字のまま残っていたこと（§3.1b）。
+22. （2026-07-22）tetu1.pdf（首都圏乗継割引設定全区間・2026-03-14現在）を基に、小田急⇔他社局（京王・東京メトロ・都営・相鉄・東急）の乗継割引9件を追加（現金・IC各20円引き、§3.3）。
+23. （2026-07-22）OP_STYLEに箱根登山鉄道・箱根登山ケーブルカーを追加（小田急は追加時点で登録済みのため変更なし）。CC_NO_SERVICEに箱根登山鉄道（非対応3駅）・箱根登山ケーブルカー（非対応4駅）を追加、小田急は全駅対応のためエントリーなし（§10・§13）。
+24. （2026-07-24）小川町の同名異駅（東武東上線[埼玉]/都営新宿線[東京]、旧slugが両社局とも`Ogawamachi`で衝突しSTSが誤って1駅に統合されていた）を、slug・nameとも`(都道府県名)`表記で分離する命名ルールを制定し適用（§15）。あわせて`romajiFromSlug()`を改善し、数字を含む駅名（例: 羽田空港第1・第2ターミナル`HanedaAirportTerminal1and2`）でも文字/数字境界にハイフンが入るよう修正。stationスキーマに任意欄`romaji`を追加し、自動変換が不自然な場合に明示的な英語表示で上書きできるようにした（§3.1・`romajiOf()`）。つくばエクスプレス浅草駅が他社局の浅草駅と600〜800m離れた別駅である疑いを発見・確認し、同ルールで分離（slug=`Asakusa(TX)`、name=`浅草（TX線）`、romaji=`Asakusa (TX Line)`）。stationGroupsの`asakusa-asakusa-asakusa-asakusa`から`mir`メンバーを削除し`asakusa-asakusa-asakusa`（東武・都営・東京メトロの3社局）に修正、TX浅草が誤って同一駅乗継グループの対象になっていた問題も解消（§15）。
+25. （2026-07-24）小川町のromaji表示を`Ogawamachi(Saitama)`から`Ogawamachi (Saitama)`（括弧前にスペース）へ修正（slugは変更せずromaji任意欄で上書き）。同じ命名ルールで霞ケ関（東武東上線[埼玉] slug=`Kasumigaseki(Saitama)` / 東京メトロ[東京] slug=`Kasumigaseki(Tokyo)`、それぞれromajiに`Kasumigaseki (Saitama)`／`Kasumigaseki (Tokyo)`）も分離（§15）。
+26. （2026-07-24）将来の福岡エリア運賃データ統合に備え、福岡市地下鉄に同名駅がある橋本(京王相模原線, slug=`Hashimoto(Tokyo)`)・赤坂(東京メトロ千代田線, slug=`Akasaka(Tokyo)`)を、現時点では衝突がないものの先行的に`(Tokyo)`表記へリネーム（name=橋本（東京）/赤坂（東京）、romaji=`Hashimoto (Tokyo)`/`Akasaka (Tokyo)`）。福岡側追加時は`(Fukuoka)`／（福岡）を付与する想定（§15）。
+27. （2026-07-25）ドキュメントのみの更新。経路案内レイヤー（メトロ+都営限定の路線ナンバリング表示。実装自体は本ラウンドより前に完了済みだったがSPEC.md未記載だった）の現状実装を§12aとして追記。あわせて、運賃計算（fare.json）の上に経路案内（route.json、計画中・未実装）を重ねる今後の方向性を§12bとしてまとめ、想定スキーマ・生成方法・移行手順を整理。§2のファイル構成にODPT生データ4ファイルとroute.json（計画中）を追記。
+28. （2026-07-25）将来の福岡エリア（JR九州・西鉄・福岡市営地下鉄）fare.json統合に備え、index.htmlのOP_STYLEに3事業者を先行登録（`fukuokacitysubway`=symbol「福岡市営」/name「福岡市営地下鉄」/color #65BBE9、`nishitetsu`=symbol「西鉄」/name「西日本鉄道」/color #F58220、`jrkyushu`=symbol「JR」/name「JR九州」/color #ED1A3D）。あわせて、従来1社局につき1件の日次上限のみだった`DAILY_CAP`を、1社局に複数件（日次・月次など）登録可能な`CAP_DEFS`へ一般化し、福岡市営地下鉄のクレカ乗車上限（1日上限640円・1か月上限12,570円、月次は暦月＝1日〜末日単位）を追加登録。同一社局の複数上限は独立に残枠計算した上で、より厳しい（残枠が少ない）方を実際の運賃軽減に採用する（`effectiveRouteForToday()`の`minRemaining`）。経路候補一覧・運賃の内訳の両方に、クレカ区間が上限サービス対象の社局・区間を含む場合（軽減の有無を問わず）薄い黄色い枠の「上限サービスあり」バッジを新設（`capServiceBadgeHtml()`、§7）。なお本ラウンドの時点ではfare.json自体はまだ福岡エリアの3事業者を含んでいないため、これらの登録は統合時に備えた先行準備（現状は無効/未使用）。福岡エリアのデータ整備（駅名・ふりがな付与、slug誤り修正、乗継割引3件、北野・春日の同名異駅分離）はfare-new.json（統合用の作業ファイル、fare.json本体とは別）側で先行して実施済み。
+29. （2026-07-25）fare-new.json（福岡エリア統合用の作業ファイル）で、Hakata・Kaizuka・Meinohama・Omuta・Yakuinの5件のstationGroupsに残っていたmembers[].nameのローマ字残り（Odawara/Gora不具合と同型）を日本語表記に修正。あわせて西鉄千早⇔JR九州千早、福岡市営地下鉄天神⇔西鉄福岡（天神）、西鉄福岡（天神）⇔福岡市営地下鉄天神南のstationGroupsを新規追加（後者2件は天神・天神南同士は距離があり直接の乗換駅指定はしていないため、あえて2つの別グループとして登録し、天神⇔天神南を1グループにまとめることはしていない）。index.htmlのCC_NO_SERVICEに`jrkyushu`を新設し、(1)筑肥線姪浜〜唐津・西唐津の21駅（姪浜はjrkyushu側のみ非対応、同slugの福岡市営地下鉄側は対応）、(2)鹿児島本線久留米〜荒尾の久留米より南の10駅（久留米自体は北方面=博多方面へは対応のため対象外）をクレカ乗車・乗降とも非対応駅として登録（§10）。
+
+30. （2026-07-25）fare-new.jsonで、桜台の同名異駅（西武池袋線[東京・練馬]/西鉄天神大牟田線[福岡]、旧slugが両社局とも`Sakuradai`で衝突しfareContinuousな同一駅として誤統合されていた）を、北野・春日と同じ命名ルールでslug・nameとも`(都道府県名)`表記に分離（seibu: `Sakuradai(Tokyo)`／桜台（東京）、nishitetsu: `Sakuradai(Fukuoka)`／桜台（福岡）、それぞれromajiに`Sakuradai (Tokyo)`／`Sakuradai (Fukuoka)`）。誤って同一駅とみなしていたstationGroups`sakuradai-sakuradai`を削除。西武側の桜台を参照する既存の乗継割引2件（`kotake-seibu-metro`・`nerima-seibu-toei-ic`）の`a`配列内slugも新しい`Sakuradai(Tokyo)`に更新（§15）。
+
+31. （2026-07-25）経路案内レイヤー（§12a）を福岡市営地下鉄（空港線K・箱崎線H・七隈線N）に拡張。生ODPTデータが未入手のため`odpt_Railway_fukuokacitysubway.json`/`odpt_Station_fukuokacitysubway.json`を手動生成（公開駅一覧と照合し、姪浜〜福岡空港13駅・中洲川端〜貝塚7駅・橋本〜博多18駅の順序を確定。中洲川端は空港線・箱崎線が同一ノードを共有、博多は空港線・七隈線が`connectingRailway`/`connectingStation`で接続する別プラットフォームとして分離）。fare-new.jsonのNakasuKawabata・Hakataに七隈線側/箱崎線側のodptIdsを追加。あわせて、路線記号1文字が事業者間で衝突する問題（メトロ南北線"N"と七隈線"N"、日比谷線"H"と箱崎線"H"）を発見し、色・アイコン画像の参照キーを「事業者URI＋路線コード」の複合キーに変更する形でrnBuildGraph/rnEnsureLoaded/rnRenderLegsを修正（§12a参照）。姪浜→貝塚（K→H）、橋本→福岡空港（N→K、博多乗継）、橋本→天神南（Nのみ、天神南・天神間に誤った接続を作らない）の3パターンをNode.jsで机上検証し、期待通りの路線分割になることを確認。なお本ラウンドの時点ではfare.json本体に福岡市営地下鉄が未統合のため、この経路案内も実際にはまだ表示されない先行準備（§28と同様）。
+
+32. （2026-07-25）fare-new.json（福岡エリア統合用の作業ファイル）をfare.jsonへ本番反映。反映前に、fare-new.jsonからfukuokacitysubway/jrkyushu/nishitetsuを除いた部分を現行fare.jsonと突き合わせ、差分が北野・春日・桜台の東京/福岡分離修正のみ（データの欠落や意図しない変更なし）であることを確認した上で実施。現行fare.jsonは`fare.before-fukuoka-2026-07-25.json`としてバックアップ。これにより、OP_STYLE・上限サービス(CAP_DEFS)・「上限サービスあり」バッジ（§28）・経路案内レイヤーの福岡市営地下鉄対応（§12a・§29）が実際に有効化された。あわせて、sw.jsのオフラインキャッシュ対象(APP_SHELL)に福岡市営地下鉄の経路案内用データ（`odpt_Railway_fukuokacitysubway.json`・`odpt_Station_fukuokacitysubway.json`・路線ナンバリング画像3枚）を追加し、`CACHE_NAME`を`v12`→`v13`に上げて確実に再キャッシュされるようにした。
+
+33. （2026-07-25）経路案内レイヤー（§12a）を2点拡張。(1) 運賃の内訳画面（`detail-via`）の路線ナンバリングバッジの右に路線名を併記するようにした（`rnTitleByKey`・`showLineName`引数を追加、「天神南→[N]七隈線→博多」のように表示。経路候補一覧は従来通りバッジのみ）。(2) 路線案内対応事業者(`tokyometro`/`toei`/`fukuokacitysubway`)と非対応事業者（西鉄・JR九州など）が混在する経路でも、対応事業者の区間だけ路線ナンバリングを表示し、非対応区間は従来の事業者バッジにフォールバックする「混在表示」に対応（`rnEligible()`を全区間一致(`every`)から1区間でも該当(`some`)に変更、`rnHopsForRoute()`/`rnRenderHops()`を新設して`rnBuildFullPath()`/`rnRenderLegs()`を置き換え）。福岡市営地下鉄⇔西鉄の乗継（貝塚接続）を模したケースをNode.jsで机上検証し、地下鉄区間はK/H番号表示・西鉄区間は事業者バッジ表示となる想定通りの混在出力になることを確認。
+
+34. （2026-07-25）不具合修正: 乗車履歴を過去日付で記録する際、上限サービス（1日上限・1か月上限）の判定が常に「本日」基準でクレカ利用累計を集計しており、同じ過去日付に複数回記録しても上限が効かなかった不具合を修正（例: 橋本→姪浜、福岡市営地下鉄1日上限640円の区間で、380円の乗車を同じ過去日付に2回記録すると、本来2回目は260円に軽減されるべきところ両方とも380円のまま記録されていた）。`effectiveRouteForToday(r)`を`effectiveRouteForDate(r, refDate)`へ改名し、`dateMatchesPeriod`/`creditCapUsageForPeriod`とあわせて基準日（refDate、省略時は本日）を明示的に渡せるよう一般化。乗車履歴シートのプレビュー（`renderRideSheetBody()`）・保存処理（`saveRide()`）では、実際に選択された乗車日（新設`selectedRideDate()`）を基準日として渡すように修正し、日付inputの`onchange`でもプレビューが即時再計算されるようにした。検索・運賃の内訳画面（「今、乗るなら」の表示）の挙動は変更なし（本日基準のまま）。Node.jsでの机上検証により、同一過去日付への2回目の記録が正しく260円（640−380）に軽減されることを確認（§7参照）。
+
+35. （2026-07-25）福岡エリア3事業者（fukuokacitysubway・nishitetsu・jrkyushu、`FUKUOKA_AREA_OPS`）のいずれかを含む経路の運賃の内訳画面に、ベータ版であることの注意書き（紫色の`warn-box.purple`、太字「福岡エリアの運賃はベータ版です」＋不具合報告用Googleフォームへのリンク）を新設。表示位置は運賃比較の3つの値（現金・IC・クレカ）と「クレカ乗車運賃の内訳」の間（既存の`arriveWarn`・`capWarn`と同じ並び）。
 
 （この仕様書は会話時点の実装に基づく。実際の値は最新の index.html / fare.json を正とすること。）

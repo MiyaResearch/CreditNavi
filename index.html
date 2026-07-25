@@ -192,6 +192,24 @@
   .via-line{font-weight:300;}
   .via-sta{font-weight:600;}
   .via-arrow{color:var(--label2);font-weight:300;}
+  /* 路線ナンバリング案内（メトロ+都営のみ・§rn = route-numbering）
+     rc-via / detail-viaの行にインラインで差し込むため、外側のブロック要素は持たせず
+     フォントサイズ・行間は差し込み先(rc-via:14px / detail-via:14px)に委ねる。 */
+  .rn-station{font-weight:600;}
+  .rn-flow{display:inline-flex;align-items:center;vertical-align:middle;margin:0 2px;}
+  .rn-dash{display:inline-block;width:7px;height:2px;background:var(--sep);}
+  .rn-badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:22px;height:22px;border-radius:50%;margin:0 3px;flex-shrink:0;box-sizing:border-box;
+    vertical-align:middle;
+  }
+  .rn-badge-inner{
+    display:flex;align-items:center;justify-content:center;
+    width:12px;height:12px;border-radius:50%;background:#fff;color:#1a1a1a;
+    font-size:9px;font-weight:800;line-height:1;
+  }
+  .rn-icon-img{width:22px;height:22px;margin:0 3px;vertical-align:middle;flex-shrink:0;}
+  .rn-transfer-dest{font-size:13px;font-weight:600;color:var(--orange);}
   .rc-fares{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
   .fare-pill{font-size:15px;padding:6px 11px;border-radius:7px;background:var(--bg);color:var(--label2);}
   .fare-pill b{color:var(--label);font-weight:600;}
@@ -344,6 +362,7 @@
   }
   .min-badge.raw{background:var(--green);}
   .min-badge.net{background:var(--blue);}
+  .min-badge.cap-service{background:#FFFDF5;color:#8a6d00;border:1.5px solid #FFE082;}
   .cc-unavail{color:var(--red);font-weight:600;font-size:15px;}
   .fare-row.cc-blocked{background:rgba(255,59,48,.06);}
   .fare-row.cc-blocked .fr-name{color:var(--red);font-weight:600;}
@@ -358,6 +377,11 @@
   }
   .warn-box svg{flex-shrink:0;margin-top:1px;}
   .warn-box b{color:#7a5f00;font-weight:600;}
+  /* 福岡エリア（データ整備が新しい3事業者）向けのベータ版注意書き。warn-box(黄色)とは
+     色味を変えて紫系にし、上限サービス等の警告と混同しないようにする */
+  .warn-box.purple{background:#F4EEFF;border:1px solid #D9C2FF;color:#5B21B6;}
+  .warn-box.purple b{color:#4C1D95;}
+  .warn-box.purple a{color:#6D28D9;font-weight:600;text-decoration:underline;}
 
   /* お知らせ */
   .notice-box{
@@ -621,7 +645,7 @@ let GROUPS=[];          // stationGroups（存在する事業者のみ）
 let JUNCTIONS=[];       // 経由駅指定用: 境界駅（GROUPSの表示用一覧）
 let DISCOUNTS=[];       // 割引テーブル
 let LINE=null;          // tx用
-const APP_VERSION="2026-07-23 21:10"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
+const APP_VERSION="2026-07-25 19:00"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
 (function(){ const el=document.getElementById("app-footnote"); if(el) el.insertAdjacentHTML("beforeend", `<span class="ver">version:${APP_VERSION}</span>`); })();
 let NOTICES=[];          // お知らせ一覧（先頭に更新案内が入る場合あり）
 let noticeRotateTimer=null;
@@ -647,15 +671,27 @@ const OP_STYLE={
   toden:            {sym:"SA", name:"東京さくらトラム（都電荒川線）", color:"#E85298"},
   nipporitoneri:    {sym:"NT", name:"日暮里・舎人ライナー", color:"#8FC31F"},
   hakonetozanrailway:{sym:"箱根", name:"箱根登山鉄道", color:"#e5580c"},
-  hakonetozancable: {sym:"箱根", name:"箱根登山ケーブルカー", color:"#e5580c"}
+  hakonetozancable: {sym:"箱根", name:"箱根登山ケーブルカー", color:"#e5580c"},
+  fukuokacitysubway:{sym:"福岡市営", name:"福岡市営地下鉄", color:"#65BBE9"},
+  nishitetsu:       {sym:"西鉄", name:"西日本鉄道", color:"#F58220"},
+  jrkyushu:         {sym:"JR", name:"JR九州", color:"#ED1A3D"}
 };
 function romajiFromSlug(slug,name){
   if(MODE==="tx"||!slug||/[぀-鿿ぁ-ヶ]/.test(slug)) return "";
   if(slug===name) return "";  /* 未和訳（名前がスラッグそのまま）は重複表示しない */
-  return slug.replace(/([a-z])([A-Z])/g,"$1-$2");
+  /* キャメルケースの単語境界(小文字→大文字)に加えて、数字の境界(文字→数字・数字→文字)にも
+     ハイフンを入れる。例: "HanedaAirportTerminal1and2" → "Haneda-Airport-Terminal-1-and-2"
+     （数字の前後は大文字化されないため、従来のキャメルケース判定だけでは境界を検出できなかった） */
+  return slug
+    .replace(/([a-z])([A-Z])/g,"$1-$2")
+    .replace(/([A-Za-z])(\d)/g,"$1-$2")
+    .replace(/(\d)([A-Za-z])/g,"$1-$2");
 }
 function romajiOf(st){
   if(!st) return "";
+  /* 任意欄romaji（2026-07追加）: slugからの自動変換が不自然になる駅名向けの明示的な上書き。
+     未設定ならslugからの自動生成にフォールバックする。 */
+  if(st.romaji) return st.romaji;
   return romajiFromSlug(st.slug, st.name);
 }
 function opStyle(op){
@@ -781,10 +817,11 @@ function initFareV2(json){
   const bySlug={};
   mats.forEach(o=>o.stations.forEach(st=>{
     const nm=groupName[o.operator+"|"+st.slug]||st.name;
-    if(!bySlug[st.slug]) bySlug[st.slug]={slug:st.slug,name:nm,ops:[],kana:st.kana||""};
+    if(!bySlug[st.slug]) bySlug[st.slug]={slug:st.slug,name:nm,ops:[],kana:st.kana||"",romaji:st.romaji||""};
     if(!bySlug[st.slug].ops.includes(o.operator)) bySlug[st.slug].ops.push(o.operator);
     if(bySlug[st.slug].name===st.slug&&nm!==st.slug) bySlug[st.slug].name=nm;
     if(!bySlug[st.slug].kana&&st.kana) bySlug[st.slug].kana=st.kana;
+    if(!bySlug[st.slug].romaji&&st.romaji) bySlug[st.slug].romaji=st.romaji;
   }));
   STS=Object.values(bySlug).sort((a,b)=>a.name.localeCompare(b.name,"ja"));
 
@@ -1249,6 +1286,293 @@ function routeFromLegs(legList){
 }
 
 /* =========================================================
+   路線ナンバリング案内（メトロ+都営のみ、とりあえずのスコープ）
+   運賃計算(上記)はそのまま既存の社局レベル(OPSTYLE)で行い、その上に
+   「2階建て」で、経路が全区間 tokyometro/toei のみの場合だけ、
+   ODPT生データ(odpt:Railway/Station)から作った駅グラフで
+   路線単位の最短経路を求めて路線ナンバリングバッジ付きで表示する。
+   ODPT4ファイル・バッジ画像は初回表示時に遅延fetchする（初期ロードを増やさないため）。
+========================================================= */
+const RN_OPERATOR_URI={tokyometro:"odpt.Operator:TokyoMetro", toei:"odpt.Operator:Toei", fukuokacitysubway:"odpt.Operator:FukuokaCitySubway"};
+const RN_ICON_DIR="路線ナンバリング/";
+/* 注意: 東京メトロの南北線もコードNだが、路線バッジ画像は事業者非依存でコード文字列だけで
+   引いているため、福岡市営地下鉄の七隈線(N)と共存できない。rnEligible()は経路の全区間が
+   tokyometro/toei/fukuokacitysubwayのいずれかであることしか見ないため、メトロ南北線と
+   福岡市営地下鉄七隈線が同一経路に混在することは実際には起こり得ない(路線網が接続していない)
+   ことを前提に、コード"N"を共用している。 */
+const RN_ICON_FILE_BY_CODE={
+  M:"marunouchi.png", C:"chiyoda.png", N:"namboku.png", F:"fukutoshin.png",
+  G:"ginza.png", Z:"hanzomon.png", H:"hibiya.png", T:"tozai.png", Y:"yurakucho.png",
+  A:"Asakusa.png", I:"Mita.png", S:"Shinjuku.png", E:"oedo.png"
+};
+/* 福岡市営地下鉄は事業者専用のアイコン対応表(FK_ICON_FILE_BY_CODE)を別に持たせる。
+   東京メトロ南北線"N"・都営新宿線"S"などと路線記号(1文字)が重複するため、色・アイコン画像は
+   素のコード文字列だけでは引かず、必ず「事業者URI＋コード」の複合キー(rnKey())経由で引く。
+   バッジに表示する文字自体は素のコード(rnCodeByKey)を使う。 */
+const FK_ICON_FILE_BY_CODE={
+  K:"福岡市営地下鉄空港線(ナンバリング).png",
+  H:"福岡市営地下鉄箱崎線(ナンバリング).png",
+  N:"福岡市営地下鉄七隈線(ナンバリング).png"
+};
+const RN_FALLBACK_COLOR="#6b7280";
+let rnStationById=null, rnRailwayById=null, rnLineColorByKey={}, rnIconSrcByKey={}, rnCodeByKey={}, rnTitleByKey={}, rnGraph=null, rnLoadPromise=null;
+function rnKey(operatorUri, code){ return operatorUri+"|"+code; }
+
+/* 経路中に1レグでも路線ナンバリング対応事業者(RN_OPERATOR_URI)が含まれていれば対象とする。
+   対応レグは路線番号案内、非対応レグ(西鉄・JR九州など路線データ未整備の事業者)は従来通り
+   事業者バッジ表示にフォールバックする混在表示を行うため、全レグ一致(every)ではなく
+   1レグでも該当(some)を条件にする。 */
+function rnEligible(r){
+  return !!(r && r.opKeys && r.opKeys.length && r.opKeys.some(op=>RN_OPERATOR_URI[op]));
+}
+
+async function rnEnsureLoaded(){
+  if(rnGraph) return true;
+  if(rnLoadPromise) return rnLoadPromise;
+  rnLoadPromise=(async()=>{
+    try{
+      const files=["odpt_Station_metro.json","odpt_Station_toei.json","odpt_Station_fukuokacitysubway.json",
+                   "odpt_Railway_metro.json","odpt_Railway_toei.json","odpt_Railway_fukuokacitysubway.json"];
+      const [sm,st,sf,rm,rt,rf]=await Promise.all(files.map(f=>fetch(f).then(res=>{
+        if(!res.ok) throw new Error(f+" の読み込みに失敗（HTTP "+res.status+"）。index.htmlと同じフォルダに置かれているか確認してください。");
+        return res.json();
+      }).catch(err=>{ console.error("[路線案内] "+f+" の取得に失敗:", err); throw err; })));
+      const stations=[...sm, ...st, ...sf];
+      const railways=[...rm, ...rt, ...rf];
+      rnStationById={}; stations.forEach(s=>rnStationById[s["owl:sameAs"]]=s);
+      rnRailwayById={}; railways.forEach(r=>rnRailwayById[r["owl:sameAs"]]=r);
+      rnLineColorByKey={}; rnIconSrcByKey={}; rnCodeByKey={}; rnTitleByKey={};
+      railways.forEach(r=>{
+        const code=r["odpt:lineCode"]||r["dc:title"];
+        const key=rnKey(r["odpt:operator"], code);
+        rnCodeByKey[key]=code;
+        rnTitleByKey[key]=(r["odpt:railwayTitle"]&&r["odpt:railwayTitle"]["ja"])||r["dc:title"]||code;
+        rnLineColorByKey[key]=r["odpt:color"]||RN_FALLBACK_COLOR;
+        const iconFile=(r["odpt:operator"]===RN_OPERATOR_URI.fukuokacitysubway) ? FK_ICON_FILE_BY_CODE[code] : RN_ICON_FILE_BY_CODE[code];
+        if(iconFile) rnIconSrcByKey[key]=encodeURI(RN_ICON_DIR+iconFile);
+      });
+      rnGraph=rnBuildGraph(stations, railways);
+      return true;
+    }catch(e){
+      console.error("[路線案内] 読み込みに失敗しました:", e);
+      rnLoadPromise=null; // 失敗時は次回また読み込みを試みる
+      return false;
+    }
+  })();
+  return rnLoadPromise;
+}
+
+/* 同一事業者内の乗車(line)・乗換(transfer)のみを辺にする。
+   事業者をまたぐ乗換は運賃計算側(cross/routeFromLegs)が既に境界駅を
+   決定済みのため、ここでの物理探索は各レグ内(同一事業者内)で完結させる。
+   各辺には「事業者＋路線コード」の複合キー(rnKey())を持たせ、色・アイコン参照時の
+   事業者間コード衝突(例: メトロ南北線"N"と福岡市営地下鉄七隈線"N")を避ける。 */
+function rnBuildGraph(stations, railways){
+  const graph={};
+  const addEdge=(a,b,w,kind,key)=>{ (graph[a]=graph[a]||[]).push([b,w,kind,key]); };
+  railways.forEach(r=>{
+    const code=r["odpt:lineCode"]||r["dc:title"];
+    const key=rnKey(r["odpt:operator"], code);
+    const order=[...r["odpt:stationOrder"]].sort((a,b)=>a["odpt:index"]-b["odpt:index"]);
+    for(let i=0;i<order.length-1;i++){
+      const sa=order[i]["odpt:station"], sb=order[i+1]["odpt:station"];
+      addEdge(sa,sb,1,"line",key);
+      addEdge(sb,sa,1,"line",key);
+    }
+  });
+  const added=new Set();
+  stations.forEach(s=>{
+    const sid=s["owl:sameAs"];
+    const crs=s["odpt:connectingRailway"]||[], css=s["odpt:connectingStation"]||[];
+    crs.forEach((cr,i)=>{
+      const cs=css[i];
+      if(!cs) return;
+      const other=stations.find(x=>x["owl:sameAs"]===cs);
+      if(!other) return;
+      if(other["odpt:operator"]!==s["odpt:operator"]) return; // 事業者またぎは対象外
+      const pairKey=[sid,cs].sort().join("|");
+      if(added.has(pairKey)) return;
+      added.add(pairKey);
+      const toRailway=rnRailwayById[cr]||{};
+      const fromRailway=rnRailwayById[s["odpt:railway"]]||{};
+      const toKey=rnKey(toRailway["odpt:operator"]||other["odpt:operator"], toRailway["odpt:lineCode"]||cr);
+      const fromKey=rnKey(fromRailway["odpt:operator"]||s["odpt:operator"], fromRailway["odpt:lineCode"]||s["odpt:railway"]);
+      addEdge(sid,cs,2,"transfer",toKey);
+      addEdge(cs,sid,2,"transfer",fromKey);
+    });
+  });
+  return graph;
+}
+
+function rnDijkstra(sourceIds, targetIds){
+  const S="__RN_S__", T="__RN_T__";
+  const g=rnGraph;
+  const targetSet=new Set(targetIds);
+  const dist={[S]:0}, prev={}, edgeUsed={}, visited=new Set(), pq=[[0,S]];
+  const neighborsOf=(u)=>{
+    if(u===S) return sourceIds.map(sid=>[sid,0,"start",null]);
+    const base=(g[u]||[]).slice();
+    if(targetSet.has(u)) base.push([T,0,"end",null]);
+    return base;
+  };
+  while(pq.length){
+    pq.sort((a,b)=>a[0]-b[0]);
+    const [d,u]=pq.shift();
+    if(visited.has(u)) continue;
+    visited.add(u);
+    if(u===T) break;
+    neighborsOf(u).forEach(([v,w,kind,lineCode])=>{
+      const nd=d+w;
+      if(!(v in dist)||nd<dist[v]){
+        dist[v]=nd; prev[v]=u; edgeUsed[v]=[w,kind,lineCode];
+        pq.push([nd,v]);
+      }
+    });
+  }
+  if(!(T in dist)) return null;
+  const path=[T]; const edges=[];
+  let node=T;
+  while(node!==S){ edges.push(edgeUsed[node]); node=prev[node]; path.push(node); }
+  path.reverse(); edges.reverse();
+  return {path:path.slice(1,-1), edges:edges.slice(1,-1)}; // __RN_S__/__RN_T__を除去
+}
+
+/* fare.jsonのoperator/slugから、そのレグ内(同一事業者)の物理最短経路(path/edges)を求める */
+function rnSubpath(op, fromSlug, toSlug){
+  const opData=OPSDATA[op];
+  if(!opData) return null;
+  const fromSt=opData.stations.find(s=>s.slug===fromSlug);
+  const toSt=opData.stations.find(s=>s.slug===toSlug);
+  if(!fromSt||!toSt||!fromSt.odptIds||!toSt.odptIds) return null;
+  if(fromSlug===toSlug) return {path:[fromSt.odptIds[0]], edges:[]};
+  const sourceIds=fromSt.odptIds.filter(id=>rnStationById[id]);
+  const targetIds=toSt.odptIds.filter(id=>rnStationById[id]);
+  if(!sourceIds.length||!targetIds.length) return null;
+  return rnDijkstra(sourceIds, targetIds);
+}
+
+/* 経路オブジェクト(single/cross/multi)+検索元/先の駅から、レグ境界の(op,slug,name)waypoint列を作る。
+   nameは非対応事業者レグのフォールバック表示（駅名そのまま）に使う。 */
+function rnWaypointsForRoute(r, od){
+  const fromSlug=od.fromSt.slug, toSlug=od.toSt.slug;
+  const fromName=od.fromSt.name, toName=od.toSt.name;
+  if(r.kind==="single"){
+    return [{op:r.opFrom,slug:fromSlug,name:fromName},{op:r.opTo,slug:toSlug,name:toName}];
+  }
+  if(r.kind==="cross"){
+    const tr=r.transfers[0];
+    return [{op:r.opFrom,slug:fromSlug,name:fromName},{op:tr.alightOp,slug:tr.alightSlug,name:tr.alightName},{op:tr.boardOp,slug:tr.boardSlug,name:tr.boardName},{op:r.opTo,slug:toSlug,name:toName}];
+  }
+  // multi
+  const wps=[{op:r.opFrom,slug:fromSlug,name:fromName}];
+  r.transfers.forEach(tr=>{ wps.push({op:tr.alightOp,slug:tr.alightSlug,name:tr.alightName}); wps.push({op:tr.boardOp,slug:tr.boardSlug,name:tr.boardName}); });
+  wps.push({op:r.opTo,slug:toSlug,name:toName});
+  return wps;
+}
+
+/* path/edges(ODPTノード列)を「駅名区切りの路線区間」列に変換 */
+function rnFormatRoute(path, edges){
+  const legs=[];
+  let currentLine=null;
+  let currentStations=[rnStationById[path[0]]["dc:title"]];
+  edges.forEach(([w,kind,lineCode],i)=>{
+    const nextName=rnStationById[path[i+1]]["dc:title"];
+    if(kind==="transfer"){
+      legs.push({line:currentLine, stations:currentStations});
+      currentLine=null;
+      currentStations=[nextName];
+    }else{
+      if(currentLine===null) currentLine=lineCode;
+      currentStations.push(nextName);
+    }
+  });
+  legs.push({line:currentLine, stations:currentStations});
+  return legs;
+}
+
+/* 経路全体を「1ホップ=1つの物理路線区間、または1つの事業者区間」の均質な列に変換する。
+   路線案内データがある事業者(rnSubpath()が経路を返す場合)のレグは、その事業者内の
+   物理路線ごとに複数ホップへ展開する（社内の路線間乗換、例:福岡市営地下鉄の空港線→箱崎線、
+   も含む）。データがない事業者（西鉄・JR九州など路線データ未整備）のレグは、その事業者の
+   バッジ(opStyle)1ホップとして扱う（社局レベルのフォールバック）。事業者をまたぐ経路の一部だけ
+   路線案内データがある場合でも、対応区間だけ路線番号・非対応区間は従来通りの事業者表示になる。 */
+function rnHopsForRoute(r, od){
+  const wps=rnWaypointsForRoute(r, od);
+  const hops=[];
+  for(let i=0;i<wps.length;i+=2){
+    const a=wps[i], b=wps[i+1];
+    const sub=RN_OPERATOR_URI[a.op] ? rnSubpath(a.op, a.slug, b.slug) : null;
+    if(sub && sub.path.length){
+      const legs=rnFormatRoute(sub.path, sub.edges);
+      legs.forEach(leg=>{
+        if(leg.line===null) return; // 理論上起きないはずの保険（同一路線内で辺が見つからない場合）
+        hops.push({numbered:true, key:leg.line, fromName:leg.stations[0], toName:leg.stations[leg.stations.length-1]});
+      });
+    }else{
+      const st=opStyle(a.op);
+      hops.push({numbered:false, sym:st.sym, name:st.name, color:st.color, fromName:a.name, toName:b.name});
+    }
+  }
+  return hops;
+}
+
+/* rnHopsForRoute()の結果を、駅名→[バッジ]→駅名…の1本のHTML断片に変換する。
+   既存のviaHTML()と差し替え可能な想定のため、外側を包むブロック要素は持たせず、
+   呼び出し先(rc-via / 詳細画面ヘッダー)側のフォントサイズ・行間をそのまま継承する。
+   showLineName=trueのとき、路線ナンバリング区間はバッジの右に路線名（.via-line、事業者名を
+   表示するviaHTML()と同じクラス）も表示する（運賃の内訳画面向け）。 */
+function rnRenderHops(hops, showLineName){
+  if(!hops.length) return "";
+  let html=`<span class="rn-station">${esc(hops[0].fromName)}</span>`;
+  hops.forEach((hop,idx)=>{
+    html+=`<span class="rn-flow"><span class="rn-dash"></span>`;
+    if(hop.numbered){
+      const codeLabel=rnCodeByKey[hop.key]||hop.key;
+      if(rnIconSrcByKey[hop.key]){
+        html+=`<img class="rn-icon-img" src="${rnIconSrcByKey[hop.key]}" alt="${esc(codeLabel)}">`;
+      }else{
+        const color=rnLineColorByKey[hop.key]||RN_FALLBACK_COLOR;
+        html+=`<span class="rn-badge" style="background:${color};"><span class="rn-badge-inner">${esc(codeLabel)}</span></span>`;
+      }
+      if(showLineName){
+        const title=rnTitleByKey[hop.key];
+        if(title) html+=`<span class="via-line">${esc(title)}</span>`;
+      }
+    }else{
+      html+=`<span class="line-badge" style="background:${hop.color};">${esc(hop.sym)}</span>`;
+      if(showLineName) html+=`<span class="via-line">${esc(hop.name)}</span>`;
+    }
+    html+=`<span class="rn-dash"></span></span>`;
+    html+=`<span class="rn-station">${esc(hop.toName)}</span>`;
+    const isLast=idx===hops.length-1;
+    if(!isLast){
+      const nextHop=hops[idx+1];
+      if(nextHop.fromName!==hop.toName){
+        html+=`<span class="rn-transfer-dest">（${esc(nextHop.fromName)}）</span>`;
+      }
+    }
+  });
+  return html;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* renderResults()のカード / openDetail()のヘッダーから呼ばれる。
+   対象外(データ未取得・生成失敗・数値化できるレグが1つもない)の場合は何もせず、
+   既存の社局レベル表示（viaHTML）のまま残す（見えている情報が消えたり壊れたりしないよう、
+   成功時のみ上書きする）。非同期のため、書き換え時に対象要素がまだ画面上に存在するかを
+   getElementByIdで確認する。showLineName: trueなら路線ナンバリング区間に路線名も併記する
+   （運賃の内訳画面向け。経路候補一覧では従来通りバッジのみのコンパクト表示のためfalse）。 */
+async function rnRenderInto(elId, r, od, showLineName){
+  const ok=await rnEnsureLoaded();
+  if(!ok) return;
+  const hops=rnHopsForRoute(r, od);
+  if(!hops.length || !hops.some(h=>h.numbered)) return;
+  const el=document.getElementById(elId);
+  if(!el) return; // 読み込み中に画面遷移していた場合は何もしない
+  el.innerHTML=rnRenderHops(hops, !!showLineName);
+}
+
+/* =========================================================
    state
 ========================================================= */
 /* 各カード: base=基本還元率(%), touch=タッチ決済乗車の上乗せ(%)。合計=base+touch。
@@ -1327,17 +1651,35 @@ const CC_NO_SERVICE={
   /* 箱根登山鉄道: クレカ乗車対応は小田原・箱根湯本・塔ノ沢・大平台・宮ノ下・小涌谷・彫刻の森・強羅のみ。それ以外(箱根板橋・入生田・風祭)は非対応 */
   hakonetozanrailway:new Set(["HakoneItabashi","Iriuda","Kazamatsuri"]),
   /* 箱根登山ケーブルカー: クレカ乗車対応は強羅・早雲山のみ。それ以外(上強羅・公園上・公園下・中強羅)は非対応 */
-  hakonetozancable:new Set(["KamiGora","KoenKami","KoenShimo","NakaGora"])
+  hakonetozancable:new Set(["KamiGora","KoenKami","KoenShimo","NakaGora"]),
+  /* JR九州: (1)筑肥線 姪浜～唐津・西唐津は全駅クレカ乗車非対応（姪浜は同slugの福岡市営地下鉄側では対応、
+     jrkyushu側のみ非対応）。(2)鹿児島本線 久留米～荒尾は久留米より南の全駅が非対応（久留米駅自体は
+     北方面=博多方面へは対応のため非対応リストに含めない） */
+  jrkyushu:new Set([
+    "ChikuzenFukae","ChikuzenMaebaru","Fukuyoshi","Hamasaki","Hatae","HigashiKaratsu","Ikisan","Imajuku",
+    "ItoshimaKokomae","Kafuri","Karatsu","KyudaiGakkentoshi","Meinohama","Misakigaoka","NijinoMatsubara",
+    "NishiKaratsu","Dainyu","Shikaka","Shimoyamato","Suzenji","Wadata",
+    "Araki","Nishimuta","Hainuzuka","ChikugoFunagoya","Setaka","MinamiSetaka","Wataze","Omuta","Ginsui","Arao"
+  ])
 };
-/* 1日上限サービス（横浜市営地下鉄740円・ゆりかもめ820円。両社局は完全に別会社・別集計で、上限は互いに影響しない） */
-const DAILY_CAP={
-  yokohamamunicipal:{name:"横浜市営地下鉄", cap:740},
-  yurikamome:{name:"ゆりかもめ", cap:820}
-};
-/* 経路中、DAILY_CAP対象社局ごとのクレカ運賃寄与額（legsの表示名で名寄せして合算） */
+/* 上限サービス（クレカ乗車の一定期間の利用累計に上限を設け、超過分を軽減する仕組み）。
+   横浜市営地下鉄740円・ゆりかもめ820円は1日上限のみ。福岡市営地下鉄は1日上限640円と
+   1か月上限12,570円（暦月＝当月1日～末日の合計）の両方を持つ。同一社局に複数の上限がある場合、
+   各上限の残枠のうちより厳しい（小さい）方を優先して軽減額を決定する。社局間の上限は互いに独立集計。 */
+const CAP_DEFS=[
+  {op:"yokohamamunicipal", name:"横浜市営地下鉄", label:"1日上限",   period:"day",   cap:740},
+  {op:"yurikamome",        name:"ゆりかもめ",     label:"1日上限",   period:"day",   cap:820},
+  {op:"fukuokacitysubway", name:"福岡市営地下鉄", label:"1日上限",   period:"day",   cap:640},
+  {op:"fukuokacitysubway", name:"福岡市営地下鉄", label:"1か月上限", period:"month", cap:12570}
+];
+const CAP_OPS=new Set(CAP_DEFS.map(d=>d.op));
+/* 福岡エリア3社局（データ整備が新しくベータ版扱いの事業者）。運賃の内訳画面でベータ版の
+   注意書き（紫色ボックス）を出すかどうかの判定に使う（§7参照） */
+const FUKUOKA_AREA_OPS=new Set(["fukuokacitysubway","nishitetsu","jrkyushu"]);
+/* 経路中、上限サービス対象社局ごとのクレカ運賃寄与額（legsの表示名で名寄せして合算） */
 function capUsageForRoute(r){
   const usage={};
-  Object.keys(DAILY_CAP).forEach(op=>{
+  CAP_OPS.forEach(op=>{
     if(!(r.opKeys||[]).includes(op)) return;
     const dispName=opStyle(op).name;
     const sum=(r.legs||[]).filter(l=>l.op===dispName).reduce((s,l)=>s+l.fare,0);
@@ -1345,36 +1687,61 @@ function capUsageForRoute(r){
   });
   return usage;
 }
-/* 乗車履歴（本日・クレカ決済のみ）から、DAILY_CAP対象社局ごとの本日利用済み額を集計 */
-function todaysCreditCapUsage(){
+/* 集計期間の一致判定。refDate（基準日、既定=本日）を基準に、period="day"はrefDateと同日か、
+   period="month"はrefDateと同月（1日～末日）かを判定する。乗車履歴を過去日付で記録する場合は、
+   「本日」ではなく「その乗車日」を基準に他の乗車履歴との同日・同月判定をする必要があるため、
+   refDateを明示的に渡せるようにしている（過去日付の乗車を複数登録したときに上限判定が正しく
+   効くようにするための対応。§7参照）。 */
+function dateMatchesPeriod(dateStr, period, refDate){
+  const ref=refDate||todayISO();
+  return period==="month" ? dateStr.slice(0,7)===ref.slice(0,7) : dateStr===ref;
+}
+/* 乗車履歴（クレカ決済のみ）から、refDate基準（既定=本日）で指定した期間区分（day/month）に
+   該当する社局ごとの利用済み額を集計する */
+function creditCapUsageForPeriod(period, refDate){
   const usage={};
-  const today=todayISO();
   rideHistory.forEach(h=>{
-    if(h.date!==today) return;
     if(h.paymentKind!=="credit") return;
     if(!h.capUsage) return;
+    if(!dateMatchesPeriod(h.date, period, refDate)) return;
     Object.keys(h.capUsage).forEach(op=>{ usage[op]=(usage[op]||0)+h.capUsage[op]; });
   });
   return usage;
 }
-/* 経路rに対し、本日のクレカ利用累計を踏まえた1日上限サービス適用後の実質クレカ運賃を計算。
-   適用がなければ元のrをそのまま返す（capApplied:[]）。適用があれば cc・legs を軽減した複製を返す。 */
-function effectiveRouteForToday(r){
+/* 経路rに対し、refDate（基準日、既定=本日）時点での同日・同月のクレカ利用累計を踏まえた
+   上限サービス適用後の実質クレカ運賃を計算。適用がなければ元のrをそのまま返す（capApplied:[]）。
+   適用があれば cc・legs を軽減した複製を返す。
+   capInfo: 経路に含まれる上限サービス全件（社局に複数上限がある場合は各上限ごとに1件、未適用分も
+   含む＝注記表示用）。capApplied: 実際にその上限の残枠をportionが超えていた（＝その上限単体でも
+   軽減対象になった）ものを個別に記載する。運賃・legsへの実軽減額は、対象社局の全上限のうち最小の
+   残枠（最も厳しい上限）を用いて一度だけ計算する。
+   検索結果・運賃の内訳画面（「今、乗るなら」の想定）ではrefDate省略＝本日基準。乗車履歴への
+   記録画面では、実際に選択された乗車日をrefDateとして渡す（過去日付の累計判定のため）。 */
+function effectiveRouteForDate(r, refDate){
   const contrib=capUsageForRoute(r);
-  const relevantOps=Object.keys(contrib).filter(op=>DAILY_CAP[op]);
-  const capInfo=relevantOps.map(op=>({op, name:DAILY_CAP[op].name, cap:DAILY_CAP[op].cap, portion:contrib[op]}));
+  const relevantOps=Object.keys(contrib);
   if(!relevantOps.length) return {...r, capApplied:[], capInfo:[]};
-  const usage=todaysCreditCapUsage();
+  const usageByPeriod={day:creditCapUsageForPeriod("day",refDate), month:creditCapUsageForPeriod("month",refDate)};
+  const capInfo=[];
   let adjustedCc=r.cc;
   let legs=r.legs;
   const capApplied=[];
   relevantOps.forEach(op=>{
-    const info=DAILY_CAP[op];
-    const usedBefore=usage[op]||0;
-    const remaining=Math.max(0, info.cap-usedBefore);
+    const defs=CAP_DEFS.filter(d=>d.op===op);
+    if(!defs.length) return;
     const portion=contrib[op];
-    if(portion>remaining){
-      const applied=remaining;
+    let minRemaining=Infinity;
+    defs.forEach(def=>{
+      const usedBefore=usageByPeriod[def.period][op]||0;
+      const remaining=Math.max(0, def.cap-usedBefore);
+      capInfo.push({op, name:def.name, label:def.label, period:def.period, cap:def.cap, portion, usedBefore});
+      if(remaining<portion){
+        capApplied.push({op, name:def.name, label:def.label, period:def.period, cap:def.cap, usedBefore, applied:remaining, reducedBy:portion-remaining, portion});
+      }
+      if(remaining<minRemaining) minRemaining=remaining;
+    });
+    if(minRemaining<portion){
+      const applied=minRemaining;
       const reducedBy=portion-applied;
       adjustedCc-=reducedBy;
       if(legs===r.legs) legs=r.legs.map(l=>({...l}));
@@ -1389,7 +1756,6 @@ function effectiveRouteForToday(r){
           matches[k].fare-=cut; toReduce-=cut;
         }
       }
-      capApplied.push({op, name:info.name, cap:info.cap, usedBefore, applied, reducedBy, portion});
     }
   });
   if(!capApplied.length) return {...r, capApplied:[], capInfo};
@@ -1455,6 +1821,11 @@ function minBadges(isRawFlag,isNetFlag){
 }
 function capBadgeHtml(effR){
   return (effR && effR.capApplied && effR.capApplied.length) ? `<span class="min-badge" style="background:#FFB300;">上限適用</span>` : "";
+}
+/* この経路のクレカ乗車区間に、上限サービス（1日上限・1か月上限など）を持つ社局が
+   含まれている場合に表示するバッジ（実際に軽減が発生したかどうかは問わない） */
+function capServiceBadgeHtml(effR){
+  return (effR && effR.capInfo && effR.capInfo.length) ? `<span class="min-badge cap-service">上限サービスあり</span>` : "";
 }
 let currentRoutes=[], currentOD=null;
 let history=[];
@@ -1705,16 +2076,16 @@ function renderResults(){
   body.innerHTML=`<div class="section-header" style="padding-top:4px;">経路候補 ${currentRoutes.length}件 ・ クレカ${card.name}（合計${cardTotalRate(card)}%）／交通系IC（${icRate}%）で計算</div>`;
   currentRoutes.forEach((r,i)=>{
     const ccBlock=ccBlockForRoute(currentOD,r);
-    const effR = ccBlock ? r : effectiveRouteForToday(r);
+    const effR = ccBlock ? r : effectiveRouteForDate(r);
     const c=compareFares(effR, !!ccBlock);
     const cashOpt=c.opts.find(o=>o.key==="cash"), icOpt=c.opts.find(o=>o.key==="ic");
     const ccPill = ccBlock
       ? `<div class="fare-pill blocked">クレカ <b>ご利用できません</b></div>`
-      : `<div class="fare-pill cc">クレカ <b>${effR.cc}円</b> ＋${fmtPt(c.pt)}pt${minBadges(c.isRaw(effR.cc),c.isNet(c.ccNet))}${capBadgeHtml(effR)}</div>`;
+      : `<div class="fare-pill cc">クレカ <b>${effR.cc}円</b> ＋${fmtPt(c.pt)}pt${minBadges(c.isRaw(effR.cc),c.isNet(c.ccNet))}${capBadgeHtml(effR)}${capServiceBadgeHtml(effR)}</div>`;
     const el=document.createElement("button");
     el.className="route-card";
     el.innerHTML=`
-      <div class="rc-top"><div class="rc-via">${viaHTML(r.via, currentOD.from, currentOD.to)}</div>${r.forcedVia?`<span class="min-badge" style="background:var(--gray);flex-shrink:0;">指定した経由駅</span>`:""}</div>
+      <div class="rc-top"><div class="rc-via" id="rc-via-${i}">${viaHTML(r.via, currentOD.from, currentOD.to)}</div>${r.forcedVia?`<span class="min-badge" style="background:var(--gray);flex-shrink:0;">指定した経由駅</span>`:""}</div>
       <div class="rc-fares">
         <div class="fare-pill">きっぷ <b>${r.cash}円</b>${minBadges(c.isRaw(cashOpt.raw),c.isNet(cashOpt.net))}</div>
         <div class="fare-pill">IC <b>${r.ic}円</b>${minBadges(c.isRaw(icOpt.raw),c.isNet(icOpt.net))}</div>
@@ -1722,6 +2093,7 @@ function renderResults(){
       </div>`;
     el.onclick=()=>openDetail(i);
     body.appendChild(el);
+    if(rnEligible(r)) rnRenderInto(`rc-via-${i}`, r, currentOD, false);
   });
 }
 
@@ -1732,7 +2104,7 @@ function openDetail(i){
   currentDetailIndex=i;
   const r=currentRoutes[i], card=activeCard();
   const ccBlock=ccBlockForRoute(currentOD,r);
-  const effR = ccBlock ? r : effectiveRouteForToday(r);
+  const effR = ccBlock ? r : effectiveRouteForDate(r);
   const c=compareFares(effR, !!ccBlock);
   const cashOpt=c.opts.find(o=>o.key==="cash"), icOpt=c.opts.find(o=>o.key==="ic");
   const icPtBlock = `
@@ -1749,8 +2121,9 @@ function openDetail(i){
   }
   if(!ccBlock && effR.capInfo && effR.capInfo.length){
     effR.capInfo.forEach(ci=>{
-      if(!effR.capApplied.some(a=>a.op===ci.op)){
-        notes.push(`この経路には1日上限サービス（${ci.name}・上限${ci.cap}円）があります。本日のクレカ乗車ご利用累計と合わせても上限以内のため、通常運賃のままです。`);
+      if(!effR.capApplied.some(a=>a.op===ci.op && a.label===ci.label)){
+        const periodWord = ci.period==="month" ? "今月" : "本日";
+        notes.push(`この経路には${ci.label}サービス（${ci.name}・上限${ci.cap}円）があります。${periodWord}のクレカ乗車ご利用累計と合わせても上限以内のため、通常運賃のままです。`);
       }
     });
   }
@@ -1760,7 +2133,7 @@ function openDetail(i){
         <div class="net-line" style="color:var(--red);">${ccBlock.msg}</div>
       </div>`
     : `<div class="fare-row cc-row">
-        <div class="fr-line"><div class="fr-name">クレカ乗車${minBadges(c.isRaw(effR.cc),c.isNet(c.ccNet))}${capBadgeHtml(effR)}</div><div class="fr-amount">${effR.cc}円</div></div>
+        <div class="fr-line"><div class="fr-name">クレカ乗車${minBadges(c.isRaw(effR.cc),c.isNet(c.ccNet))}${capBadgeHtml(effR)}${capServiceBadgeHtml(effR)}</div><div class="fr-amount">${effR.cc}円</div></div>
         <div class="pt-line">
           <span class="pt-sub" style="margin-right:4px;">（${card.name}）</span><svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6.5" fill="#34C759"/><path d="M7 3.5 L7 10.5 M3.5 7 L10.5 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>${fmtPt(c.pt)}pt 獲得
         </div>
@@ -1772,21 +2145,32 @@ function openDetail(i){
       <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 1.5 L17 15.5 L1 15.5 Z" fill="#FFC107"/><path d="M9 6 L9 10.5 M9 12.6 L9 13.1" stroke="#7a5f00" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
       <span><b>${arriveBlk.name}駅からの乗車時には、クレカ乗車はご利用できません。</b>ご注意ください。</span>
     </div>` : "";
-  const capWarn = (!ccBlock && effR.capApplied.length) ? effR.capApplied.map(ci=>`
+  const capWarn = (!ccBlock && effR.capApplied.length) ? effR.capApplied.map(ci=>{
+    const periodWord = ci.period==="month" ? "今月" : "本日";
+    return `
     <div class="warn-box">
       <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 1.5 L17 15.5 L1 15.5 Z" fill="#FFC107"/><path d="M9 6 L9 10.5 M9 12.6 L9 13.1" stroke="#7a5f00" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
-      <span><b>1日上限サービス適用済</b><br>本日の${ci.name}のクレカ乗車ご利用額（累計${ci.usedBefore}円）がこの区間分（${ci.portion}円）を含めると上限（${ci.cap}円）を超えるため、この区間のクレカ乗車運賃を ${ci.applied}円 に軽減しています（${ci.usedBefore}円＋${ci.applied}円＝${ci.usedBefore+ci.applied}円）。</span>
-    </div>`).join("") : "";
+      <span><b>${ci.label}サービス適用済</b><br>${periodWord}の${ci.name}のクレカ乗車ご利用額（累計${ci.usedBefore}円）がこの区間分（${ci.portion}円）を含めると上限（${ci.cap}円）を超えるため、この区間のクレカ乗車運賃を ${ci.applied}円 に軽減しています（${ci.usedBefore}円＋${ci.applied}円＝${ci.usedBefore+ci.applied}円）。</span>
+    </div>`;
+  }).join("") : "";
   const legsSection = ccBlock ? "" : `
     <div class="section-header">クレカ乗車運賃の内訳</div>
     <div class="group">
       ${effR.legs.map(l=>`<div class="leg-cell"><span class="op-badge" style="background:${l.color};">${l.op}</span><span class="leg-sec">${l.sec}</span><span class="leg-fare">${l.fare<0?"−"+(-l.fare):l.fare}円</span></div>`).join("")}
     </div>`;
+  /* 福岡エリア（JR九州・西鉄・福岡市営地下鉄）を含む経路には、運賃の内訳画面にベータ版の
+     注意書きを表示し、Googleフォームでの不具合報告に誘導する（§7参照） */
+  const fukuokaBetaNotice = (r.opKeys||[]).some(op=>FUKUOKA_AREA_OPS.has(op)) ? `
+    <div class="warn-box purple">
+      <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="#D9C2FF"/><path d="M9 5 L9 10.5 M9 12.6 L9 13.1" stroke="#5B21B6" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+      <span><b>福岡エリアの運賃はベータ版です</b><br>運賃が間違っていましたか？改善にご協力ください<br><a href="https://docs.google.com/forms/d/e/1FAIpQLSdvt_6S_sGtdFt-O7Y3TjSoyT81rP86zeW_-uNhUHFhXciHFQ/viewform?usp=header" target="_blank" rel="noopener">Googleフォームへ</a></span>
+    </div>` : "";
+  const rnEnabled=rnEligible(r);
   const body=document.getElementById("detail-body");
   body.innerHTML=`
     <div style="padding:4px 4px 12px 4px;">
       <div style="font-size:22px;font-weight:700;">${currentOD.from}${currentOD.fromR?`<span class="st-romaji-lg">${currentOD.fromR}</span>`:""} → ${currentOD.to}${currentOD.toR?`<span class="st-romaji-lg">${currentOD.toR}</span>`:""}</div>
-      <div style="font-size:14px;color:var(--label);margin-top:4px;line-height:1.7;">${viaHTML(r.via, currentOD.from, currentOD.to)}</div>
+      <div style="font-size:14px;color:var(--label);margin-top:4px;line-height:1.7;" id="detail-via">${viaHTML(r.via, currentOD.from, currentOD.to)}</div>
     </div>
     <div class="section-header sh-title-row"><span>運賃比較</span><button class="add-ride-btn" onclick="openAddRide()" aria-label="乗車履歴を追加"><svg width="15" height="15" viewBox="0 0 14 14"><path d="M7 1.5 L7 12.5 M1.5 7 L12.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><span>乗車履歴を追加</span></button></div>
     <div class="group">
@@ -1796,8 +2180,10 @@ function openDetail(i){
     </div>
     ${arriveWarn}
     ${capWarn}
+    ${fukuokaBetaNotice}
     ${legsSection}
     <div class="footnote">${notes.map(n=>"・"+n).join("<br>")}</div>`;
+  if(rnEnabled) rnRenderInto("detail-via", r, currentOD, true);
   history.unshift({from:currentOD.from,to:currentOD.to,via:viaText(r.via, currentOD.from, currentOD.to),cc: ccBlock?null:effR.cc, pt: ccBlock?0:c.pt, card:card.name, blocked:!!ccBlock});
   if(history.length>30) history.pop();
   saveHistory();
@@ -2141,12 +2527,15 @@ function rideCheckSvg(on){
   return on ? `<svg width="18" height="14" viewBox="0 0 18 14"><path d="M2 7.5 L7 12.5 L16 1.5" stroke="#007AFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>` : "";
 }
 /* key: "default"（検索時のカード） / "ic" / "cash" / "card:<id>"（その他で選んだ個別カード）
-   カード（クレカ）決済の場合のみ、本日の1日上限サービス適用後の実質金額を返す（IC・現金は対象外）。
-   route: 実際に充当された経路オブジェクト（クレカ=1日上限適用後、IC・現金=元のr）。cardId: 使用したCARDSのid（クレカのみ）。 */
-function resolveRidePayment(key, r){
+   カード（クレカ）決済の場合のみ、上限サービス（1日上限・1か月上限）適用後の実質金額を返す（IC・現金は対象外）。
+   refDate: 上限判定の基準日（実際に記録する乗車日。省略時は本日）。過去日付で乗車履歴を記録する
+   場合、同じ過去日付に既に記録済みの乗車と合算して上限を判定する必要があるため、本日ではなく
+   その乗車日を基準に判定する（§7参照）。
+   route: 実際に充当された経路オブジェクト（クレカ=上限適用後、IC・現金=元のr）。cardId: 使用したCARDSのid（クレカのみ）。 */
+function resolveRidePayment(key, r, refDate){
   if(key==="ic") return {label:"交通系IC", amount:r.ic, kind:"ic", cardId:null, route:r};
   if(key==="cash") return {label:"現金（きっぷ）", amount:r.cash, kind:"cash", cardId:null, route:r};
-  const effR=effectiveRouteForToday(r);
+  const effR=effectiveRouteForDate(r, refDate);
   if(key==="default"){
     const card=activeCard();
     return {label: card.custom?`その他のクレカ（${customRate}%）`:card.name, amount:effR.cc, kind:"credit", cardId:selectedCardId, route:effR};
@@ -2179,13 +2568,21 @@ function setRideStage(stage){
   rideStage=stage;
   renderRideSheetBody();
 }
+/* 乗車履歴シートで現在選択されている乗車日を返す（「今日」モードなら本日、「今日以外」モードなら
+   date inputの値／rideCustomDateのいずれか）。saveRide()の日付決定ロジックと揃えることで、
+   プレビュー表示と実際に保存される内容の上限判定基準日を一致させる。 */
+function selectedRideDate(){
+  if(rideDateMode==="today") return todayISO();
+  const dateInput=document.getElementById("ride-date-input");
+  return (dateInput&&dateInput.value)||rideCustomDate||todayISO();
+}
 function renderRideSheetBody(){
   const r=currentRoutes[pendingRideRouteIndex], od=currentOD;
   if(!r||!od) return;
   const ccBlocked=!!ccBlockForRoute(od,r);
   const card=activeCard();
-  const effR=ccBlocked?r:effectiveRouteForToday(r);
-  const capSuffix=effR.capApplied&&effR.capApplied.length?"（1日上限サービス適用後）":"";
+  const effR=ccBlocked?r:effectiveRouteForDate(r, selectedRideDate());
+  const capSuffix=(effR.capApplied&&effR.capApplied.length)?`（${[...new Set(effR.capApplied.map(ci=>ci.label))].join("・")}サービス適用後）`:"";
 
   let optsHtml;
   if(rideStage==="main"){
@@ -2237,7 +2634,7 @@ function renderRideSheetBody(){
       <button class="cell" onclick="setRideDateMode('today')"><div style="flex:1;">今日</div><div class="rate-badge">${rideCheckSvg(rideDateMode==="today")}</div></button>
       <button class="cell" onclick="setRideDateMode('custom')"><div style="flex:1;">今日以外</div><div class="rate-badge">${rideCheckSvg(rideDateMode==="custom")}</div></button>
     </div>
-    ${rideDateMode==="custom"?`<div style="padding:12px 16px 0 16px;"><input type="date" id="ride-date-input" value="${rideCustomDate||todayISO()}" onchange="rideCustomDate=this.value;" style="width:100%;padding:11px;border-radius:10px;border:0.5px solid var(--gray3);font-family:inherit;font-size:16px;background:#fff;color:var(--label);"></div>`:""}
+    ${rideDateMode==="custom"?`<div style="padding:12px 16px 0 16px;"><input type="date" id="ride-date-input" value="${rideCustomDate||todayISO()}" onchange="rideCustomDate=this.value; renderRideSheetBody();" style="width:100%;padding:11px;border-radius:10px;border:0.5px solid var(--gray3);font-family:inherit;font-size:16px;background:#fff;color:var(--label);"></div>`:""}
   `;
 }
 function selectRidePayment(key){
@@ -2252,9 +2649,10 @@ function setRideDateMode(mode){
 function saveRide(){
   const od=currentOD, r=currentRoutes[pendingRideRouteIndex];
   if(!od||!r) return;
-  const {label:paymentLabel, amount, kind:paymentKind, cardId, route:effRouteUsed} = resolveRidePayment(selectedRidePayment, r);
-  const dateInput=document.getElementById("ride-date-input");
-  const date = rideDateMode==="today" ? todayISO() : ((dateInput&&dateInput.value)||rideCustomDate||todayISO());
+  /* 上限判定は「その乗車日」を基準に行う必要があるため、先に乗車日を確定させてから
+     resolveRidePayment()に渡す（同じ過去日付への複数回登録で上限が正しく効くようにするため） */
+  const date = selectedRideDate();
+  const {label:paymentLabel, amount, kind:paymentKind, cardId, route:effRouteUsed} = resolveRidePayment(selectedRidePayment, r, date);
   /* クレカ決済の場合のみ、実際に充当された（1日上限適用後の）社局別金額を記録し、以後の上限判定に使う */
   const capUsage = paymentKind==="credit" ? capUsageForRoute(effRouteUsed) : null;
   /* 東武運賃（月次のポイント計算用。1日上限の対象外なので元のrの値をそのまま使う）と、

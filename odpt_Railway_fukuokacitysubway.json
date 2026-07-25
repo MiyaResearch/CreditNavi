@@ -1,0 +1,307 @@
+[
+  {
+    "@type": "odpt:Railway",
+    "dc:title": "空港線",
+    "odpt:color": "#F39800",
+    "odpt:lineCode": "K",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "owl:sameAs": "odpt.Railway:FukuokaCitySubway.Airport",
+    "odpt:railwayTitle": {
+      "ja": "空港線"
+    },
+    "odpt:stationOrder": [
+      {
+        "odpt:index": 1,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Meinohama",
+        "odpt:stationTitle": {
+          "ja": "姪浜"
+        }
+      },
+      {
+        "odpt:index": 2,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Muromi",
+        "odpt:stationTitle": {
+          "ja": "室見"
+        }
+      },
+      {
+        "odpt:index": 3,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Fujisaki",
+        "odpt:stationTitle": {
+          "ja": "藤崎"
+        }
+      },
+      {
+        "odpt:index": 4,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Nishijin",
+        "odpt:stationTitle": {
+          "ja": "西新"
+        }
+      },
+      {
+        "odpt:index": 5,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Tojinmachi",
+        "odpt:stationTitle": {
+          "ja": "唐人町"
+        }
+      },
+      {
+        "odpt:index": 6,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Ohorikoen",
+        "odpt:stationTitle": {
+          "ja": "大濠公園"
+        }
+      },
+      {
+        "odpt:index": 7,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Akasaka",
+        "odpt:stationTitle": {
+          "ja": "赤坂"
+        }
+      },
+      {
+        "odpt:index": 8,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Tenjin",
+        "odpt:stationTitle": {
+          "ja": "天神"
+        }
+      },
+      {
+        "odpt:index": 9,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.NakasuKawabata",
+        "odpt:stationTitle": {
+          "ja": "中洲川端"
+        }
+      },
+      {
+        "odpt:index": 10,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Gion",
+        "odpt:stationTitle": {
+          "ja": "祇園"
+        }
+      },
+      {
+        "odpt:index": 11,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.Hakata",
+        "odpt:stationTitle": {
+          "ja": "博多"
+        }
+      },
+      {
+        "odpt:index": 12,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.HigashiHie",
+        "odpt:stationTitle": {
+          "ja": "東比恵"
+        }
+      },
+      {
+        "odpt:index": 13,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Airport.FukuokaKuko",
+        "odpt:stationTitle": {
+          "ja": "福岡空港"
+        }
+      }
+    ]
+  },
+  {
+    "@type": "odpt:Railway",
+    "dc:title": "箱崎線",
+    "odpt:color": "#0072BC",
+    "odpt:lineCode": "H",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "owl:sameAs": "odpt.Railway:FukuokaCitySubway.Hakozaki",
+    "odpt:railwayTitle": {
+      "ja": "箱崎線"
+    },
+    "odpt:stationOrder": [
+      {
+        "odpt:index": 1,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Hakozaki.NakasuKawabata",
+        "odpt:stationTitle": {
+          "ja": "中洲川端"
+        }
+      },
+      {
+        "odpt:index": 2,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Hakozaki.Gofukumachi",
+        "odpt:stationTitle": {
+          "ja": "呉服町"
+        }
+      },
+      {
+        "odpt:index": 3,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Hakozaki.ChiyoKenchoguchi",
+        "odpt:stationTitle": {
+          "ja": "千代県庁口"
+        }
+      },
+      {
+        "odpt:index": 4,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Hakozaki.MaidashiKyudaiByoinmae",
+        "odpt:stationTitle": {
+          "ja": "馬出九大病院前"
+        }
+      },
+      {
+        "odpt:index": 5,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Hakozaki.HakozakiKyudaimae",
+        "odpt:stationTitle": {
+          "ja": "箱崎九大前"
+        }
+      },
+      {
+        "odpt:index": 6,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Hakozaki.HakozakiMiyamae",
+        "odpt:stationTitle": {
+          "ja": "箱崎宮前"
+        }
+      },
+      {
+        "odpt:index": 7,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Hakozaki.Kaizuka",
+        "odpt:stationTitle": {
+          "ja": "貝塚"
+        }
+      }
+    ]
+  },
+  {
+    "@type": "odpt:Railway",
+    "dc:title": "七隈線",
+    "odpt:color": "#00A960",
+    "odpt:lineCode": "N",
+    "odpt:operator": "odpt.Operator:FukuokaCitySubway",
+    "owl:sameAs": "odpt.Railway:FukuokaCitySubway.Nanakuma",
+    "odpt:railwayTitle": {
+      "ja": "七隈線"
+    },
+    "odpt:stationOrder": [
+      {
+        "odpt:index": 1,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Hashimoto",
+        "odpt:stationTitle": {
+          "ja": "橋本"
+        }
+      },
+      {
+        "odpt:index": 2,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Jiromaru",
+        "odpt:stationTitle": {
+          "ja": "次郎丸"
+        }
+      },
+      {
+        "odpt:index": 3,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Kamo",
+        "odpt:stationTitle": {
+          "ja": "賀茂"
+        }
+      },
+      {
+        "odpt:index": 4,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Noke",
+        "odpt:stationTitle": {
+          "ja": "野芥"
+        }
+      },
+      {
+        "odpt:index": 5,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Umebayashi",
+        "odpt:stationTitle": {
+          "ja": "梅林"
+        }
+      },
+      {
+        "odpt:index": 6,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Fukudaimae",
+        "odpt:stationTitle": {
+          "ja": "福大前"
+        }
+      },
+      {
+        "odpt:index": 7,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Nanakuma",
+        "odpt:stationTitle": {
+          "ja": "七隈"
+        }
+      },
+      {
+        "odpt:index": 8,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Kanayama",
+        "odpt:stationTitle": {
+          "ja": "金山"
+        }
+      },
+      {
+        "odpt:index": 9,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Chayama",
+        "odpt:stationTitle": {
+          "ja": "茶山"
+        }
+      },
+      {
+        "odpt:index": 10,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Befu",
+        "odpt:stationTitle": {
+          "ja": "別府"
+        }
+      },
+      {
+        "odpt:index": 11,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Ropponmatsu",
+        "odpt:stationTitle": {
+          "ja": "六本松"
+        }
+      },
+      {
+        "odpt:index": 12,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Sakurazaka",
+        "odpt:stationTitle": {
+          "ja": "桜坂"
+        }
+      },
+      {
+        "odpt:index": 13,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.YakuinOdori",
+        "odpt:stationTitle": {
+          "ja": "薬院大通"
+        }
+      },
+      {
+        "odpt:index": 14,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Yakuin",
+        "odpt:stationTitle": {
+          "ja": "薬院"
+        }
+      },
+      {
+        "odpt:index": 15,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.WatanabeDori",
+        "odpt:stationTitle": {
+          "ja": "渡辺通"
+        }
+      },
+      {
+        "odpt:index": 16,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.TenjinMinami",
+        "odpt:stationTitle": {
+          "ja": "天神南"
+        }
+      },
+      {
+        "odpt:index": 17,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.KushidaJinjamae",
+        "odpt:stationTitle": {
+          "ja": "櫛田神社前"
+        }
+      },
+      {
+        "odpt:index": 18,
+        "odpt:station": "odpt.Station:FukuokaCitySubway.Nanakuma.Hakata",
+        "odpt:stationTitle": {
+          "ja": "博多"
+        }
+      }
+    ]
+  }
+]
