@@ -563,4 +563,6 @@ LS_KEYS = {
 
 35. （2026-07-25）福岡エリア3事業者（fukuokacitysubway・nishitetsu・jrkyushu、`FUKUOKA_AREA_OPS`）のいずれかを含む経路の運賃の内訳画面に、ベータ版であることの注意書き（紫色の`warn-box.purple`、太字「福岡エリアの運賃はベータ版です」＋不具合報告用Googleフォームへのリンク）を新設。表示位置は運賃比較の3つの値（現金・IC・クレカ）と「クレカ乗車運賃の内訳」の間（既存の`arriveWarn`・`capWarn`と同じ並び）。
 
+36. （2026-07-25）不具合修正: 経路案内レイヤー（§12a）がGitHub Pages上のデプロイ環境でのみ全く表示されない不具合を、Claude in Chromeで本番サイト（https://miyaresearch.github.io/CreditNavi/）を直接検証して特定。原因は`rnEnsureLoaded()`がメトロ・都営・福岡市営地下鉄の計6ファイルを`Promise.all()`で一括取得しており、そのうち`odpt_Station_metro.json`・`odpt_Station_toei.json`・`odpt_Railway_metro.json`・`odpt_Railway_toei.json`の4ファイルが本番環境で404（未デプロイ、要確認）だったため、1件でも失敗すると`Promise.all()`全体が失敗し、福岡市営地下鉄側のファイル（200で正常取得できていた）まで含めて経路案内が完全に無効化されていたこと。`fare.json`・`sw.js`・福岡市営地下鉄の2ファイル自体は本番環境で正しく配信されていることも確認済み（データ側の問題ではない）。`rnEnsureLoaded()`を`Promise.allSettled()`に変更し、ファイル単位で成否を分離。一部の事業者のファイルが欠落・失敗しても、取得できた事業者分だけで`rnGraph`を部分的に構築し、経路案内を有効化するように修正（全滅時のみ無効化）。Node.jsでの机上検証により、メトロ・都営の2事業者4ファイルが404でも福岡市営地下鉄の経路案内は正常に機能することを確認。なお、メトロ・都営の経路案内を本番で有効化するには、`odpt_Station_metro.json`・`odpt_Station_toei.json`・`odpt_Railway_metro.json`・`odpt_Railway_toei.json`の4ファイルをGitHubリポジトリに実際にpush/コミットする必要がある（ローカルには存在するが本番環境に反映されていない）。
+
 （この仕様書は会話時点の実装に基づく。実際の値は最新の index.html / fare.json を正とすること。）

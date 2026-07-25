@@ -645,7 +645,7 @@ let GROUPS=[];          // stationGroups（存在する事業者のみ）
 let JUNCTIONS=[];       // 経由駅指定用: 境界駅（GROUPSの表示用一覧）
 let DISCOUNTS=[];       // 割引テーブル
 let LINE=null;          // tx用
-const APP_VERSION="2026-07-25 19:00"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
+const APP_VERSION="2026-07-23 21:10"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
 (function(){ const el=document.getElementById("app-footnote"); if(el) el.insertAdjacentHTML("beforeend", `<span class="ver">version:${APP_VERSION}</span>`); })();
 let NOTICES=[];          // お知らせ一覧（先頭に更新案内が入る場合あり）
 let noticeRotateTimer=null;
@@ -1330,34 +1330,40 @@ async function rnEnsureLoaded(){
   if(rnGraph) return true;
   if(rnLoadPromise) return rnLoadPromise;
   rnLoadPromise=(async()=>{
-    try{
-      const files=["odpt_Station_metro.json","odpt_Station_toei.json","odpt_Station_fukuokacitysubway.json",
-                   "odpt_Railway_metro.json","odpt_Railway_toei.json","odpt_Railway_fukuokacitysubway.json"];
-      const [sm,st,sf,rm,rt,rf]=await Promise.all(files.map(f=>fetch(f).then(res=>{
-        if(!res.ok) throw new Error(f+" の読み込みに失敗（HTTP "+res.status+"）。index.htmlと同じフォルダに置かれているか確認してください。");
-        return res.json();
-      }).catch(err=>{ console.error("[路線案内] "+f+" の取得に失敗:", err); throw err; })));
-      const stations=[...sm, ...st, ...sf];
-      const railways=[...rm, ...rt, ...rf];
-      rnStationById={}; stations.forEach(s=>rnStationById[s["owl:sameAs"]]=s);
-      rnRailwayById={}; railways.forEach(r=>rnRailwayById[r["owl:sameAs"]]=r);
-      rnLineColorByKey={}; rnIconSrcByKey={}; rnCodeByKey={}; rnTitleByKey={};
-      railways.forEach(r=>{
-        const code=r["odpt:lineCode"]||r["dc:title"];
-        const key=rnKey(r["odpt:operator"], code);
-        rnCodeByKey[key]=code;
-        rnTitleByKey[key]=(r["odpt:railwayTitle"]&&r["odpt:railwayTitle"]["ja"])||r["dc:title"]||code;
-        rnLineColorByKey[key]=r["odpt:color"]||RN_FALLBACK_COLOR;
-        const iconFile=(r["odpt:operator"]===RN_OPERATOR_URI.fukuokacitysubway) ? FK_ICON_FILE_BY_CODE[code] : RN_ICON_FILE_BY_CODE[code];
-        if(iconFile) rnIconSrcByKey[key]=encodeURI(RN_ICON_DIR+iconFile);
-      });
-      rnGraph=rnBuildGraph(stations, railways);
-      return true;
-    }catch(e){
-      console.error("[路線案内] 読み込みに失敗しました:", e);
-      rnLoadPromise=null; // 失敗時は次回また読み込みを試みる
+    // ファイル単位で成否を分離する: いずれかの事業者のファイルが欠落・取得失敗しても
+    // (例: デプロイ環境に一部ファイルが未配置)、取得できた事業者分だけで路線案内を
+    // 部分的に有効化する。1事業者でも失敗したら全滅、という挙動は避ける。
+    const files=["odpt_Station_metro.json","odpt_Station_toei.json","odpt_Station_fukuokacitysubway.json",
+                 "odpt_Railway_metro.json","odpt_Railway_toei.json","odpt_Railway_fukuokacitysubway.json"];
+    const results=await Promise.allSettled(files.map(f=>fetch(f).then(res=>{
+      if(!res.ok) throw new Error(f+" の読み込みに失敗（HTTP "+res.status+"）。index.htmlと同じフォルダに置かれているか確認してください。");
+      return res.json();
+    })));
+    results.forEach((res,i)=>{
+      if(res.status==="rejected") console.error("[路線案内] "+files[i]+" の取得に失敗:", res.reason);
+    });
+    const dataOf=(i)=> results[i].status==="fulfilled" ? results[i].value : [];
+    const stations=[...dataOf(0), ...dataOf(1), ...dataOf(2)];
+    const railways=[...dataOf(3), ...dataOf(4), ...dataOf(5)];
+    if(!stations.length || !railways.length){
+      // 全滅時のみ失敗扱いとし、次回また読み込みを試みられるようにする
+      rnLoadPromise=null;
       return false;
     }
+    rnStationById={}; stations.forEach(s=>rnStationById[s["owl:sameAs"]]=s);
+    rnRailwayById={}; railways.forEach(r=>rnRailwayById[r["owl:sameAs"]]=r);
+    rnLineColorByKey={}; rnIconSrcByKey={}; rnCodeByKey={}; rnTitleByKey={};
+    railways.forEach(r=>{
+      const code=r["odpt:lineCode"]||r["dc:title"];
+      const key=rnKey(r["odpt:operator"], code);
+      rnCodeByKey[key]=code;
+      rnTitleByKey[key]=(r["odpt:railwayTitle"]&&r["odpt:railwayTitle"]["ja"])||r["dc:title"]||code;
+      rnLineColorByKey[key]=r["odpt:color"]||RN_FALLBACK_COLOR;
+      const iconFile=(r["odpt:operator"]===RN_OPERATOR_URI.fukuokacitysubway) ? FK_ICON_FILE_BY_CODE[code] : RN_ICON_FILE_BY_CODE[code];
+      if(iconFile) rnIconSrcByKey[key]=encodeURI(RN_ICON_DIR+iconFile);
+    });
+    rnGraph=rnBuildGraph(stations, railways);
+    return true;
   })();
   return rnLoadPromise;
 }
