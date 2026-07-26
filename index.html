@@ -3,7 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>クレカ乗車運賃ナビ</title>
+<title>クレカ乗車運賃ナビ【日本で唯一のクレカ乗車の運賃が分かるサービス】</title>
+<meta name="description" content="三井住友カード(NL)・Olive・JCB CARD Sなどのタッチ決済「クレカ乗車」の運賃を、交通系IC・きっぷと比較。ポイント還元を含めた実質負担額まで分かる、日本で唯一のクレカ乗車運賃比較サービス。東京メトロ・都営地下鉄・福岡市営地下鉄など対応。">
+<meta name="keywords" content="クレカ乗車,タッチ決済乗車,クレジットカード 電車,交通系IC,運賃比較,ポイント還元,三井住友カード NL,Olive,JCB CARD S,東京メトロ,都営地下鉄,福岡市営地下鉄">
+<link rel="canonical" href="https://miyaresearch.github.io/CreditNavi/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="クレカ乗車運賃ナビ">
+<meta property="og:title" content="クレカ乗車運賃ナビ【日本で唯一のクレカ乗車の運賃が分かるサービス】">
+<meta property="og:description" content="クレカ乗車（タッチ決済乗車）の運賃を交通系IC・きっぷと比較。ポイント還元込みの実質負担額まで分かるアプリ。">
+<meta property="og:url" content="https://miyaresearch.github.io/CreditNavi/">
+<meta property="og:image" content="https://miyaresearch.github.io/CreditNavi/%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3%E7%94%BB%E5%83%8F/icon-512.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="クレカ乗車運賃ナビ【日本で唯一のクレカ乗車の運賃が分かるサービス】">
+<meta name="twitter:description" content="クレカ乗車（タッチ決済乗車）の運賃を交通系IC・きっぷと比較。ポイント還元込みの実質負担額まで分かるアプリ。">
+<meta name="twitter:image" content="https://miyaresearch.github.io/CreditNavi/%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3%E7%94%BB%E5%83%8F/icon-512.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2f7de1">
 <link rel="icon" href="アイコン画像/favicon.ico" sizes="any">
@@ -407,6 +421,19 @@
   .notice-body img{max-width:100%;border-radius:10px;display:block;margin:12px 0;}
   .notice-body a{color:var(--blue);text-decoration:underline;word-break:break-all;}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "クレカ乗車運賃ナビ",
+  "url": "https://miyaresearch.github.io/CreditNavi/",
+  "description": "三井住友カード(NL)・Olive・JCB CARD Sなどのタッチ決済「クレカ乗車」の運賃を、交通系IC・きっぷと比較。ポイント還元を含めた実質負担額まで分かる、日本で唯一のクレカ乗車運賃比較サービス。",
+  "applicationCategory": "TravelApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" }
+}
+</script>
 </head>
 <body>
 <div id="app">
@@ -645,7 +672,7 @@ let GROUPS=[];          // stationGroups（存在する事業者のみ）
 let JUNCTIONS=[];       // 経由駅指定用: 境界駅（GROUPSの表示用一覧）
 let DISCOUNTS=[];       // 割引テーブル
 let LINE=null;          // tx用
-const APP_VERSION="2026-07-25 19:00"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
+const APP_VERSION="2026-07-23 21:10"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
 (function(){ const el=document.getElementById("app-footnote"); if(el) el.insertAdjacentHTML("beforeend", `<span class="ver">version:${APP_VERSION}</span>`); })();
 let NOTICES=[];          // お知らせ一覧（先頭に更新案内が入る場合あり）
 let noticeRotateTimer=null;
