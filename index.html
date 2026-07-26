@@ -2087,11 +2087,27 @@ function viaText(via, from, to){
   return tokens.map(t=> t.sta ? t.sta : `[${t.sym}]${t.name}`).join(" → ");
 }
 
+/* 検索区間の匿名集計（駅slugのみ送信・IP/Cookie/個人情報は一切扱わない）。
+   未デプロイの間はSEARCH_LOG_ENDPOINTが空文字のため何もしない。 */
+const SEARCH_LOG_ENDPOINT = "https://crecanavisearch.soraodyssey.workers.dev/";
+function logSearchEvent(fromSlug, toSlug){
+  if(!SEARCH_LOG_ENDPOINT || !fromSlug || !toSlug) return;
+  try{
+    fetch(SEARCH_LOG_ENDPOINT, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({from:fromSlug, to:toSlug}),
+      keepalive:true
+    }).catch(()=>{});
+  }catch(e){}
+}
+
 function doSearch(){
   currentRoutes=buildRoutes(fromIdx,toIdx,selectedViaGroupId);
   currentOD={from:STS[fromIdx].name, to:STS[toIdx].name,
              fromR:romajiOf(STS[fromIdx]), toR:romajiOf(STS[toIdx]),
              fromSt:STS[fromIdx], toSt:STS[toIdx]};
+  logSearchEvent(STS[fromIdx].slug, STS[toIdx].slug);
   if(!currentRoutes.length){
     showAlert("経路が見つかりません","この駅の組合せでは運賃を計算できませんでした。データが部分的な可能性があります。",[{label:"OK",bold:true}]);
     return;
