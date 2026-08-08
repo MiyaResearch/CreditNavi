@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>東京メトロ きっぷ運賃表（プレビュー）</title>
+<style>
+  :root{
+    --label:#1C1C1E; --label2:#8E8E93; --gray3:#C7C7CC; --gray6:#F2F2F7;
+    --blue:#007AFF; --paper:#F7F4EC; --child:#C0392B; --here:#EFC65B;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--paper);color:var(--label);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;}
+  #bar{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(255,255,255,.94);
+    backdrop-filter:blur(12px);border-bottom:.5px solid var(--gray3);
+    padding:calc(env(safe-area-inset-top) + 8px) 12px 8px;display:flex;gap:8px;align-items:center;}
+  #bar .ttl{font-size:13px;color:var(--label2);flex-shrink:0;}
+  #origin{flex:1;font:inherit;font-size:16px;font-weight:600;padding:9px 10px;
+    border:.5px solid var(--gray3);border-radius:10px;background:var(--gray6);color:var(--label);}
+  #stage{position:absolute;inset:0;touch-action:none;overflow:hidden;}
+  /* ベースマップ画像と運賃レイヤーを同じ wrapper に入れ、同じ transform で動かす。
+     両者は同一の座標系（viewBox）なので、拡大しても位置がずれない。 */
+  #wrap{position:absolute;top:0;left:0;transform-origin:0 0;}
+  #wrap img{display:block;width:100%;height:100%;}
+  #fares{position:absolute;top:0;left:0;width:100%;height:100%;}
+  #legend{position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom) + 10px);z-index:10;
+    background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border:.5px solid var(--gray3);
+    border-radius:12px;padding:9px 12px;font-size:11px;line-height:1.75;color:var(--label2);max-width:62vw;}
+  #legend b{color:var(--label);} #legend i{color:var(--child);font-style:normal;}
+  #home{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 12px);z-index:10;
+    width:46px;height:46px;border-radius:23px;border:.5px solid var(--gray3);background:rgba(255,255,255,.95);
+    backdrop-filter:blur(12px);font:inherit;font-size:11px;font-weight:600;color:var(--blue);cursor:pointer;}
+  #tip{position:fixed;z-index:20;background:#fff;border:.5px solid var(--gray3);border-radius:12px;
+    box-shadow:0 8px 28px rgba(0,0,0,.16);padding:11px 13px;font-size:13px;display:none;min-width:190px;}
+  #tip .r{font-size:15px;font-weight:700;margin-bottom:3px;}
+  #tip .f{color:var(--label2);margin-bottom:8px;}
+  #tip button{width:100%;font:inherit;font-size:13px;padding:8px;border:0;border-radius:8px;
+    background:var(--blue);color:#fff;font-weight:600;cursor:pointer;}
+  #msg{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;
+    text-align:center;font-size:14px;color:var(--label2);background:var(--paper);z-index:30;}
+</style>
+</head>
+<body>
+<div id="bar">
+  <span class="ttl">当駅</span>
+  <select id="origin"></select>
+</div>
+<div id="stage">
+  <div id="wrap">
+    <img id="basemap" alt="東京メトロ 路線図" src="運賃表ベース.svg">
+    <svg id="fares" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+</div>
+<div id="legend">
+  大きい数字は<b>きっぷ運賃</b>、<i>赤い小さな数字</i>は<b>IC運賃</b>（おとな）です。<br>
+  綾瀬〜北千住は160円（IC155円）、目黒〜中目黒はIC227円の特例です。
+</div>
+<button id="home">当駅へ</button>
+<div id="tip"></div>
+<div id="msg">運賃表を読み込んでいます…</div>
+
+<script>
+const BW=76, BH=48;
+let MAP=null, ST={}, FIDX={}, FM=null, N=0, origin=null;
+let tx=0, ty=0, sc=1;
+
+(async function init(){
+  try{
+    const [m,f]=await Promise.all([
+      fetch("map_tokyometro.json").then(r=>r.json()),
+      fetch("fare.json").then(r=>r.json())
+    ]);
+    MAP=m;
+    const op=f.operators.find(o=>o.operator==="tokyometro");
+    N=op.stations.length;
+    op.stations.forEach(s=>FIDX[s.slug]=s.idx);
+    /* 10,296件の運賃ペアを密行列(Int16Array・約81KB)に一度だけ展開しておく。
+       当駅を切り替えるたびに配列を線形探索すると重いため。 */
+    FM=new Int16Array(N*N*2);
+    op.fares.forEach(([a,b,c,i])=>{
+      FM[(a*N+b)*2]=c; FM[(a*N+b)*2+1]=i;
+      FM[(b*N+a)*2]=c; FM[(b*N+a)*2+1]=i;
+    });
+    MAP.stations.forEach(s=>ST[s.slug]=s);
+    const vb=MAP.viewBox;
+    const wrap=document.getElementById("wrap");
+    wrap.style.width=vb[2]+"px"; wrap.style.height=vb[3]+"px";
+    const fs=document.getElementById("fares");
+    fs.setAttribute("viewBox",vb.join(" "));
+    buildSelect(); buildFareLayer();
+    setOrigin(localStorage.getItem("ftOrigin")||"Ginza");
+    centerOnOrigin();
+    document.getElementById("msg").style.display="none";
+  }catch(e){
+    document.getElementById("msg").textContent=
+      "読み込みに失敗しました（"+e.message+"）。運賃表ベース.svg / map_tokyometro.json / fare.json を index.html と同じフォルダに置き、ローカルサーバー経由で開いてください。";
+  }
+})();
+
+function buildSelect(){
+  const sel=document.getElementById("origin");
+  MAP.stations.slice().sort((a,b)=>a.name.localeCompare(b.name,"ja"))
+    .forEach(s=>{ const o=document.createElement("option"); o.value=s.slug; o.textContent=s.name; sel.appendChild(o); });
+  sel.onchange=()=>{ setOrigin(sel.value); centerOnOrigin(); };
+}
+function el(t,a){ const e=document.createElementNS("http://www.w3.org/2000/svg",t);
+  for(const k in a) e.setAttribute(k,a[k]); return e; }
+
+/* ベースマップ側にバッジの枠と駅名が焼き込まれているので、
+   ここで作るのは「当駅の塗り」と「運賃の数字」だけ。 */
+function buildFareLayer(){
+  const g=document.getElementById("fares");
+  MAP.stations.forEach(s=>{
+    const hit=el("rect",{x:s.x-BW/2,y:s.y-BH/2,width:BW,height:BH,
+      rx:s.interchange?10:24,fill:"#fff","fill-opacity":0,style:"cursor:pointer"});
+    const n1=el("text",{x:s.x,y:s.y+4,"text-anchor":"middle","font-size":27,"font-weight":"700",
+      fill:"#1C1C1E","font-family":"inherit"});
+    const n2=el("text",{x:s.x,y:s.y+19,"text-anchor":"middle","font-size":14,
+      fill:"#C0392B","font-family":"inherit"});
+    hit.onclick=(ev)=>onTap(ev,s.slug);
+    g.append(hit,n1,n2);
+    s._hit=hit; s._n1=n1; s._n2=n2;
+  });
+}
+
+function setOrigin(slug){
+  if(!ST[slug]) slug="Ginza";
+  origin=slug; localStorage.setItem("ftOrigin",slug);
+  document.getElementById("origin").value=slug;
+  const oi=FIDX[slug];
+  MAP.stations.forEach(s=>{
+    if(s.slug===slug){
+      s._hit.setAttribute("fill-opacity",1);
+      s._hit.setAttribute("fill","var(--here)");
+      s._n1.setAttribute("font-size",26); s._n1.setAttribute("y",s.y+9);
+      s._n1.textContent="当駅"; s._n2.textContent=""; return;
+    }
+    s._hit.setAttribute("fill-opacity",0);
+    const k=(oi*N+FIDX[s.slug])*2, c=FM[k], ic=FM[k+1];
+    if(c===0){   /* 同一駅として扱われる区間（赤坂見附↔永田町 など12組） */
+      s._n1.setAttribute("font-size",19); s._n1.setAttribute("y",s.y+7);
+      s._n1.textContent="同一駅"; s._n2.textContent=""; return;
+    }
+    s._n1.setAttribute("font-size",27); s._n1.setAttribute("y",s.y+4);
+    s._n1.textContent=c; s._n2.textContent=ic;
+  });
+  hideTip();
+}
+
+/* ---- pan / zoom ---- */
+const stage=document.getElementById("stage"), wrap=document.getElementById("wrap");
+function apply(){ wrap.style.transform=`translate(${tx}px,${ty}px) scale(${sc})`; }
+function centerOnOrigin(){
+  const s=ST[origin]; if(!s) return;
+  sc=Math.max(0.30, Math.min(0.9, window.innerWidth/1500));
+  tx=window.innerWidth/2 - s.x*sc; ty=window.innerHeight/2 - s.y*sc; apply();
+}
+document.getElementById("home").onclick=centerOnOrigin;
+let pts=new Map(), last=null;
+stage.addEventListener("pointerdown",e=>{ stage.setPointerCapture(e.pointerId);
+  pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); last=null; });
+stage.addEventListener("pointermove",e=>{
+  if(!pts.has(e.pointerId)) return;
+  pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const a=[...pts.values()];
+  if(a.length===1){
+    if(last&&last.x!==undefined){ tx+=a[0].x-last.x; ty+=a[0].y-last.y; }
+    last={x:a[0].x,y:a[0].y};
+  }else if(a.length>=2){
+    const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+    const cx=(a[0].x+a[1].x)/2, cy=(a[0].y+a[1].y)/2;
+    if(last&&last.d){
+      const ns=Math.min(3,Math.max(0.18,sc*(d/last.d)));
+      tx=cx-(cx-tx)*(ns/sc); ty=cy-(cy-ty)*(ns/sc); sc=ns;
+    }
+    last={d:d};
+  }
+  apply();
+});
+["pointerup","pointercancel"].forEach(t=>stage.addEventListener(t,e=>{ pts.delete(e.pointerId); last=null; }));
+stage.addEventListener("wheel",e=>{ e.preventDefault();
+  const ns=Math.min(3,Math.max(0.18,sc*Math.exp(-e.deltaY*0.0015)));
+  tx=e.clientX-(e.clientX-tx)*(ns/sc); ty=e.clientY-(e.clientY-ty)*(ns/sc); sc=ns; apply();
+},{passive:false});
+window.addEventListener("resize",()=>{ if(origin) centerOnOrigin(); });
+
+/* ---- タップ ---- */
+function onTap(ev,slug){
+  ev.stopPropagation();
+  if(slug===origin) return;
+  const k=(FIDX[origin]*N+FIDX[slug])*2, c=FM[k], ic=FM[k+1];
+  const t=document.getElementById("tip");
+  t.innerHTML=`<div class="r">${ST[origin].name} → ${ST[slug].name}</div>`+
+    (c===0?`<div class="f">同一駅として扱われる区間です</div>`
+          :`<div class="f">きっぷ ${c}円 ／ IC ${ic}円</div>`)+
+    `<button>この駅を当駅にする</button>`;
+  t.querySelector("button").onclick=()=>{ setOrigin(slug); centerOnOrigin(); };
+  t.style.display="block";
+  t.style.left=Math.min(ev.clientX+10, window.innerWidth-t.offsetWidth-10)+"px";
+  t.style.top=Math.min(ev.clientY+10, window.innerHeight-t.offsetHeight-10)+"px";
+}
+function hideTip(){ document.getElementById("tip").style.display="none"; }
+stage.addEventListener("pointerdown",hideTip);
+</script>
+</body>
+</html>

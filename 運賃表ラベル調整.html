@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>運賃表 駅名ラベル調整ツール</title>
+<style>
+  :root{ --paper:#F7F4EC; --ink:#1C1C1E; --sub:#8E8E93; --line:#C7C7CC; --blue:#007AFF; --child:#C0392B; --here:#EFC65B; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);
+    font:14px/1.5 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI","Noto Sans JP",sans-serif;}
+  #top{position:fixed;inset:0 0 auto 0;height:52px;z-index:20;display:flex;align-items:center;gap:10px;
+    padding:0 12px;background:#fff;border-bottom:1px solid var(--line);}
+  #top b{font-size:14px;}
+  button{font:inherit;padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;}
+  button:hover{background:#F2F2F7;}
+  button.pri{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600;}
+  button.pri:hover{filter:brightness(1.08);}
+  input[type=search],select{font:inherit;padding:6px 9px;border:1px solid var(--line);border-radius:8px;}
+  label.chk{display:flex;align-items:center;gap:5px;color:var(--sub);cursor:pointer;user-select:none;}
+  #stage{position:absolute;inset:52px 0 34px 0;overflow:hidden;background:var(--paper);cursor:grab;touch-action:none;}
+  #stage.panning{cursor:grabbing;}
+  #wrap{position:absolute;top:0;left:0;transform-origin:0 0;}
+  #status{position:fixed;inset:auto 0 0 0;height:34px;z-index:20;display:flex;align-items:center;gap:14px;
+    padding:0 12px;background:#fff;border-top:1px solid var(--line);color:var(--sub);font-size:12px;}
+  #status b{color:var(--ink);}
+  .lbl{cursor:move;}
+  .lbl.sel .hit{stroke:var(--blue);stroke-width:2;fill:rgba(0,122,255,.10);}
+  .lbl.bad .hit{stroke:#FF3B30;stroke-width:2;fill:rgba(255,59,48,.12);}
+  .lbl.moved .txt{fill:#0B6BCB;}
+  .hit{fill:transparent;stroke:none;}
+  #help{position:fixed;right:12px;bottom:44px;z-index:20;max-width:290px;background:rgba(255,255,255,.97);
+    border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--sub);
+    box-shadow:0 6px 20px rgba(0,0,0,.08);}
+  #help b{color:var(--ink);} #help kbd{background:#F2F2F7;border:1px solid var(--line);border-radius:4px;padding:0 4px;font-size:11px;}
+  #msg{position:fixed;inset:52px 0 34px 0;display:flex;align-items:center;justify-content:center;
+    padding:24px;text-align:center;color:var(--sub);background:var(--paper);z-index:15;}
+</style>
+</head>
+<body>
+<div id="top">
+  <b>駅名ラベル調整</b>
+  <input type="search" id="find" placeholder="駅名で探す" style="width:150px;">
+  <select id="origin" title="当駅（運賃の見え方確認用）"></select>
+  <label class="chk"><input type="checkbox" id="snap" checked> 2px単位</label>
+  <label class="chk"><input type="checkbox" id="showbad" checked> 重なりを赤表示</label>
+  <span style="flex:1"></span>
+  <button id="undo" title="Ctrl+Z">元に戻す</button>
+  <button id="resetAll">全部を自動配置に戻す</button>
+  <button class="pri" id="save">2つのファイルを書き出す</button>
+</div>
+<div id="stage"><div id="wrap"></div></div>
+<div id="status">
+  <span>選択中: <b id="cur">—</b></span>
+  <span>dx <b id="cdx">–</b> / dy <b id="cdy">–</b> / 揃え <b id="can">–</b></span>
+  <span>動かした駅: <b id="ccnt">0</b></span>
+  <span>重なり: <b id="cbad">0</b></span>
+</div>
+<div id="help">
+  <b>操作</b><br>
+  ・駅名を<b>ドラッグ</b>して移動（左右に大きくずらすと自動で左揃え／右揃えに切り替わります）<br>
+  ・駅名を<b>ダブルクリック</b>でその駅だけ元の位置に戻す<br>
+  ・選択中に<b>矢印キー</b>で1pxずつ微調整（<kbd>Shift</kbd>で10px）<br>
+  ・<kbd>A</kbd>で揃え方（中央／左／右）を切り替え<br>
+  ・ドラッグ（背景）でスクロール、ホイールで拡大縮小
+</div>
+<div id="msg">読み込んでいます…</div>
+
+<script>
+const BW=76, BH=48, FS=24, NS="http://www.w3.org/2000/svg";
+let MAP=null, ST={}, AUTO={}, sel=null, FM=null, FIDX={}, N=0, origin=null;
+let tx=0, ty=0, sc=0.5;
+const undoStack=[];
+
+const el=(t,a={})=>{ const e=document.createElementNS(NS,t);
+  for(const k in a) e.setAttribute(k,a[k]); return e; };
+const textWidth = nm => nm.split("").reduce((w,ch)=>w+FS*("（）()・".includes(ch)?0.55:1.0),0);
+
+(async function init(){
+  try{
+    MAP=await fetch("map_tokyometro.json").then(r=>r.json());
+    MAP.stations.forEach(s=>{ ST[s.slug]=s; AUTO[s.slug]={...s.label}; });
+    try{
+      const f=await fetch("fare.json").then(r=>r.json());
+      const op=f.operators.find(o=>o.operator==="tokyometro");
+      N=op.stations.length; op.stations.forEach(s=>FIDX[s.slug]=s.idx);
+      FM=new Int16Array(N*N*2);
+      op.fares.forEach(([a,b,c,i])=>{ FM[(a*N+b)*2]=c; FM[(a*N+b)*2+1]=i; FM[(b*N+a)*2]=c; FM[(b*N+a)*2+1]=i; });
+    }catch(e){ console.warn("fare.json を読めなかったため運賃はダミー表示にします", e); }
+    build();
+    buildOriginSelect();
+    setOrigin("Ginza");
+    fit();
+    document.getElementById("msg").style.display="none";
+  }catch(e){
+    document.getElementById("msg").textContent =
+      "map_tokyometro.json を読み込めませんでした（"+e.message+"）。index.html と同じフォルダに置き、ローカルサーバー経由で開いてください。";
+  }
+})();
+
+/* ---------------- 描画 ---------------- */
+let svg, gLbl;
+function build(){
+  const vb=MAP.viewBox;
+  svg=el("svg",{xmlns:NS,viewBox:vb.join(" "),width:vb[2],height:vb[3]});
+  svg.appendChild(el("rect",{width:vb[2],height:vb[3],fill:"#F7F4EC"}));
+  MAP.lines.forEach(L=>{
+    const pts=(L.geom||L.path.map(s=>[ST[s].x,ST[s].y])).map(p=>p[0]+","+p[1]).join(" ");
+    svg.appendChild(el("polyline",{points:pts,fill:"none",stroke:L.color,"stroke-width":16,
+      "stroke-linejoin":"round","stroke-linecap":"round"}));
+  });
+  [[20,"#1C1C1E"],[13,"#ffffff"]].forEach(([w,col])=>{
+    (MAP.sameStationLinks||[]).forEach(([a,b])=>{
+      svg.appendChild(el("line",{x1:ST[a].x,y1:ST[a].y,x2:ST[b].x,y2:ST[b].y,
+        stroke:col,"stroke-width":w,"stroke-linecap":"round"}));
+    });
+  });
+  gLbl=el("g",{"font-size":FS,"font-family":"'Hiragino Sans','Yu Gothic','Noto Sans JP',sans-serif"});
+  svg.appendChild(gLbl);
+  MAP.stations.forEach(s=>{
+    const g=el("g",{class:"lbl","data-slug":s.slug});
+    const hit=el("rect",{class:"hit",rx:4});
+    const halo=el("text",{class:"halo",fill:"none",stroke:"#F7F4EC","stroke-width":6,"stroke-linejoin":"round"});
+    const txt=el("text",{class:"txt",fill:"#1C1C1E"});
+    halo.textContent=txt.textContent=s.name;
+    g.append(hit,halo,txt); gLbl.appendChild(g);
+    s._g=g; s._hit=hit; s._halo=halo; s._txt=txt;
+    g.addEventListener("pointerdown",e=>startDrag(e,s));
+    g.addEventListener("dblclick",e=>{ e.preventDefault(); pushUndo(s); s.label={...AUTO[s.slug]}; place(s); select(s); refresh(); });
+    place(s);
+  });
+  const gB=el("g"); svg.appendChild(gB);
+  MAP.stations.forEach(s=>{
+    gB.appendChild(el("rect",{x:s.x-BW/2,y:s.y-BH/2,width:BW,height:BH,
+      rx:s.interchange?10:24,fill:"#fff",stroke:"#1C1C1E","stroke-width":3}));
+    const n1=el("text",{x:s.x,y:s.y+4,"text-anchor":"middle","font-size":27,"font-weight":"700",fill:"#1C1C1E",
+      "font-family":"'Hiragino Sans','Yu Gothic','Noto Sans JP',sans-serif","pointer-events":"none"});
+    const n2=el("text",{x:s.x,y:s.y+19,"text-anchor":"middle","font-size":14,fill:"#C0392B",
+      "font-family":"'Hiragino Sans','Yu Gothic','Noto Sans JP',sans-serif","pointer-events":"none"});
+    gB.append(n1,n2); s._n1=n1; s._n2=n2;
+  });
+  document.getElementById("wrap").appendChild(svg);
+}
+
+function place(s){
+  const l=s.label, x=s.x+l.dx, y=s.y+l.dy, w=textWidth(s.name);
+  [s._halo,s._txt].forEach(t=>{ t.setAttribute("x",x); t.setAttribute("y",y);
+    t.setAttribute("text-anchor",l.anchor); t.setAttribute("textLength",w.toFixed(1));
+    t.setAttribute("lengthAdjust","spacingAndGlyphs"); });
+  const x0 = l.anchor==="start" ? x : l.anchor==="end" ? x-w : x-w/2;
+  s._hit.setAttribute("x",x0-3); s._hit.setAttribute("y",y-FS*0.85-3);
+  s._hit.setAttribute("width",w+6); s._hit.setAttribute("height",FS*1.1+6);
+  s._g.classList.toggle("moved", l.dx!==AUTO[s.slug].dx || l.dy!==AUTO[s.slug].dy || l.anchor!==AUTO[s.slug].anchor);
+}
+function box(s){
+  const l=s.label, w=textWidth(s.name), x=s.x+l.dx, y=s.y+l.dy;
+  const x0 = l.anchor==="start" ? x : l.anchor==="end" ? x-w : x-w/2;
+  return [x0, y-FS*0.85, x0+w, y+FS*0.25];
+}
+const ovl=(a,b)=>!(a[2]<=b[0]||b[2]<=a[0]||a[3]<=b[1]||b[3]<=a[1]);
+
+function refresh(){
+  const show=document.getElementById("showbad").checked;
+  const boxes=MAP.stations.map(box);
+  const bad=new Set();
+  if(show){
+    for(let i=0;i<boxes.length;i++){
+      for(let j=i+1;j<boxes.length;j++) if(ovl(boxes[i],boxes[j])){ bad.add(i); bad.add(j); }
+      // バッジ本体との重なりも見る
+      for(let j=0;j<MAP.stations.length;j++){
+        const t=MAP.stations[j];
+        if(ovl(boxes[i],[t.x-BW/2,t.y-BH/2,t.x+BW/2,t.y+BH/2])) bad.add(i);
+      }
+    }
+  }
+  MAP.stations.forEach((s,i)=>s._g.classList.toggle("bad", bad.has(i)));
+  document.getElementById("cbad").textContent=bad.size;
+  document.getElementById("ccnt").textContent=
+    MAP.stations.filter(s=>s._g.classList.contains("moved")).length;
+  if(sel){
+    document.getElementById("cur").textContent=sel.name;
+    document.getElementById("cdx").textContent=sel.label.dx.toFixed(0);
+    document.getElementById("cdy").textContent=sel.label.dy.toFixed(0);
+    document.getElementById("can").textContent=
+      {start:"左揃え",end:"右揃え",middle:"中央"}[sel.label.anchor];
+  }
+}
+function select(s){
+  if(sel) sel._g.classList.remove("sel");
+  sel=s; if(s){ s._g.classList.add("sel"); gLbl.appendChild(s._g); }
+  refresh();
+}
+
+/* ---------------- 運賃表示（見え方確認用） ---------------- */
+function buildOriginSelect(){
+  const sel2=document.getElementById("origin");
+  MAP.stations.slice().sort((a,b)=>a.name.localeCompare(b.name,"ja")).forEach(s=>{
+    const o=document.createElement("option"); o.value=s.slug; o.textContent="当駅: "+s.name; sel2.appendChild(o);
+  });
+  sel2.onchange=()=>setOrigin(sel2.value);
+}
+function setOrigin(slug){
+  origin=slug; document.getElementById("origin").value=slug;
+  MAP.stations.forEach(s=>{
+    if(!FM){ s._n1.textContent="260"; s._n2.textContent="252"; return; }
+    if(s.slug===slug){ s._n1.setAttribute("font-size",26); s._n1.setAttribute("y",s.y+9);
+      s._n1.textContent="当駅"; s._n2.textContent=""; return; }
+    const k=(FIDX[slug]*N+FIDX[s.slug])*2, c=FM[k], ic=FM[k+1];
+    if(c===0){ s._n1.setAttribute("font-size",19); s._n1.setAttribute("y",s.y+7);
+      s._n1.textContent="同一駅"; s._n2.textContent=""; return; }
+    s._n1.setAttribute("font-size",27); s._n1.setAttribute("y",s.y+4);
+    s._n1.textContent=c; s._n2.textContent=ic;
+  });
+}
+
+/* ---------------- ドラッグ ---------------- */
+function pushUndo(s){ undoStack.push({slug:s.slug,label:{...s.label}}); if(undoStack.length>200) undoStack.shift(); }
+let drag=null;
+function startDrag(e,s){
+  e.stopPropagation(); e.preventDefault();
+  select(s); pushUndo(s);
+  drag={s, sx:e.clientX, sy:e.clientY, dx0:s.label.dx, dy0:s.label.dy, an0:s.label.anchor, moved:false};
+  window.addEventListener("pointermove",onDrag);
+  window.addEventListener("pointerup",endDrag,{once:true});
+}
+function onDrag(e){
+  if(!drag) return;
+  const s=drag.s;
+  let dx=drag.dx0+(e.clientX-drag.sx)/sc, dy=drag.dy0+(e.clientY-drag.sy)/sc;
+  if(document.getElementById("snap").checked){ dx=Math.round(dx/2)*2; dy=Math.round(dy/2)*2; }
+  s.label.dx=dx; s.label.dy=dy;
+  /* 左右に大きくずらしたら揃え方も自然に切り替える */
+  s.label.anchor = dx>BW/2-8 ? "start" : dx<-(BW/2-8) ? "end" : "middle";
+  drag.moved=true; place(s); refresh();
+}
+function endDrag(){ window.removeEventListener("pointermove",onDrag);
+  if(drag && !drag.moved) undoStack.pop(); drag=null; }
+
+document.getElementById("undo").onclick=doUndo;
+function doUndo(){
+  const u=undoStack.pop(); if(!u) return;
+  const s=ST[u.slug]; s.label={...u.label}; place(s); select(s); refresh();
+}
+document.getElementById("resetAll").onclick=()=>{
+  if(!confirm("すべての駅名を自動配置の位置に戻します。よろしいですか？")) return;
+  MAP.stations.forEach(s=>{ s.label={...AUTO[s.slug]}; place(s); }); refresh();
+};
+document.getElementById("showbad").onchange=refresh;
+
+window.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT") return;
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="z"){ e.preventDefault(); doUndo(); return; }
+  if(!sel) return;
+  const step=e.shiftKey?10:1;
+  const mv={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[e.key];
+  if(mv){ e.preventDefault(); pushUndo(sel);
+    sel.label.dx+=mv[0]; sel.label.dy+=mv[1]; place(sel); refresh(); return; }
+  if(e.key.toLowerCase()==="a"){ e.preventDefault(); pushUndo(sel);
+    sel.label.anchor={middle:"start",start:"end",end:"middle"}[sel.label.anchor];
+    place(sel); refresh(); }
+});
+
+/* ---------------- 検索・パン・ズーム ---------------- */
+document.getElementById("find").addEventListener("input",function(){
+  const q=this.value.trim(); if(!q) return;
+  const s=MAP.stations.find(s=>s.name.startsWith(q))||MAP.stations.find(s=>s.name.includes(q));
+  if(s){ select(s); centerOn(s); }
+});
+const stage=document.getElementById("stage"), wrap=document.getElementById("wrap");
+function apply(){ wrap.style.transform=`translate(${tx}px,${ty}px) scale(${sc})`; }
+function fit(){
+  sc=Math.min((stage.clientWidth-40)/MAP.viewBox[2], 1);
+  tx=20; ty=(stage.clientHeight-MAP.viewBox[3]*sc)/2; apply();
+}
+function centerOn(s){
+  sc=Math.max(sc,0.85);
+  tx=stage.clientWidth/2-s.x*sc; ty=stage.clientHeight/2-s.y*sc; apply();
+}
+let pan=null;
+stage.addEventListener("pointerdown",e=>{
+  if(e.target.closest(".lbl")) return;
+  pan={x:e.clientX,y:e.clientY,tx,ty}; stage.classList.add("panning");
+  select(null);
+});
+window.addEventListener("pointermove",e=>{
+  if(!pan) return; tx=pan.tx+(e.clientX-pan.x); ty=pan.ty+(e.clientY-pan.y); apply();
+});
+window.addEventListener("pointerup",()=>{ pan=null; stage.classList.remove("panning"); });
+stage.addEventListener("wheel",e=>{ e.preventDefault();
+  const ns=Math.min(4,Math.max(0.15,sc*Math.exp(-e.deltaY*0.0015)));
+  const r=stage.getBoundingClientRect(), cx=e.clientX-r.left, cy=e.clientY-r.top;
+  tx=cx-(cx-tx)*(ns/sc); ty=cy-(cy-ty)*(ns/sc); sc=ns; apply();
+},{passive:false});
+window.addEventListener("resize",()=>apply());
+
+/* ---------------- 書き出し ---------------- */
+function download(name,text,type){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([text],{type:type}));
+  a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+function buildBaseSvg(){
+  const vb=MAP.viewBox, st=ST, FONT="'Hiragino Sans','Noto Sans CJK JP','Yu Gothic',sans-serif";
+  const o=[`<svg xmlns="${NS}" viewBox="0 0 ${vb[2]} ${vb[3]}" width="${vb[2]}" height="${vb[3]}">`,
+           `<rect width="${vb[2]}" height="${vb[3]}" fill="#F7F4EC"/>`];
+  MAP.lines.forEach(L=>{
+    const pts=(L.geom||L.path.map(s=>[st[s].x,st[s].y])).map(p=>p[0]+","+p[1]).join(" ");
+    o.push(`<polyline points="${pts}" fill="none" stroke="${L.color}" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>`);
+  });
+  [[20,"#1C1C1E"],[13,"#ffffff"]].forEach(([w,col])=>{
+    (MAP.sameStationLinks||[]).forEach(([a,b])=>{
+      o.push(`<line x1="${st[a].x}" y1="${st[a].y}" x2="${st[b].x}" y2="${st[b].y}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`);
+    });
+  });
+  o.push(`<g font-family="${FONT}" font-size="${FS}" lengthAdjust="spacingAndGlyphs">`);
+  for(const pass of [0,1]){
+    MAP.stations.forEach(s=>{
+      const l=s.label, x=(s.x+l.dx), y=(s.y+l.dy), w=textWidth(s.name).toFixed(1);
+      const style = pass===0 ? 'fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round"' : 'fill="#1C1C1E"';
+      o.push(`<text x="${x}" y="${y}" text-anchor="${l.anchor}" textLength="${w}" ${style}>${s.name}</text>`);
+    });
+  }
+  o.push("</g>");
+  MAP.stations.forEach(s=>{
+    o.push(`<rect x="${s.x-BW/2}" y="${s.y-BH/2}" width="${BW}" height="${BH}" rx="${s.interchange?10:24}" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>`);
+  });
+  o.push("</svg>");
+  return o.join("\n");
+}
+document.getElementById("save").onclick=()=>{
+  const out=JSON.parse(JSON.stringify(MAP, (k,v)=>k.startsWith("_")?undefined:v));
+  out.stations.forEach(s=>{
+    const l=ST[s.slug].label;
+    s.label={dx:Math.round(l.dx*10)/10, dy:Math.round(l.dy*10)/10, anchor:l.anchor};
+  });
+  download("map_tokyometro.json", JSON.stringify(out), "application/json");
+  setTimeout(()=>download("運賃表ベース.svg", buildBaseSvg(), "image/svg+xml"), 350);
+  alert("2つのファイルをダウンロードしました。\n\n  ・map_tokyometro.json\n  ・運賃表ベース.svg\n\n"
+       +"ダウンロードフォルダから、index.html と同じフォルダに上書きコピーしてください。");
+};
+</script>
+</body>
+</html>
