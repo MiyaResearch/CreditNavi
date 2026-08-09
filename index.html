@@ -192,6 +192,15 @@
   }
   .ft-title{font-size:26px;font-weight:700;letter-spacing:-0.6px;}
   .ft-desc{font-size:13px;color:var(--label2);line-height:1.5;margin-top:5px;}
+  /* 事業者切替（東京メトロ／都営地下鉄） */
+  .ft-seg{display:flex;gap:4px;margin-top:11px;padding:3px;border-radius:11px;
+    background:var(--gray5,rgba(120,120,128,.12));}
+  .ft-seg button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+    font-family:inherit;font-size:14px;font-weight:600;padding:8px 4px;
+    border:none;border-radius:8px;background:transparent;color:var(--label2);cursor:pointer;}
+  .ft-seg button img{width:17px;height:17px;flex-shrink:0;opacity:.5;}
+  .ft-seg button.on{background:var(--card);color:var(--label);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .ft-seg button.on img{opacity:1;}
   .ft-search{position:relative;display:flex;align-items:center;gap:10px;margin-top:12px;}
   .ft-search-label{font-size:13px;color:var(--label2);flex-shrink:0;}
   .ft-input-wrap{position:relative;flex:1;min-width:0;}
@@ -583,8 +592,8 @@
           </svg>
         </div>
         <div class="ft-entry-txt">
-          <div class="ft-entry-t">東京メトロ どこでも運賃表</div>
-          <div class="ft-entry-s">駅に貼ってある運賃表を、どの駅からでも</div>
+          <div class="ft-entry-t">どこでも運賃表</div>
+          <div class="ft-entry-s">東京メトロ・都営地下鉄の運賃表を、どの駅からでも</div>
         </div>
         <svg width="8" height="14" viewBox="0 0 8 14"><path d="M1 1 L7 7 L1 13" stroke="rgba(255,255,255,.75)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
@@ -665,7 +674,13 @@
     </div>
     <div class="ft-head">
       <div class="ft-title">どこでも運賃表</div>
-      <div class="ft-desc">東京メトロの各駅に設置されている運賃表を再現したものです。東京メトロ線内完結のみ対応。</div>
+      <div class="ft-desc" id="ft-desc">東京メトロの各駅に設置されている運賃表を再現したものです。東京メトロ線内完結のみ対応。</div>
+      <div class="ft-seg" id="ft-seg">
+        <button type="button" class="on" data-op="tokyometro" onclick="ftSetOperator('tokyometro')">
+          <img src="アイコン画像/logo-line-tokyometro.svg" alt="">東京メトロ</button>
+        <button type="button" data-op="toei" onclick="ftSetOperator('toei')">
+          <img src="アイコン画像/logo-line-kotsumetro.svg" alt="">都営地下鉄</button>
+      </div>
       <div class="ft-search">
         <span class="ft-search-label">出発駅</span>
         <div class="ft-input-wrap">
@@ -679,7 +694,7 @@
     <div class="ft-stage" id="ft-stage">
       <div class="ft-empty" id="ft-empty">出発駅を入力すると、その駅の運賃表を表示します。</div>
       <div class="ft-wrap" id="ft-wrap">
-        <img id="ft-base" alt="東京メトロ 路線図">
+        <img id="ft-base" alt="運賃表 路線図">
         <svg id="ft-fares" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
       <div class="ft-legend" id="ft-legend">大きい数字は<b>きっぷ運賃</b>、<i>赤い数字</i>は<b>IC運賃</b>（おとな）</div>
@@ -789,7 +804,7 @@ let GROUPS=[];          // stationGroups（存在する事業者のみ）
 let JUNCTIONS=[];       // 経由駅指定用: 境界駅（GROUPSの表示用一覧）
 let DISCOUNTS=[];       // 割引テーブル
 let LINE=null;          // tx用
-const APP_VERSION="2026-08-08 22:35"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
+const APP_VERSION="2026-08-09 18:10"; // デプロイ毎に手動更新（"YYYY-MM-DD HH:mm"。日付のみだと同日複数回デプロイを区別できないため分単位まで含める。notices.jsonのlatestVersionと比較して更新案内を出す）
 (function(){ const el=document.getElementById("app-footnote"); if(el) el.insertAdjacentHTML("beforeend", `<span class="ver">version:${APP_VERSION}</span>`); })();
 let NOTICES=[];          // お知らせ一覧（先頭に更新案内が入る場合あり）
 let noticeRotateTimer=null;
@@ -1742,7 +1757,8 @@ const LS_KEYS={
   customRate:"crekaFareNavi.customRate.v1",
   icRate:"crekaFareNavi.icRate.v1",
   favorites:"crekaFareNavi.favorites.v1",
-  ftOrigin:"crekaFareNavi.fareTableOrigin.v1"
+  ftOrigin:"crekaFareNavi.fareTableOrigin.v1",
+  ftOp:"crekaFareNavi.fareTableOperator.v1"
 };
 function loadPersisted(){
   try{
@@ -2039,19 +2055,55 @@ function monthlyCardUsage(cardId, ym){
 }
 
 /* =========================================================
-   §ft どこでも運賃表（東京メトロ線内のみ）
-   駅に掲出されている「東京メトロ きっぷ運賃表」を再現した画面。
+   §ft どこでも運賃表（東京メトロ線内／都営地下鉄線内）
+   駅に掲出されている「きっぷ運賃表」を再現した画面。
    路線図は 運賃表ベース.svg（線・同一駅リンク・バッジ枠・駅名を焼き込んだ1枚の画像）を敷き、
    その上に運賃の数字だけをSVGで重ねる。両者は同じ viewBox・同じ transform で動かすので、
    どれだけ拡大してもズレない。データは初回オープン時に遅延fetchする（起動を重くしないため）。
+   事業者ごとに map_<operator>.json ＋ 運賃表ベース(_operator).svg を1組ずつ持ち、
+   読み込み済みの状態は ftCache[operator] に保持して切替時の再fetchを避ける。
 ========================================================= */
 const FT_BW=76, FT_BH=48;
+const FT_OPS={
+  tokyometro:{label:"東京メトロ", map:"map_tokyometro.json", svg:"運賃表ベース.svg",
+              desc:"東京メトロの各駅に設置されている運賃表を再現したものです。東京メトロ線内完結のみ対応。"},
+  toei:      {label:"都営地下鉄", map:"map_toei.json",       svg:"運賃表ベース_toei.svg",
+              desc:"都営地下鉄の各駅に設置されている運賃表を再現したものです。都営地下鉄線内完結のみ対応。"}
+};
+let ftOp="tokyometro";
+const ftCache={};                       /* operator -> {map,st,idx,fm,n,origin,load} */
 let ftMap=null, ftST={}, ftIdx={}, ftFM=null, ftN=0, ftOrigin=null;
 let ftLoad=null, ftTx=0, ftTy=0, ftSc=1, ftSug=[], ftSugI=-1;
 
+function ftLSKey(op){ return LS_KEYS.ftOrigin + (op==="tokyometro" ? "" : "."+op); }
+
 function openFareTable(){
   pushScreen("scr-faretable");
-  ftEnsureLoaded();
+  ftSetOperator(localStorage.getItem(LS_KEYS.ftOp)||ftOp, true);
+}
+
+/* 事業者の切替。表示中の状態は ftCache に退避し、切替先が読み込み済みならそのまま復元する。 */
+function ftSetOperator(op, initial){
+  if(!FT_OPS[op]) op="tokyometro";
+  if(!initial && op===ftOp) return;
+  if(ftMap||ftLoad) ftCache[ftOp]={map:ftMap,st:ftST,idx:ftIdx,fm:ftFM,n:ftN,origin:ftOrigin,load:ftLoad};
+  ftOp=op;
+  try{ localStorage.setItem(LS_KEYS.ftOp, op); }catch(e){}
+  document.querySelectorAll("#ft-seg button").forEach(b=>b.classList.toggle("on", b.dataset.op===op));
+  document.getElementById("ft-desc").textContent=FT_OPS[op].desc;
+  const c=ftCache[op];
+  ftMap=c?c.map:null; ftST=c?c.st:{}; ftIdx=c?c.idx:{}; ftFM=c?c.fm:null;
+  ftN=c?c.n:0; ftOrigin=c?c.origin:null; ftLoad=c?c.load:null;
+  ftHideSug();
+  const q=document.getElementById("ft-q");
+  if(q){ q.value=""; document.getElementById("ft-clear").style.display="none"; }
+  document.getElementById("ft-wrap").style.display="none";
+  document.getElementById("ft-legend").style.display="none";
+  document.getElementById("ft-home").style.display="none";
+  document.getElementById("ft-empty").style.display="";
+  document.getElementById("ft-empty").textContent="出発駅を入力すると、その駅の運賃表を表示します。";
+  if(ftMap){ ftBuild(); if(ftOrigin) ftSetOrigin(ftOrigin, true); }
+  else ftEnsureLoaded();
 }
 function closeFareTable(){
   ftHideSug();
@@ -2063,35 +2115,40 @@ function closeFareTable(){
 async function ftEnsureLoaded(){
   if(ftMap) return true;
   if(ftLoad) return ftLoad;
+  const OP=ftOp, CONF=FT_OPS[OP];
   ftLoad=(async()=>{
     try{
-      const m=await fetch("map_tokyometro.json").then(r=>{
-        if(!r.ok) throw new Error("map_tokyometro.json HTTP "+r.status); return r.json(); });
-      ftMap=m; m.stations.forEach(s=>ftST[s.slug]=s);
+      const m=await fetch(CONF.map).then(r=>{
+        if(!r.ok) throw new Error(CONF.map+" HTTP "+r.status); return r.json(); });
+      const st={}, idx={};
+      m.stations.forEach(s=>st[s.slug]=s);
       /* 運賃と読みがなは、すでに読み込み済みの DATA(fare.json) から取る */
-      const op=(DATA&&DATA.operators||[]).find(o=>o.operator==="tokyometro");
-      if(!op) throw new Error("運賃データに東京メトロが見つかりません");
-      ftN=op.stations.length;
+      const op=(DATA&&DATA.operators||[]).find(o=>o.operator===OP);
+      if(!op) throw new Error("運賃データに"+CONF.label+"が見つかりません");
+      const n=op.stations.length;
       const kana={};
-      op.stations.forEach(st=>{ ftIdx[st.slug]=st.idx; if(st.kana) kana[st.slug]=st.kana; });
-      m.stations.forEach(st=>{ if(kana[st.slug]) st.kana=kana[st.slug]; });
-      /* 10,296件のペアを密行列(Int16Array・約81KB)へ一度だけ展開。
+      op.stations.forEach(s=>{ idx[s.slug]=s.idx; if(s.kana) kana[s.slug]=s.kana; });
+      m.stations.forEach(s=>{ if(kana[s.slug]) s.kana=kana[s.slug]; });
+      /* 全ペアを密行列(Int16Array)へ一度だけ展開。
          当駅を切り替えるたびに線形探索すると重いため。 */
-      ftFM=new Int16Array(ftN*ftN*2);
+      const fm=new Int16Array(n*n*2);
       op.fares.forEach(p=>{
         const a=p[0], b=p[1], c=p[2], ic=p[3];
-        ftFM[(a*ftN+b)*2]=c; ftFM[(a*ftN+b)*2+1]=ic;
-        ftFM[(b*ftN+a)*2]=c; ftFM[(b*ftN+a)*2+1]=ic;
+        fm[(a*n+b)*2]=c; fm[(a*n+b)*2+1]=ic;
+        fm[(b*n+a)*2]=c; fm[(b*n+a)*2+1]=ic;
       });
+      ftCache[OP]={map:m,st:st,idx:idx,fm:fm,n:n,origin:null,load:ftLoad};
+      if(ftOp!==OP) return true;            /* 読み込み中に切り替えられていたら描画しない */
+      ftMap=m; ftST=st; ftIdx=idx; ftFM=fm; ftN=n;
       ftBuild();
-      const saved=localStorage.getItem(LS_KEYS.ftOrigin);
+      const saved=localStorage.getItem(ftLSKey(OP));
       if(saved && ftST[saved]) ftSetOrigin(saved, true);
       return true;
     }catch(e){
       console.error("[どこでも運賃表] 読み込み失敗:", e);
       const em=document.getElementById("ft-empty");
-      if(em) em.textContent="運賃表を読み込めませんでした。map_tokyometro.json と 運賃表ベース.svg が index.html と同じ場所にあるか確認してください。";
-      ftLoad=null;
+      if(em && ftOp===OP) em.textContent="運賃表を読み込めませんでした。"+CONF.map+" と "+CONF.svg+" が index.html と同じ場所にあるか確認してください。";
+      if(ftOp===OP) ftLoad=null;
       return false;
     }
   })();
@@ -2105,7 +2162,7 @@ function ftBuild(){
   const vb=ftMap.viewBox;
   const wrap=document.getElementById("ft-wrap");
   wrap.style.width=vb[2]+"px"; wrap.style.height=vb[3]+"px";
-  document.getElementById("ft-base").src="運賃表ベース.svg";
+  document.getElementById("ft-base").src=FT_OPS[ftOp].svg;
   const g=document.getElementById("ft-fares");
   g.setAttribute("viewBox", vb.join(" "));
   g.innerHTML="";
@@ -2127,7 +2184,8 @@ function ftBuild(){
 function ftSetOrigin(slug, silent){
   if(!ftST[slug]) return;
   ftOrigin=slug;
-  try{ localStorage.setItem(LS_KEYS.ftOrigin, slug); }catch(e){}
+  if(ftCache[ftOp]) ftCache[ftOp].origin=slug;
+  try{ localStorage.setItem(ftLSKey(ftOp), slug); }catch(e){}
   const oi=ftIdx[slug];
   ftMap.stations.forEach(s=>{
     if(s.slug===slug){

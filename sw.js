@@ -2,7 +2,7 @@
    オフラインでもアプリ本体・運賃データを表示できるようにするためのキャッシュ層。
    fare.json はキャッシュを即返しつつバックグラウンドで最新版に更新（stale-while-revalidate）。
 */
-const CACHE_NAME = "creka-fare-navi-v14";
+const CACHE_NAME = "creka-fare-navi-v16";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -11,6 +11,10 @@ const APP_SHELL = [
   /* どこでも運賃表 */
   "./map_tokyometro.json",
   "./運賃表ベース.svg",
+  "./map_toei.json",
+  "./運賃表ベース_toei.svg",
+  "./アイコン画像/logo-line-tokyometro.svg",
+  "./アイコン画像/logo-line-kotsumetro.svg",
   "./アイコン画像/favicon.ico",
   "./アイコン画像/apple-touch-icon.png",
   "./アイコン画像/icon-192.png",
