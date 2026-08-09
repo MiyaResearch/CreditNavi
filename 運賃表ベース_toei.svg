@@ -1,308 +1,308 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3650 1826" width="3650" height="1826">
-<rect width="3650" height="1826" fill="#F7F4EC"/>
-<polyline points="150.0,110.0 291.0,110.0 432.0,110.0 573.0,110.0 714.0,110.0 855.0,110.0 994.5,110.0 1134.0,110.0 1272.0,110.0 1411.5,110.0 1551.0,110.0 1689.0,110.0 1827.0,110.0 1959.8,110.0 1959.8,161.6 1959.8,293.6 1959.8,425.6 1959.8,578.6 1959.8,731.3 1959.8,853.1 1959.8,974.6 1959.8,1094.6 1959.8,1214.6 1959.8,1418.6 1959.8,1537.1 1722.0,1537.1 1536.0,1537.1 1348.5,1537.1" fill="none" stroke="#0067B0" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="786.0,1715.8 973.5,1715.8 1161.0,1715.8 1347.0,1715.8 1533.0,1715.8 1719.0,1715.8 1905.0,1715.8 1959.8,1715.8 1959.8,1537.1 2185.5,1537.1 2185.5,1317.3 2185.5,1134.7 2259.0,1134.7 2391.0,1134.7 2555.7,1134.7 2555.7,1012.1 2555.7,890.6 2555.7,692.6 2555.7,557.6 2555.7,425.6 2555.7,202.1 2646.0,202.1 2830.5,202.1 3009.0,202.1" fill="none" stroke="#FF535F" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="3500.0,113.6 3500.0,242.6 3500.0,362.6 3500.0,482.6 3500.0,602.6 3500.0,731.3 3321.0,731.3 3195.0,731.3 3069.0,731.3 2943.0,731.3 2817.0,731.3 2688.0,731.3 2443.5,731.3 2278.5,731.3 2118.0,731.3 1959.8,731.3 1665.0,731.3 1527.0,731.3 1527.0,845.6 1527.0,995.6 1341.0,995.6 1177.9,995.6" fill="none" stroke="#9FB01C" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="150.0,362.6 150.0,497.6 150.0,629.6 150.0,761.6 150.0,898.1 195.0,898.1 336.0,898.1 478.5,898.1 618.0,898.1 759.0,898.1 900.0,898.1 1038.0,898.1 1177.9,898.1 1177.9,995.6 1177.9,1129.1 1177.9,1262.6 1177.9,1317.3 1335.0,1317.3 1491.0,1317.3 1644.0,1317.3 1797.0,1317.3 2185.5,1317.3 2361.0,1317.3 2529.0,1317.3 2697.0,1317.3 2817.0,1317.3 2817.0,1226.6 2817.0,1075.1 2817.0,923.6 2817.0,731.3 2817.0,512.6 2817.0,425.6 2555.7,425.6 2410.5,425.6 2260.5,425.6 2109.0,425.6 1959.8,425.6 1716.0,425.6 1560.0,425.6 1404.0,425.6 1248.0,425.6 1179.0,425.6 1179.0,584.6 1179.0,736.1 1179.0,898.1 1038.0,898.1" fill="none" stroke="#CF3366" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
-<line x1="2555.7" y1="692.6" x2="2443.5" y2="731.3" stroke="#1C1C1E" stroke-width="20" stroke-linecap="round"/>
-<line x1="2555.7" y1="692.6" x2="2443.5" y2="731.3" stroke="#ffffff" stroke-width="13" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3072 1538" width="3072" height="1538">
+<rect width="3072" height="1538" fill="#F7F4EC"/>
+<polyline points="140.0,100.0 257.5,100.0 375.0,100.0 492.5,100.0 610.0,100.0 727.5,100.0 843.8,100.0 960.0,100.0 1075.0,100.0 1191.2,100.0 1307.5,100.0 1422.5,100.0 1537.5,100.0 1648.1,100.0 1648.1,143.0 1648.1,253.0 1648.1,363.0 1648.1,490.5 1648.1,617.8 1648.1,719.2 1648.1,820.5 1648.1,920.5 1648.1,1020.5 1648.1,1190.5 1648.1,1289.2 1450.0,1289.2 1295.0,1289.2 1138.8,1289.2" fill="none" stroke="#0067B0" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="670.0,1438.1 826.2,1438.1 982.5,1438.1 1137.5,1438.1 1292.5,1438.1 1447.5,1438.1 1602.5,1438.1 1648.1,1438.1 1648.1,1289.2 1836.2,1289.2 1836.2,1106.1 1836.2,953.9 1897.5,953.9 2007.5,953.9 2144.8,953.9 2144.8,851.8 2144.8,750.5 2144.8,585.5 2144.8,473.0 2144.8,363.0 2144.8,176.8 2220.0,176.8 2373.8,176.8 2522.5,176.8" fill="none" stroke="#FF535F" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="2931.6,103.0 2931.6,210.5 2931.6,310.5 2931.6,410.5 2931.6,510.5 2931.6,617.8 2782.5,617.8 2677.5,617.8 2572.5,617.8 2467.5,617.8 2362.5,617.8 2255.0,617.8 2051.2,617.8 1913.8,617.8 1780.0,617.8 1648.1,617.8 1402.5,617.8 1287.5,617.8 1287.5,713.0 1287.5,838.0 1132.5,838.0 996.6,838.0" fill="none" stroke="#9FB01C" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="140.0,310.5 140.0,423.0 140.0,533.0 140.0,643.0 140.0,756.8 177.5,756.8 295.0,756.8 413.8,756.8 530.0,756.8 647.5,756.8 765.0,756.8 880.0,756.8 996.6,756.8 996.6,838.0 996.6,949.2 996.6,1060.5 996.6,1106.1 1127.5,1106.1 1257.5,1106.1 1385.0,1106.1 1512.5,1106.1 1836.2,1106.1 1982.5,1106.1 2122.5,1106.1 2262.5,1106.1 2362.5,1106.1 2362.5,1030.5 2362.5,904.2 2362.5,778.0 2362.5,617.8 2362.5,435.5 2362.5,363.0 2144.8,363.0 2023.8,363.0 1898.8,363.0 1772.5,363.0 1648.1,363.0 1445.0,363.0 1315.0,363.0 1185.0,363.0 1055.0,363.0 997.5,363.0 997.5,495.5 997.5,621.8 997.5,756.8 880.0,756.8" fill="none" stroke="#CF3366" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="2144.8" y1="585.5" x2="2051.2" y2="617.8" stroke="#1C1C1E" stroke-width="20" stroke-linecap="round"/>
+<line x1="2144.8" y1="585.5" x2="2051.2" y2="617.8" stroke="#ffffff" stroke-width="13" stroke-linecap="round"/>
 <g font-family="'Hiragino Sans','Noto Sans CJK JP','Yu Gothic',sans-serif" font-size="24.0" lengthAdjust="spacingAndGlyphs">
-<text x="150.0" y="76.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西高島平</text>
-<text x="291.0" y="76.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新高島平</text>
-<text x="432.0" y="76.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">高島平</text>
-<text x="573.0" y="76.0" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西台</text>
-<text x="714.0" y="76.0" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">蓮根</text>
-<text x="855.0" y="76.0" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">志村三丁目</text>
-<text x="994.5" y="76.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">志村坂上</text>
-<text x="1134.0" y="76.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">本蓮沼</text>
-<text x="1272.0" y="76.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">板橋本町</text>
-<text x="1411.5" y="76.0" text-anchor="middle" textLength="144.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">板橋区役所前</text>
-<text x="1551.0" y="76.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新板橋</text>
-<text x="1689.0" y="76.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西巣鴨</text>
-<text x="1827.0" y="76.0" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">巣鴨</text>
-<text x="3500.0" y="79.6" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">本八幡</text>
-<text x="2009.8" y="170.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">千石</text>
-<text x="2646.0" y="168.1" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">浅草</text>
-<text x="2830.5" y="168.1" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">本所吾妻橋</text>
-<text x="3009.0" y="168.1" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">押上</text>
-<text x="3550.0" y="251.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">篠崎</text>
-<text x="2009.8" y="302.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">白山</text>
-<text x="150.0" y="328.6" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">光が丘</text>
-<text x="3550.0" y="371.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">瑞江</text>
-<text x="1248.0" y="391.6" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">若松河田</text>
-<text x="1404.0" y="391.6" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">牛込柳町</text>
-<text x="1560.0" y="391.6" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">牛込神楽坂</text>
-<text x="1716.0" y="391.6" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">飯田橋</text>
-<text x="1959.8" y="391.6" text-anchor="middle" textLength="122.4" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">春日（東京）</text>
-<text x="2109.0" y="391.6" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">本郷三丁目</text>
-<text x="2260.5" y="391.6" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">上野御徒町</text>
-<text x="2410.5" y="391.6" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新御徒町</text>
-<text x="2605.7" y="399.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">蔵前</text>
-<text x="3550.0" y="491.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">一之江</text>
-<text x="200.0" y="506.6" text-anchor="start" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">練馬春日町</text>
-<text x="2867.0" y="521.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">両国</text>
-<text x="2605.7" y="566.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">浅草橋</text>
-<text x="2009.8" y="587.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">水道橋</text>
-<text x="1229.0" y="593.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東新宿</text>
-<text x="3550.0" y="611.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">船堀</text>
-<text x="200.0" y="638.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">豊島園</text>
-<text x="2605.7" y="666.6" text-anchor="start" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東日本橋</text>
-<text x="1665.0" y="697.3" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">九段下</text>
-<text x="1959.8" y="697.3" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">神保町</text>
-<text x="2118.0" y="697.3" text-anchor="middle" textLength="146.4" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">小川町（東京）</text>
-<text x="2278.5" y="697.3" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">岩本町</text>
-<text x="2443.5" y="697.3" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">馬喰横山</text>
-<text x="2688.0" y="697.3" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">浜町</text>
-<text x="2817.0" y="697.3" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">森下</text>
-<text x="2943.0" y="697.3" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">菊川</text>
-<text x="3069.0" y="697.3" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">住吉</text>
-<text x="3195.0" y="697.3" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西大島</text>
-<text x="3321.0" y="697.3" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">大島</text>
-<text x="3550.0" y="740.3" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東大島</text>
-<text x="1229.0" y="745.1" text-anchor="start" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新宿西口</text>
-<text x="200.0" y="770.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">練馬</text>
-<text x="1577.0" y="854.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">市ケ谷</text>
-<text x="2009.8" y="862.1" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">大手町</text>
-<text x="2605.7" y="899.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">人形町</text>
-<text x="195.0" y="944.1" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新江古田</text>
-<text x="336.0" y="864.1" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">落合南長崎</text>
-<text x="478.5" y="864.1" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">中井</text>
-<text x="618.0" y="864.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東中野</text>
-<text x="759.0" y="864.1" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">中野坂上</text>
-<text x="900.0" y="864.1" text-anchor="middle" textLength="144.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西新宿五丁目</text>
-<text x="1038.0" y="864.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">都庁前</text>
-<text x="2867.0" y="932.6" text-anchor="start" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">清澄白河</text>
-<text x="2009.8" y="983.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">日比谷</text>
-<text x="1127.9" y="1004.6" text-anchor="end" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新宿</text>
-<text x="1341.0" y="961.6" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新宿三丁目</text>
-<text x="1577.0" y="1004.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">曙橋</text>
-<text x="2605.7" y="1021.1" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">日本橋</text>
-<text x="2867.0" y="1084.1" text-anchor="start" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">門前仲町</text>
-<text x="2009.8" y="1103.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">内幸町</text>
-<text x="1227.9" y="1138.1" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">代々木</text>
-<text x="2259.0" y="1100.7" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新橋</text>
-<text x="2391.0" y="1100.7" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東銀座</text>
-<text x="2605.7" y="1143.7" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">宝町</text>
-<text x="2009.8" y="1223.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">御成門</text>
-<text x="2867.0" y="1235.6" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">月島</text>
-<text x="1227.9" y="1271.6" text-anchor="start" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">国立競技場</text>
-<text x="1335.0" y="1363.3" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">青山一丁目</text>
-<text x="1491.0" y="1283.3" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">六本木</text>
-<text x="1644.0" y="1283.3" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">麻布十番</text>
-<text x="1797.0" y="1283.3" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">赤羽橋</text>
-<text x="2235.5" y="1291.3" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">大門</text>
-<text x="2361.0" y="1283.3" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">汐留</text>
-<text x="2529.0" y="1283.3" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">築地市場</text>
-<text x="2697.0" y="1283.3" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">勝どき</text>
-<text x="2009.8" y="1427.6" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">芝公園</text>
-<text x="1348.5" y="1503.1" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">目黒</text>
-<text x="1536.0" y="1503.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">白金台</text>
-<text x="1722.0" y="1503.1" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">白金高輪</text>
-<text x="2009.8" y="1511.1" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">三田</text>
-<text x="786.0" y="1681.8" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西馬込</text>
-<text x="973.5" y="1681.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">馬込</text>
-<text x="1161.0" y="1681.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">中延</text>
-<text x="1347.0" y="1681.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">戸越</text>
-<text x="1533.0" y="1681.8" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">五反田</text>
-<text x="1719.0" y="1681.8" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">高輪台</text>
-<text x="1905.0" y="1681.8" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">泉岳寺</text>
-<text x="150.0" y="76.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">西高島平</text>
-<text x="291.0" y="76.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">新高島平</text>
-<text x="432.0" y="76.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">高島平</text>
-<text x="573.0" y="76.0" text-anchor="middle" textLength="48.0" fill="#1C1C1E">西台</text>
-<text x="714.0" y="76.0" text-anchor="middle" textLength="48.0" fill="#1C1C1E">蓮根</text>
-<text x="855.0" y="76.0" text-anchor="middle" textLength="120.0" fill="#1C1C1E">志村三丁目</text>
-<text x="994.5" y="76.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">志村坂上</text>
-<text x="1134.0" y="76.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">本蓮沼</text>
-<text x="1272.0" y="76.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">板橋本町</text>
-<text x="1411.5" y="76.0" text-anchor="middle" textLength="144.0" fill="#1C1C1E">板橋区役所前</text>
-<text x="1551.0" y="76.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">新板橋</text>
-<text x="1689.0" y="76.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">西巣鴨</text>
-<text x="1827.0" y="76.0" text-anchor="middle" textLength="48.0" fill="#1C1C1E">巣鴨</text>
-<text x="3500.0" y="79.6" text-anchor="middle" textLength="72.0" fill="#1C1C1E">本八幡</text>
-<text x="2009.8" y="170.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">千石</text>
-<text x="2646.0" y="168.1" text-anchor="middle" textLength="48.0" fill="#1C1C1E">浅草</text>
-<text x="2830.5" y="168.1" text-anchor="middle" textLength="120.0" fill="#1C1C1E">本所吾妻橋</text>
-<text x="3009.0" y="168.1" text-anchor="middle" textLength="48.0" fill="#1C1C1E">押上</text>
-<text x="3550.0" y="251.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">篠崎</text>
-<text x="2009.8" y="302.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">白山</text>
-<text x="150.0" y="328.6" text-anchor="middle" textLength="72.0" fill="#1C1C1E">光が丘</text>
-<text x="3550.0" y="371.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">瑞江</text>
-<text x="1248.0" y="391.6" text-anchor="middle" textLength="96.0" fill="#1C1C1E">若松河田</text>
-<text x="1404.0" y="391.6" text-anchor="middle" textLength="96.0" fill="#1C1C1E">牛込柳町</text>
-<text x="1560.0" y="391.6" text-anchor="middle" textLength="120.0" fill="#1C1C1E">牛込神楽坂</text>
-<text x="1716.0" y="391.6" text-anchor="middle" textLength="72.0" fill="#1C1C1E">飯田橋</text>
-<text x="1959.8" y="391.6" text-anchor="middle" textLength="122.4" fill="#1C1C1E">春日（東京）</text>
-<text x="2109.0" y="391.6" text-anchor="middle" textLength="120.0" fill="#1C1C1E">本郷三丁目</text>
-<text x="2260.5" y="391.6" text-anchor="middle" textLength="120.0" fill="#1C1C1E">上野御徒町</text>
-<text x="2410.5" y="391.6" text-anchor="middle" textLength="96.0" fill="#1C1C1E">新御徒町</text>
-<text x="2605.7" y="399.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">蔵前</text>
-<text x="3550.0" y="491.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">一之江</text>
-<text x="200.0" y="506.6" text-anchor="start" textLength="120.0" fill="#1C1C1E">練馬春日町</text>
-<text x="2867.0" y="521.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">両国</text>
-<text x="2605.7" y="566.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">浅草橋</text>
-<text x="2009.8" y="587.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">水道橋</text>
-<text x="1229.0" y="593.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">東新宿</text>
-<text x="3550.0" y="611.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">船堀</text>
-<text x="200.0" y="638.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">豊島園</text>
-<text x="2605.7" y="666.6" text-anchor="start" textLength="96.0" fill="#1C1C1E">東日本橋</text>
-<text x="1665.0" y="697.3" text-anchor="middle" textLength="72.0" fill="#1C1C1E">九段下</text>
-<text x="1959.8" y="697.3" text-anchor="middle" textLength="72.0" fill="#1C1C1E">神保町</text>
-<text x="2118.0" y="697.3" text-anchor="middle" textLength="146.4" fill="#1C1C1E">小川町（東京）</text>
-<text x="2278.5" y="697.3" text-anchor="middle" textLength="72.0" fill="#1C1C1E">岩本町</text>
-<text x="2443.5" y="697.3" text-anchor="middle" textLength="96.0" fill="#1C1C1E">馬喰横山</text>
-<text x="2688.0" y="697.3" text-anchor="middle" textLength="48.0" fill="#1C1C1E">浜町</text>
-<text x="2817.0" y="697.3" text-anchor="middle" textLength="48.0" fill="#1C1C1E">森下</text>
-<text x="2943.0" y="697.3" text-anchor="middle" textLength="48.0" fill="#1C1C1E">菊川</text>
-<text x="3069.0" y="697.3" text-anchor="middle" textLength="48.0" fill="#1C1C1E">住吉</text>
-<text x="3195.0" y="697.3" text-anchor="middle" textLength="72.0" fill="#1C1C1E">西大島</text>
-<text x="3321.0" y="697.3" text-anchor="middle" textLength="48.0" fill="#1C1C1E">大島</text>
-<text x="3550.0" y="740.3" text-anchor="start" textLength="72.0" fill="#1C1C1E">東大島</text>
-<text x="1229.0" y="745.1" text-anchor="start" textLength="96.0" fill="#1C1C1E">新宿西口</text>
-<text x="200.0" y="770.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">練馬</text>
-<text x="1577.0" y="854.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">市ケ谷</text>
-<text x="2009.8" y="862.1" text-anchor="start" textLength="72.0" fill="#1C1C1E">大手町</text>
-<text x="2605.7" y="899.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">人形町</text>
-<text x="195.0" y="944.1" text-anchor="middle" textLength="96.0" fill="#1C1C1E">新江古田</text>
-<text x="336.0" y="864.1" text-anchor="middle" textLength="120.0" fill="#1C1C1E">落合南長崎</text>
-<text x="478.5" y="864.1" text-anchor="middle" textLength="48.0" fill="#1C1C1E">中井</text>
-<text x="618.0" y="864.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">東中野</text>
-<text x="759.0" y="864.1" text-anchor="middle" textLength="96.0" fill="#1C1C1E">中野坂上</text>
-<text x="900.0" y="864.1" text-anchor="middle" textLength="144.0" fill="#1C1C1E">西新宿五丁目</text>
-<text x="1038.0" y="864.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">都庁前</text>
-<text x="2867.0" y="932.6" text-anchor="start" textLength="96.0" fill="#1C1C1E">清澄白河</text>
-<text x="2009.8" y="983.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">日比谷</text>
-<text x="1127.9" y="1004.6" text-anchor="end" textLength="48.0" fill="#1C1C1E">新宿</text>
-<text x="1341.0" y="961.6" text-anchor="middle" textLength="120.0" fill="#1C1C1E">新宿三丁目</text>
-<text x="1577.0" y="1004.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">曙橋</text>
-<text x="2605.7" y="1021.1" text-anchor="start" textLength="72.0" fill="#1C1C1E">日本橋</text>
-<text x="2867.0" y="1084.1" text-anchor="start" textLength="96.0" fill="#1C1C1E">門前仲町</text>
-<text x="2009.8" y="1103.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">内幸町</text>
-<text x="1227.9" y="1138.1" text-anchor="start" textLength="72.0" fill="#1C1C1E">代々木</text>
-<text x="2259.0" y="1100.7" text-anchor="middle" textLength="48.0" fill="#1C1C1E">新橋</text>
-<text x="2391.0" y="1100.7" text-anchor="middle" textLength="72.0" fill="#1C1C1E">東銀座</text>
-<text x="2605.7" y="1143.7" text-anchor="start" textLength="48.0" fill="#1C1C1E">宝町</text>
-<text x="2009.8" y="1223.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">御成門</text>
-<text x="2867.0" y="1235.6" text-anchor="start" textLength="48.0" fill="#1C1C1E">月島</text>
-<text x="1227.9" y="1271.6" text-anchor="start" textLength="120.0" fill="#1C1C1E">国立競技場</text>
-<text x="1335.0" y="1363.3" text-anchor="middle" textLength="120.0" fill="#1C1C1E">青山一丁目</text>
-<text x="1491.0" y="1283.3" text-anchor="middle" textLength="72.0" fill="#1C1C1E">六本木</text>
-<text x="1644.0" y="1283.3" text-anchor="middle" textLength="96.0" fill="#1C1C1E">麻布十番</text>
-<text x="1797.0" y="1283.3" text-anchor="middle" textLength="72.0" fill="#1C1C1E">赤羽橋</text>
-<text x="2235.5" y="1291.3" text-anchor="start" textLength="48.0" fill="#1C1C1E">大門</text>
-<text x="2361.0" y="1283.3" text-anchor="middle" textLength="48.0" fill="#1C1C1E">汐留</text>
-<text x="2529.0" y="1283.3" text-anchor="middle" textLength="96.0" fill="#1C1C1E">築地市場</text>
-<text x="2697.0" y="1283.3" text-anchor="middle" textLength="72.0" fill="#1C1C1E">勝どき</text>
-<text x="2009.8" y="1427.6" text-anchor="start" textLength="72.0" fill="#1C1C1E">芝公園</text>
-<text x="1348.5" y="1503.1" text-anchor="middle" textLength="48.0" fill="#1C1C1E">目黒</text>
-<text x="1536.0" y="1503.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">白金台</text>
-<text x="1722.0" y="1503.1" text-anchor="middle" textLength="96.0" fill="#1C1C1E">白金高輪</text>
-<text x="2009.8" y="1511.1" text-anchor="start" textLength="48.0" fill="#1C1C1E">三田</text>
-<text x="786.0" y="1681.8" text-anchor="middle" textLength="72.0" fill="#1C1C1E">西馬込</text>
-<text x="973.5" y="1681.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">馬込</text>
-<text x="1161.0" y="1681.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">中延</text>
-<text x="1347.0" y="1681.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">戸越</text>
-<text x="1533.0" y="1681.8" text-anchor="middle" textLength="72.0" fill="#1C1C1E">五反田</text>
-<text x="1719.0" y="1681.8" text-anchor="middle" textLength="72.0" fill="#1C1C1E">高輪台</text>
-<text x="1905.0" y="1681.8" text-anchor="middle" textLength="72.0" fill="#1C1C1E">泉岳寺</text>
+<text x="140.0" y="66.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西高島平</text>
+<text x="257.5" y="66.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新高島平</text>
+<text x="375.0" y="66.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">高島平</text>
+<text x="492.5" y="66.0" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西台</text>
+<text x="610.0" y="66.0" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">蓮根</text>
+<text x="727.5" y="66.0" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">志村三丁目</text>
+<text x="843.8" y="66.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">志村坂上</text>
+<text x="960.0" y="66.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">本蓮沼</text>
+<text x="1075.0" y="146.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">板橋本町</text>
+<text x="1191.2" y="66.0" text-anchor="middle" textLength="144.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">板橋区役所前</text>
+<text x="1307.5" y="66.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新板橋</text>
+<text x="1422.5" y="66.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西巣鴨</text>
+<text x="1537.5" y="66.0" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">巣鴨</text>
+<text x="2931.6" y="69.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">本八幡</text>
+<text x="1698.1" y="152.0" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">千石</text>
+<text x="2220.0" y="142.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">浅草</text>
+<text x="2373.8" y="142.8" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">本所吾妻橋</text>
+<text x="2522.5" y="142.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">押上</text>
+<text x="2981.6" y="219.5" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">篠崎</text>
+<text x="1698.1" y="262.0" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">白山</text>
+<text x="140.0" y="276.5" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">光が丘</text>
+<text x="2981.6" y="319.5" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">瑞江</text>
+<text x="1055.0" y="329.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">若松河田</text>
+<text x="1185.0" y="329.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">牛込柳町</text>
+<text x="1315.0" y="329.0" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">牛込神楽坂</text>
+<text x="1445.0" y="329.0" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">飯田橋</text>
+<text x="1648.1" y="329.0" text-anchor="middle" textLength="122.4" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">春日（東京）</text>
+<text x="1772.5" y="409.0" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">本郷三丁目</text>
+<text x="1898.8" y="329.0" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">上野御徒町</text>
+<text x="2023.8" y="329.0" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新御徒町</text>
+<text x="2194.8" y="337.0" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">蔵前</text>
+<text x="2981.6" y="419.5" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">一之江</text>
+<text x="190.0" y="432.0" text-anchor="start" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">練馬春日町</text>
+<text x="2412.5" y="444.5" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">両国</text>
+<text x="2194.8" y="482.0" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">浅草橋</text>
+<text x="1698.1" y="499.5" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">水道橋</text>
+<text x="1047.5" y="504.5" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東新宿</text>
+<text x="2981.6" y="519.5" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">船堀</text>
+<text x="190.0" y="542.0" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">豊島園</text>
+<text x="2194.8" y="559.5" text-anchor="start" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東日本橋</text>
+<text x="1402.5" y="583.8" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">九段下</text>
+<text x="1598.1" y="591.8" text-anchor="end" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">神保町</text>
+<text x="1780.0" y="583.8" text-anchor="middle" textLength="146.4" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">小川町（東京）</text>
+<text x="1913.8" y="583.8" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">岩本町</text>
+<text x="2051.2" y="583.8" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">馬喰横山</text>
+<text x="2255.0" y="663.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">浜町</text>
+<text x="2362.5" y="583.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">森下</text>
+<text x="2467.5" y="583.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">菊川</text>
+<text x="2572.5" y="583.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">住吉</text>
+<text x="2677.5" y="583.8" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西大島</text>
+<text x="2782.5" y="583.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">大島</text>
+<text x="2981.6" y="626.8" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東大島</text>
+<text x="1047.5" y="630.8" text-anchor="start" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新宿西口</text>
+<text x="190.0" y="652.0" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">練馬</text>
+<text x="1337.5" y="722.0" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">市ケ谷</text>
+<text x="1698.1" y="728.2" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">大手町</text>
+<text x="2194.8" y="759.5" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">人形町</text>
+<text x="127.5" y="765.8" text-anchor="end" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新江古田</text>
+<text x="295.0" y="722.8" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">落合南長崎</text>
+<text x="413.8" y="722.8" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">中井</text>
+<text x="530.0" y="722.8" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東中野</text>
+<text x="647.5" y="802.8" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">中野坂上</text>
+<text x="765.0" y="722.8" text-anchor="middle" textLength="144.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西新宿五丁目</text>
+<text x="880.0" y="722.8" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">都庁前</text>
+<text x="2412.5" y="787.0" text-anchor="start" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">清澄白河</text>
+<text x="1698.1" y="829.5" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">日比谷</text>
+<text x="946.6" y="847.0" text-anchor="end" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新宿</text>
+<text x="1132.5" y="804.0" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新宿三丁目</text>
+<text x="1337.5" y="847.0" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">曙橋</text>
+<text x="2194.8" y="860.8" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">日本橋</text>
+<text x="2412.5" y="913.2" text-anchor="start" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">門前仲町</text>
+<text x="1698.1" y="929.5" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">内幸町</text>
+<text x="1046.6" y="958.2" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">代々木</text>
+<text x="1897.5" y="919.9" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">新橋</text>
+<text x="2007.5" y="919.9" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">東銀座</text>
+<text x="2194.8" y="962.9" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">宝町</text>
+<text x="1698.1" y="1029.5" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">御成門</text>
+<text x="2412.5" y="1039.5" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">月島</text>
+<text x="1046.6" y="1069.5" text-anchor="start" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">国立競技場</text>
+<text x="1127.5" y="1152.1" text-anchor="middle" textLength="120.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">青山一丁目</text>
+<text x="1257.5" y="1072.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">六本木</text>
+<text x="1385.0" y="1072.1" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">麻布十番</text>
+<text x="1512.5" y="1072.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">赤羽橋</text>
+<text x="1886.2" y="1080.1" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">大門</text>
+<text x="1982.5" y="1072.1" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">汐留</text>
+<text x="2122.5" y="1072.1" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">築地市場</text>
+<text x="2262.5" y="1072.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">勝どき</text>
+<text x="1698.1" y="1199.5" text-anchor="start" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">芝公園</text>
+<text x="1138.8" y="1255.2" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">目黒</text>
+<text x="1295.0" y="1255.2" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">白金台</text>
+<text x="1450.0" y="1255.2" text-anchor="middle" textLength="96.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">白金高輪</text>
+<text x="1698.1" y="1263.2" text-anchor="start" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">三田</text>
+<text x="670.0" y="1404.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">西馬込</text>
+<text x="826.2" y="1404.1" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">馬込</text>
+<text x="982.5" y="1404.1" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">中延</text>
+<text x="1137.5" y="1404.1" text-anchor="middle" textLength="48.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">戸越</text>
+<text x="1292.5" y="1404.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">五反田</text>
+<text x="1447.5" y="1404.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">高輪台</text>
+<text x="1602.5" y="1404.1" text-anchor="middle" textLength="72.0" fill="none" stroke="#F7F4EC" stroke-width="6" stroke-linejoin="round">泉岳寺</text>
+<text x="140.0" y="66.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">西高島平</text>
+<text x="257.5" y="66.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">新高島平</text>
+<text x="375.0" y="66.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">高島平</text>
+<text x="492.5" y="66.0" text-anchor="middle" textLength="48.0" fill="#1C1C1E">西台</text>
+<text x="610.0" y="66.0" text-anchor="middle" textLength="48.0" fill="#1C1C1E">蓮根</text>
+<text x="727.5" y="66.0" text-anchor="middle" textLength="120.0" fill="#1C1C1E">志村三丁目</text>
+<text x="843.8" y="66.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">志村坂上</text>
+<text x="960.0" y="66.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">本蓮沼</text>
+<text x="1075.0" y="146.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">板橋本町</text>
+<text x="1191.2" y="66.0" text-anchor="middle" textLength="144.0" fill="#1C1C1E">板橋区役所前</text>
+<text x="1307.5" y="66.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">新板橋</text>
+<text x="1422.5" y="66.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">西巣鴨</text>
+<text x="1537.5" y="66.0" text-anchor="middle" textLength="48.0" fill="#1C1C1E">巣鴨</text>
+<text x="2931.6" y="69.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">本八幡</text>
+<text x="1698.1" y="152.0" text-anchor="start" textLength="48.0" fill="#1C1C1E">千石</text>
+<text x="2220.0" y="142.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">浅草</text>
+<text x="2373.8" y="142.8" text-anchor="middle" textLength="120.0" fill="#1C1C1E">本所吾妻橋</text>
+<text x="2522.5" y="142.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">押上</text>
+<text x="2981.6" y="219.5" text-anchor="start" textLength="48.0" fill="#1C1C1E">篠崎</text>
+<text x="1698.1" y="262.0" text-anchor="start" textLength="48.0" fill="#1C1C1E">白山</text>
+<text x="140.0" y="276.5" text-anchor="middle" textLength="72.0" fill="#1C1C1E">光が丘</text>
+<text x="2981.6" y="319.5" text-anchor="start" textLength="48.0" fill="#1C1C1E">瑞江</text>
+<text x="1055.0" y="329.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">若松河田</text>
+<text x="1185.0" y="329.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">牛込柳町</text>
+<text x="1315.0" y="329.0" text-anchor="middle" textLength="120.0" fill="#1C1C1E">牛込神楽坂</text>
+<text x="1445.0" y="329.0" text-anchor="middle" textLength="72.0" fill="#1C1C1E">飯田橋</text>
+<text x="1648.1" y="329.0" text-anchor="middle" textLength="122.4" fill="#1C1C1E">春日（東京）</text>
+<text x="1772.5" y="409.0" text-anchor="middle" textLength="120.0" fill="#1C1C1E">本郷三丁目</text>
+<text x="1898.8" y="329.0" text-anchor="middle" textLength="120.0" fill="#1C1C1E">上野御徒町</text>
+<text x="2023.8" y="329.0" text-anchor="middle" textLength="96.0" fill="#1C1C1E">新御徒町</text>
+<text x="2194.8" y="337.0" text-anchor="start" textLength="48.0" fill="#1C1C1E">蔵前</text>
+<text x="2981.6" y="419.5" text-anchor="start" textLength="72.0" fill="#1C1C1E">一之江</text>
+<text x="190.0" y="432.0" text-anchor="start" textLength="120.0" fill="#1C1C1E">練馬春日町</text>
+<text x="2412.5" y="444.5" text-anchor="start" textLength="48.0" fill="#1C1C1E">両国</text>
+<text x="2194.8" y="482.0" text-anchor="start" textLength="72.0" fill="#1C1C1E">浅草橋</text>
+<text x="1698.1" y="499.5" text-anchor="start" textLength="72.0" fill="#1C1C1E">水道橋</text>
+<text x="1047.5" y="504.5" text-anchor="start" textLength="72.0" fill="#1C1C1E">東新宿</text>
+<text x="2981.6" y="519.5" text-anchor="start" textLength="48.0" fill="#1C1C1E">船堀</text>
+<text x="190.0" y="542.0" text-anchor="start" textLength="72.0" fill="#1C1C1E">豊島園</text>
+<text x="2194.8" y="559.5" text-anchor="start" textLength="96.0" fill="#1C1C1E">東日本橋</text>
+<text x="1402.5" y="583.8" text-anchor="middle" textLength="72.0" fill="#1C1C1E">九段下</text>
+<text x="1598.1" y="591.8" text-anchor="end" textLength="72.0" fill="#1C1C1E">神保町</text>
+<text x="1780.0" y="583.8" text-anchor="middle" textLength="146.4" fill="#1C1C1E">小川町（東京）</text>
+<text x="1913.8" y="583.8" text-anchor="middle" textLength="72.0" fill="#1C1C1E">岩本町</text>
+<text x="2051.2" y="583.8" text-anchor="middle" textLength="96.0" fill="#1C1C1E">馬喰横山</text>
+<text x="2255.0" y="663.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">浜町</text>
+<text x="2362.5" y="583.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">森下</text>
+<text x="2467.5" y="583.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">菊川</text>
+<text x="2572.5" y="583.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">住吉</text>
+<text x="2677.5" y="583.8" text-anchor="middle" textLength="72.0" fill="#1C1C1E">西大島</text>
+<text x="2782.5" y="583.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">大島</text>
+<text x="2981.6" y="626.8" text-anchor="start" textLength="72.0" fill="#1C1C1E">東大島</text>
+<text x="1047.5" y="630.8" text-anchor="start" textLength="96.0" fill="#1C1C1E">新宿西口</text>
+<text x="190.0" y="652.0" text-anchor="start" textLength="48.0" fill="#1C1C1E">練馬</text>
+<text x="1337.5" y="722.0" text-anchor="start" textLength="72.0" fill="#1C1C1E">市ケ谷</text>
+<text x="1698.1" y="728.2" text-anchor="start" textLength="72.0" fill="#1C1C1E">大手町</text>
+<text x="2194.8" y="759.5" text-anchor="start" textLength="72.0" fill="#1C1C1E">人形町</text>
+<text x="127.5" y="765.8" text-anchor="end" textLength="96.0" fill="#1C1C1E">新江古田</text>
+<text x="295.0" y="722.8" text-anchor="middle" textLength="120.0" fill="#1C1C1E">落合南長崎</text>
+<text x="413.8" y="722.8" text-anchor="middle" textLength="48.0" fill="#1C1C1E">中井</text>
+<text x="530.0" y="722.8" text-anchor="middle" textLength="72.0" fill="#1C1C1E">東中野</text>
+<text x="647.5" y="802.8" text-anchor="middle" textLength="96.0" fill="#1C1C1E">中野坂上</text>
+<text x="765.0" y="722.8" text-anchor="middle" textLength="144.0" fill="#1C1C1E">西新宿五丁目</text>
+<text x="880.0" y="722.8" text-anchor="middle" textLength="72.0" fill="#1C1C1E">都庁前</text>
+<text x="2412.5" y="787.0" text-anchor="start" textLength="96.0" fill="#1C1C1E">清澄白河</text>
+<text x="1698.1" y="829.5" text-anchor="start" textLength="72.0" fill="#1C1C1E">日比谷</text>
+<text x="946.6" y="847.0" text-anchor="end" textLength="48.0" fill="#1C1C1E">新宿</text>
+<text x="1132.5" y="804.0" text-anchor="middle" textLength="120.0" fill="#1C1C1E">新宿三丁目</text>
+<text x="1337.5" y="847.0" text-anchor="start" textLength="48.0" fill="#1C1C1E">曙橋</text>
+<text x="2194.8" y="860.8" text-anchor="start" textLength="72.0" fill="#1C1C1E">日本橋</text>
+<text x="2412.5" y="913.2" text-anchor="start" textLength="96.0" fill="#1C1C1E">門前仲町</text>
+<text x="1698.1" y="929.5" text-anchor="start" textLength="72.0" fill="#1C1C1E">内幸町</text>
+<text x="1046.6" y="958.2" text-anchor="start" textLength="72.0" fill="#1C1C1E">代々木</text>
+<text x="1897.5" y="919.9" text-anchor="middle" textLength="48.0" fill="#1C1C1E">新橋</text>
+<text x="2007.5" y="919.9" text-anchor="middle" textLength="72.0" fill="#1C1C1E">東銀座</text>
+<text x="2194.8" y="962.9" text-anchor="start" textLength="48.0" fill="#1C1C1E">宝町</text>
+<text x="1698.1" y="1029.5" text-anchor="start" textLength="72.0" fill="#1C1C1E">御成門</text>
+<text x="2412.5" y="1039.5" text-anchor="start" textLength="48.0" fill="#1C1C1E">月島</text>
+<text x="1046.6" y="1069.5" text-anchor="start" textLength="120.0" fill="#1C1C1E">国立競技場</text>
+<text x="1127.5" y="1152.1" text-anchor="middle" textLength="120.0" fill="#1C1C1E">青山一丁目</text>
+<text x="1257.5" y="1072.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">六本木</text>
+<text x="1385.0" y="1072.1" text-anchor="middle" textLength="96.0" fill="#1C1C1E">麻布十番</text>
+<text x="1512.5" y="1072.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">赤羽橋</text>
+<text x="1886.2" y="1080.1" text-anchor="start" textLength="48.0" fill="#1C1C1E">大門</text>
+<text x="1982.5" y="1072.1" text-anchor="middle" textLength="48.0" fill="#1C1C1E">汐留</text>
+<text x="2122.5" y="1072.1" text-anchor="middle" textLength="96.0" fill="#1C1C1E">築地市場</text>
+<text x="2262.5" y="1072.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">勝どき</text>
+<text x="1698.1" y="1199.5" text-anchor="start" textLength="72.0" fill="#1C1C1E">芝公園</text>
+<text x="1138.8" y="1255.2" text-anchor="middle" textLength="48.0" fill="#1C1C1E">目黒</text>
+<text x="1295.0" y="1255.2" text-anchor="middle" textLength="72.0" fill="#1C1C1E">白金台</text>
+<text x="1450.0" y="1255.2" text-anchor="middle" textLength="96.0" fill="#1C1C1E">白金高輪</text>
+<text x="1698.1" y="1263.2" text-anchor="start" textLength="48.0" fill="#1C1C1E">三田</text>
+<text x="670.0" y="1404.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">西馬込</text>
+<text x="826.2" y="1404.1" text-anchor="middle" textLength="48.0" fill="#1C1C1E">馬込</text>
+<text x="982.5" y="1404.1" text-anchor="middle" textLength="48.0" fill="#1C1C1E">中延</text>
+<text x="1137.5" y="1404.1" text-anchor="middle" textLength="48.0" fill="#1C1C1E">戸越</text>
+<text x="1292.5" y="1404.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">五反田</text>
+<text x="1447.5" y="1404.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">高輪台</text>
+<text x="1602.5" y="1404.1" text-anchor="middle" textLength="72.0" fill="#1C1C1E">泉岳寺</text>
 </g>
-<rect x="112.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="253.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="394.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="535.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="676.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="817.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="956.5" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1096.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1234.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1373.5" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1513.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1651.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1789.0" y="86.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="3462.0" y="89.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="137.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2608.0" y="178.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2792.5" y="178.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2971.0" y="178.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="3462.0" y="218.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="269.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="112.0" y="338.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="3462.0" y="338.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1210.0" y="401.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1366.0" y="401.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1522.0" y="401.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1678.0" y="401.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="401.6" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2071.0" y="401.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2222.5" y="401.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2372.5" y="401.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2517.7" y="401.6" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="3462.0" y="458.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="112.0" y="473.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2779.0" y="488.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2517.7" y="533.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="554.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1141.0" y="560.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="3462.0" y="578.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="112.0" y="605.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2517.7" y="668.6" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1627.0" y="707.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="707.3" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2080.0" y="707.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2240.5" y="707.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2405.5" y="707.3" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2650.0" y="707.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2779.0" y="707.3" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2905.0" y="707.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="3031.0" y="707.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="3157.0" y="707.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="3283.0" y="707.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="3462.0" y="707.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1141.0" y="712.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="112.0" y="737.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1489.0" y="821.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="829.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2517.7" y="866.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="157.0" y="874.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="298.0" y="874.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="440.5" y="874.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="580.0" y="874.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="721.0" y="874.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="862.0" y="874.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1000.0" y="874.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2779.0" y="899.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="950.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1139.9" y="971.6" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1303.0" y="971.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1489.0" y="971.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2517.7" y="988.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2779.0" y="1051.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="1070.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1139.9" y="1105.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2221.0" y="1110.7" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2353.0" y="1110.7" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2517.7" y="1110.7" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="1190.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2779.0" y="1202.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1139.9" y="1238.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1297.0" y="1293.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1453.0" y="1293.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1606.0" y="1293.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1759.0" y="1293.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2147.5" y="1293.3" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2323.0" y="1293.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2491.0" y="1293.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="2659.0" y="1293.3" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="1394.6" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1310.5" y="1513.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1498.0" y="1513.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1684.0" y="1513.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1921.8" y="1513.1" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="748.0" y="1691.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="935.5" y="1691.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1123.0" y="1691.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1309.0" y="1691.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1495.0" y="1691.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1681.0" y="1691.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
-<rect x="1867.0" y="1691.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="102.0" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="219.5" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="337.0" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="454.5" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="572.0" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="689.5" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="805.8" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="922.0" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1037.0" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1153.2" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1269.5" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1384.5" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1499.5" y="76.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2893.6" y="79.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="119.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2182.0" y="152.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2335.8" y="152.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2484.5" y="152.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2893.6" y="186.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="229.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="102.0" y="286.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2893.6" y="286.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1017.0" y="339.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1147.0" y="339.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1277.0" y="339.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1407.0" y="339.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="339.0" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1734.5" y="339.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1860.8" y="339.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1985.8" y="339.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2106.8" y="339.0" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2893.6" y="386.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="102.0" y="399.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2324.5" y="411.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2106.8" y="449.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="466.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="959.5" y="471.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2893.6" y="486.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="102.0" y="509.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2106.8" y="561.5" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1364.5" y="593.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="593.8" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1742.0" y="593.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1875.8" y="593.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2013.1999999999998" y="593.8" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2217.0" y="593.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2324.5" y="593.8" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2429.5" y="593.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2534.5" y="593.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2639.5" y="593.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2744.5" y="593.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2893.6" y="593.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="959.5" y="597.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="102.0" y="619.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1249.5" y="689.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="695.2" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2106.8" y="726.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="139.5" y="732.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="257.0" y="732.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="375.8" y="732.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="492.0" y="732.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="609.5" y="732.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="727.0" y="732.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="842.0" y="732.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2324.5" y="754.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="796.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="958.6" y="814.0" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1094.5" y="814.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1249.5" y="814.0" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2106.8" y="827.8" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2324.5" y="880.2" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="896.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="958.6" y="925.2" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1859.5" y="929.9" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1969.5" y="929.9" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2106.8" y="929.9" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="996.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2324.5" y="1006.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="958.6" y="1036.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1089.5" y="1082.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1219.5" y="1082.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1347.0" y="1082.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1474.5" y="1082.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1798.2" y="1082.1" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1944.5" y="1082.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2084.5" y="1082.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="2224.5" y="1082.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="1166.5" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1100.8" y="1265.2" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1257.0" y="1265.2" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1412.0" y="1265.2" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1610.1" y="1265.2" width="76" height="48" rx="10" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="632.0" y="1414.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="788.2" y="1414.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="944.5" y="1414.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1099.5" y="1414.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1254.5" y="1414.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1409.5" y="1414.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
+<rect x="1564.5" y="1414.1" width="76" height="48" rx="24" fill="#fff" stroke="#1C1C1E" stroke-width="3"/>
 </svg>
